@@ -1,0 +1,23 @@
+{
+  "name": "pac-man",
+  "version": "1.0.0",
+  "description": "The Classic arcade game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -a localhost -p 1234 -o"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Umitosan/pac-man.git"
+  },
+  "author": "Dominic Brown",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Umitosan/pac-man/issues"
+  },
+  "homepage": "https://github.com/Umitosan/pac-man#readme",
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}

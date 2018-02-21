@@ -1,0 +1,127 @@
+/*
+pac man font source http://www.classicgaming.cc/classics/pac-man/fonts
+COLORS
+pac yellow = #FFFF01
+teal #82B9C0 rgb(130, 185, 192)
+red #C7402E rgb(199, 64, 46)
+*/
+
+@font-face {
+    font-family: "joystix";
+    src: url("joystix.ttf");
+}
+
+@font-face {
+    font-family: "pac-font";
+    src: url("pac-font.ttf");
+}
+
+body {
+  background-color: black;
+  font-family: 'Audiowide', cursive;
+}
+
+canvas {
+  padding: 5px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #1532BC;
+  border-radius: 10px;
+}
+
+.title-div {
+  width: 1196px;
+  display: block;
+  font-family: "pac-font";
+}
+
+#title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: #FFFF01;
+  /*text-shadow: x-offset y-offset blur-radius color|none|initial|inherit;*/
+  text-shadow: 3px 3px 1px rgba(225, 64, 46, 0.8),
+              -3px -3px 1px rgba(120, 200, 192, 0.8);
+}
+
+.main-row {
+  display: inline-flex;
+  color: blue;
+  font-family: "joystix";
+}
+
+.left-col, .right-col {
+  text-align: center;
+  width: 240px;
+  color: #1532BC;
+}
+
+#score {
+  font-size: 28px;
+  color: #FFFF01;
+}
+
+.label {
+  font-size: 30px;
+}
+
+/*
+←	&#8592;	&larr;	LEFTWARDS ARROW
+↑	&#8593;	&uarr;	UPWARDS ARROW
+→	&#8594;	&rarr;	RIGHTWARDS ARROW
+↓	&#8595;	&darr;	DOWNWARDS ARROW
+*/
+
+.keycaps {
+  margin-top: 16px;
+  display: inline-block;
+  margin-bottom: 30px;
+}
+.key {
+  text-align: center;
+  height: 50px;
+  width: 50px;
+  font-size: 30px;
+  border-color: blue;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 8px;
+}
+th.key p {
+  font-size: 30px;
+  padding: 0px;
+  margin: 0px;
+}
+
+
+#sketch-holder-div {
+  padding-top: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #1532BC;
+  border-radius: 10px;
+}
+
+/*reuseable classes*//*reuseable classes*//*reuseable classes*/
+.center {
+  text-align: center;
+}
+
+.lg-text {
+  font-size: 24px;
+  color: #FFFF01;
+}
+
+.green-out {
+  outline-color: green;
+  outline-style: solid;
+  outline-width: 1px;
+}
+.red-out {
+  outline-color: red;
+  outline-style: solid;
+  outline-width: 1px;
+}
