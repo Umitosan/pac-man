@@ -113,34 +113,169 @@ var State = {
   pageLoadTime: 0,
 };
 
-function Game() {
+function Game(updateDur = 100) {
   this.paused = true;
   this.bg = new Image();
+  this.started = false;
+  this.myPac = undefined;
+  this.ghosts = undefined;
+  this.updateDuration = updateDur;
+  this.lastUpdateTime = 0;
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
+    // Pac(x,y,xVelocity,yVelocity,width,faceDirection,moveState)
+    this.myPac = new Pac( /* x */             200,
+                          /* y */             CANVAS.height/2,
+                          /* xVelocity */     1,
+                          /* yVelocity */     0,
+                          /* width */         42,
+                          /* faceDirection */ 'right',
+                          /* moveState */     'go'
+                        );
+    // init ghosts
   };
-  this.draw = function() {
+  this.drawBG = function() {
     ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
-    // simple draw image:     drawImage(image, x, y)
-    // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
     ctx.drawImage(this.bg,0,0,CANVAS.width,CANVAS.height);
   };
+  this.draw = function() {
+    if (this.myPac) {
+      this.myPac.draw();
+    }
+    // this.ghosts.each( (g) => { g.update() });
+  };
   this.update = function() {
-
+    this.myPac.update();
   };
 }
 
-function Pac() {
+function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
+  this.x = x;
+  this.y = y;
+  this.xVel = xVelocity;
+  this.yVel = yVelocity;
+  this.diameter = diameter;
+  this.radius = diameter/2;
+  this.mouthSize = 1;
+  this.mouthVel = 0.015;
+  this.baseMouthVel = 0.015;
+  this.direction = direction;
+  this.moveState = moveState;
+  this.color = Colors.pacYellow;
+  this.lineW = 3;
 
   this.init = function() {
+    // init
+  }; // init
 
+  // move pac in facing direction
+  this.slide = function() {
+    if (this.direction === 'left') {
+      this.x -= this.xVel;
+    } else if (this.direction === 'right') {
+      this.x += this.xVel;
+    } else if (this.direction === 'up') {
+      this.y -= this.yVel;
+    } else if (this.direction === 'down') {
+      this.y += this.yVel;
+    } else {
+      console.log(' slide problems ');
+    }
+  }; // slide
+
+  this.inBounds = function() { // is pac in bounds? (true/false)
+    var bounds;
+    if ( (this.x - this.radius < 6) && (this.direction === 'left') ) {  // check left
+      bounds = false;
+    } else if ( (this.x + this.radius > CANVAS.width-6) && (this.direction === 'right') ) { // check right
+      bounds = false;
+    } else if ( (this.y + this.radius > CANVAS.height-6) && (this.direction === 'down') ) {  // check down
+      bounds = false;
+    } else if ( (this.y - this.radius < 6) && (this.direction === 'up') ) { // check up
+      bounds = false;
+    } else {
+      bounds = true;
+    }
+    return bounds;
+  }; // inBounds
+
+  this.nextMouth = function() {
+    if ( this.mouthSize > 1.46 ) {
+      this.mouthVel = -this.baseMouthVel;
+    } else if ( this.mouthSize <= 1.00 ) {
+      this.mouthVel = this.baseMouthVel;
+    } else {
+      // do nothing?
+    }
+    this.mouthSize += this.mouthVel;
+  };
+
+  this.draw = function() {
+    // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+    // sAngle	The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
+    // eAngle	The ending angle, in radians
+    // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
+
+
+    // ctx.fillStyle = this.color;
+    // ctx.beginPath();
+    // ctx.moveTo(this.x,this.y);
+    // ctx.arc(this.x,this.y,this.radius,(2*Math.PI)+Math.PI/6,(2*Math.PI)-Math.PI/6);
+    // ctx.lineTo(this.x,this.y);
+    // ctx.closePath();
+    // ctx.fill();
+
+    ctx.save();
+    ctx.fillStyle = this.color;
+    // ctx.strokeStyle = invertRGBAstr(this.color);
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.lineW;
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y); // new center of drawing map is center of pacman
+
+    // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
+    switch ( this.direction )  {
+      case 'left':
+        ctx.arc(this.x, this.y, this.radius, ( (-(2*Math.PI)/3)*this.mouthSize), ( ((2*Math.PI)/3)*this.mouthSize) , Math.PI);  break;
+      case 'right':
+        ctx.arc(this.x, this.y, this.radius, ( (((2*Math.PI)/3)*this.mouthSize)+Math.PI ), ( ((-(2*Math.PI)/3)*this.mouthSize)+Math.PI ), Math.PI);  break;
+      case 'up':
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+      case 'down':
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+      case 'stop':
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+      default: console.log("switch broke"); break;
+    } // end switch
+
+    ctx.lineTo(this.x,this.y);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+    ctx.restore();
+
+  }; // draw
+
+  this.update = function() {
+    if ( (this.moveState === 'go') && (this.inBounds() === true) ) {
+      this.slide();
+      this.nextMouth();
+    }
+  }; // update
+
+} // PAC
+
+function Ghost() {
+
+  this.init = function() {
+    // init
   };
   this.draw = function() {
-
+    // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   };
   this.update = function() {
-
+    // update positions
   };
 }
 
@@ -153,19 +288,24 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  // if (State.loopRunning) {
-  //   var now = performance.now();
-  //   if ( (now - myGame.lastUpdateTime) >= myGame.sortDuration ) {
-  //     var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.sortDuration);
-  //     for (var i=0; i < timesToUpdate; i++) {
-  //       myGame.update();
-  //       if (myGame.sorted) { break; }
-  //     }
-  //     myGame.lastUpdateTime = performance.now();
-  //   }
-  // }
+  if ( (State.loopRunning) && (myGame.started) ) {
+    var now = performance.now();
+    if ( (now - myGame.lastUpdateTime) >= myGame.updateDuration ) {
+      var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.updateDuration);
+      for (var i=0; i < timesToUpdate; i++) {
+        myGame.update();
+      }
+      myGame.lastUpdateTime = performance.now();
+    }
+  }
+
   clearCanvas();
-  myGame.draw();
+  if (!myGame.started) {
+    myGame.drawBG();
+  } else {
+    myGame.draw();
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -176,25 +316,24 @@ $(document).ready(function() {
   CANVAS =  $('#canvas')[0];
   ctx =  CANVAS.getContext('2d');
 
-  console.log('CANVAS = ', CANVAS);
-  console.log('ctx = ', ctx);
+  myGame = new Game();
+  myGame.init();
+  State.loopRunning = true;
+  State.myReq = requestAnimationFrame(gameLoop);
 
   setInterval(clockTimer, 1000);
 
   $('#start-btn').click(function() {
-    console.log('start button clicked');
-    if (State.myReq !== undefined) {
-      cancelAnimationFrame(State.myReq);
-      clearCanvas();
-    } else {
-      console.log("first game loop started");
-      myGame = new Game();
-      clearCanvas();
-      State.loopRunning = true;
-      myGame.init();
-      // myGame.draw();
-      State.myReq = requestAnimationFrame(gameLoop);
-    }
+    console.log("first game loop started");
+    myGame = new Game(16);
+    State.loopRunning = true;
+    myGame.init();
+    myGame.started = true;
+    State.myReq = requestAnimationFrame(gameLoop);
+  });
+
+  $("#stop").click(function() {
+    cancelAnimationFrame(State.myReq);
   });
 
 });
