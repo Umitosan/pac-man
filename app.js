@@ -127,7 +127,7 @@ function Game(updateDur = 100) {
     // Pac(x,y,xVelocity,yVelocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             200,
                           /* y */             CANVAS.height/2,
-                          /* xVelocity */     1,
+                          /* xVelocity */     2,
                           /* yVelocity */     0,
                           /* width */         42,
                           /* faceDirection */ 'right',
@@ -157,13 +157,13 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
   this.yVel = yVelocity;
   this.diameter = diameter;
   this.radius = diameter/2;
-  this.mouthSize = 1;
-  this.mouthVel = 0.015;
-  this.baseMouthVel = 0.015;
+  this.mouthSize = 0.523599; // 30 degrees in radians
+  this.mouthVel = 0.0174533; // 1 degree in radians
+  this.baseMouthVel = 0.0174533; // 1 degree in radians
   this.direction = direction;
   this.moveState = moveState;
   this.color = Colors.pacYellow;
-  this.lineW = 3;
+  this.lineW = 2;
 
   this.init = function() {
     // init
@@ -172,11 +172,11 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
   // move pac in facing direction
   this.slide = function() {
     if (this.direction === 'left') {
-      this.x -= this.xVel;
+      this.x += this.xVel;
     } else if (this.direction === 'right') {
       this.x += this.xVel;
     } else if (this.direction === 'up') {
-      this.y -= this.yVel;
+      this.y += this.yVel;
     } else if (this.direction === 'down') {
       this.y += this.yVel;
     } else {
@@ -186,13 +186,13 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
 
   this.inBounds = function() { // is pac in bounds? (true/false)
     var bounds;
-    if ( (this.x - this.radius < 6) && (this.direction === 'left') ) {  // check left
+    if ( (this.direction === 'left') && (this.x - this.radius < 6) ) {
       bounds = false;
-    } else if ( (this.x + this.radius > CANVAS.width-6) && (this.direction === 'right') ) { // check right
+    } else if ( (this.direction === 'right') && (this.x + this.radius > CANVAS.width-6) ) {
       bounds = false;
-    } else if ( (this.y + this.radius > CANVAS.height-6) && (this.direction === 'down') ) {  // check down
+    } else if ( (this.direction === 'down') && (this.y + this.radius > CANVAS.height-6) ) {
       bounds = false;
-    } else if ( (this.y - this.radius < 6) && (this.direction === 'up') ) { // check up
+    } else if ( (this.direction === 'up') && (this.y - this.radius < 6) ) {
       bounds = false;
     } else {
       bounds = true;
@@ -200,10 +200,29 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
     return bounds;
   }; // inBounds
 
+  this.changeDir = function() {
+    if (this.direction === 'right') {
+      this.xVel *= -1;
+      this.direction = 'left';
+    } else if (this.direction === 'left') {
+      this.xVel *= -1;
+      this.direction = 'right';
+    } else if (this.direction === 'up') {
+      this.yVel *= -1;
+      this.direction = 'down';
+    } else if (this.direction === 'down') {
+      this.yVel *= -1;
+      this.direction = 'up';
+    } else {
+      console.log(' slide problems ');
+    }
+    console.log('this.xVel = ', this.xVel);
+  };
+
   this.nextMouth = function() {
-    if ( this.mouthSize > 1.46 ) {
+    if ( this.mouthSize >= Math.PI/3 ) {
       this.mouthVel = -this.baseMouthVel;
-    } else if ( this.mouthSize <= 1.00 ) {
+    } else if ( this.mouthSize <= 0 ) {
       this.mouthVel = this.baseMouthVel;
     } else {
       // do nothing?
@@ -217,7 +236,6 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
     // eAngle	The ending angle, in radians
     // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
 
-
     // ctx.fillStyle = this.color;
     // ctx.beginPath();
     // ctx.moveTo(this.x,this.y);
@@ -228,7 +246,6 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
 
     ctx.save();
     ctx.fillStyle = this.color;
-    // ctx.strokeStyle = invertRGBAstr(this.color);
     ctx.strokeStyle = this.color;
     ctx.lineWidth = this.lineW;
     ctx.beginPath();
@@ -237,15 +254,15 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
     // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
     switch ( this.direction )  {
       case 'left':
-        ctx.arc(this.x, this.y, this.radius, ( (-(2*Math.PI)/3)*this.mouthSize), ( ((2*Math.PI)/3)*this.mouthSize) , Math.PI);  break;
+        ctx.arc(this.x, this.y, this.radius, ( (Math.PI*2/3)*this.mouthSize)-Math.PI, ( -(Math.PI*2/3)*this.mouthSize));  break;
       case 'right':
-        ctx.arc(this.x, this.y, this.radius, ( (((2*Math.PI)/3)*this.mouthSize)+Math.PI ), ( ((-(2*Math.PI)/3)*this.mouthSize)+Math.PI ), Math.PI);  break;
+        ctx.arc(this.x, this.y, this.radius, (Math.PI/6)*this.mouthSize, -(Math.PI/6)*this.mouthSize   );  break;
       case 'up':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
       case 'down':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
       case 'stop':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize, Math.PI);  break;
+        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
       default: console.log("switch broke"); break;
     } // end switch
 
@@ -258,9 +275,16 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
   }; // draw
 
   this.update = function() {
-    if ( (this.moveState === 'go') && (this.inBounds() === true) ) {
-      this.slide();
-      this.nextMouth();
+    if (this.moveState === 'go') {
+      if (!this.inBounds()) {  // not in bounds so change direction
+        console.log("time to change direction!");
+        this.changeDir();
+        this.slide();
+        this.nextMouth();
+      } else {  // is in bounds, proceed as normal
+        this.slide();
+        this.nextMouth();
+      }
     }
   }; // update
 
