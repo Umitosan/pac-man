@@ -8,9 +8,9 @@
 // sample level image
 // http://samentries.com/wp-content/uploads/2015/10/PacmanLevel-1.png
 
-///////////////////
-// HELPER FUNCTIONS / OBJECTS
-///////////////////
+//////////////////////
+// HELPER FUNCTIONS
+//////////////////////
 
 // ref https://www.w3schools.com/colors/colors_shades.asp
 var Colors = {
@@ -42,19 +42,57 @@ function TxtBox(x,y,txt) {
   };
 }
 
+
+function clockTimer() {
+  State.pageLoadTime += 1;
+  $('#clock').text(State.pageLoadTime);
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
 }
 
-function clearCanvas() {
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+function getRadianAngle(degreeValue) {
+  return degreeValue * Math.PI / 180;
 }
 
-function clockTimer() {
-  State.time += 1;
-  $('#clock').text(State.time);
+function randSign() {
+  let num = getRandomIntInclusive(1,2);
+  if (num === 1) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
+function randColor(type) {
+  // more muted colors example
+      // return ( "#" + Math.round((getRandomIntInclusive(0,99999999) + 0x77000000)).toString(16) );
+  // full spectum below
+  if (type === 'hex') {
+    return ( "#" + Math.round((getRandomIntInclusive(0,0xffffff))).toString(16) );
+  } else if (type === 'rgba') {
+    return ( 'rgba('+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+1+')' );
+  } else {
+    console.log("Not valid option for randColor()");
+    return undefined;
+  }
+}
+
+function invertRGBAstr(str) {
+  let arr1 = str.slice(5,-1); // arr1 = "173,216,230,0.2"
+  let arr2 = arr1.split(','); // arr2 = ["173","216","230","0.2"]
+  let r = -1 * arr2[0] + 255;
+  let g = -1 * arr2[1] + 255;
+  let b = -1 * arr2[2] + 255;
+  let a = arr2[3];
+  return 'rgba('+r+','+g+','+b+','+a+')';
 }
 
 
@@ -62,24 +100,31 @@ function clockTimer() {
 // GAME
 ///////////////////
 
-var CANVAS = $('#canvas')[0];
+var CANVAS = undefined;
+var ctx = undefined;
+var myGame = undefined;
 
 var State = {
-  time: 0,
+  loopRunning: false,
   myReq: undefined,
+  playTime: 0,
   lastFrameTimeMs: 0, // The last time the loop was run
   maxFPS: 60, // The maximum FPS we want to allow
-  loopRunning: false,
-  pageLoadTime: 0
+  pageLoadTime: 0,
 };
 
 function Game() {
+  this.paused = true;
+  this.bg = new Image();
 
   this.init = function() {
-
+    this.bg.src = 'img/reference1.png';
   };
   this.draw = function() {
-
+    ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
+    // simple draw image:     drawImage(image, x, y)
+    // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+    ctx.drawImage(this.bg,0,0,CANVAS.width,CANVAS.height);
   };
   this.update = function() {
 
@@ -108,19 +153,19 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  // if (loopRunning) {
+  // if (State.loopRunning) {
   //   var now = performance.now();
-  //   if ( (now - bubbleStack.lastUpdateTime) >= bubbleStack.sortDuration ) {
-  //     var timesToUpdate = Math.ceil( (now - bubbleStack.lastUpdateTime) / bubbleStack.sortDuration);
+  //   if ( (now - myGame.lastUpdateTime) >= myGame.sortDuration ) {
+  //     var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.sortDuration);
   //     for (var i=0; i < timesToUpdate; i++) {
-  //       bubbleStack.update();
-  //       if (bubbleStack.sorted) { break; }
+  //       myGame.update();
+  //       if (myGame.sorted) { break; }
   //     }
-  //     bubbleStack.lastUpdateTime = performance.now();
+  //     myGame.lastUpdateTime = performance.now();
   //   }
   // }
-  // clearCanvas();
-  // bubbleStack.draw();
+  clearCanvas();
+  myGame.draw();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -128,20 +173,28 @@ function gameLoop(timestamp) {
 //////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
 
-  State.pageLoadTime = performance.now();
+  CANVAS =  $('#canvas')[0];
+  ctx =  CANVAS.getContext('2d');
+
+  console.log('CANVAS = ', CANVAS);
+  console.log('ctx = ', ctx);
 
   setInterval(clockTimer, 1000);
 
-  $('#start').click(function() {
+  $('#start-btn').click(function() {
+    console.log('start button clicked');
     if (State.myReq !== undefined) {
       cancelAnimationFrame(State.myReq);
+      clearCanvas();
     } else {
       console.log("first game loop started");
+      myGame = new Game();
+      clearCanvas();
+      State.loopRunning = true;
+      myGame.init();
+      // myGame.draw();
+      State.myReq = requestAnimationFrame(gameLoop);
     }
-    clearCanvas();
-    State.loopRunning = false;
-    // init()
-    // draw()
   });
 
 });
