@@ -3,7 +3,7 @@
   <head>
     <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="app.js"></script>
     <link href="css/styles.css" rel="stylesheet" type="text/css" >
   </head>
   <body>
@@ -12,11 +12,13 @@
     </div>
     <div class="main-row">
       <div class="left-col">
+        <p class="label">Time</p>
+        <p id='clock'>0</p>
         <p class="label">score</p>
         <p id="score">000000</p>
       </div>
-      <div id="sketch-holder-div">
-        <!-- canvas inserted here on load -->
+      <div id="canvas-container">
+        <canvas id="canvas" width="702" height="777"></canvas>
       </div>
       <div class="right-col">
         <table class="keycaps">
@@ -36,7 +38,12 @@
         </table>
         <p><span class="lg-text">G</span> - grid on/off</p>
         <p><span class="lg-text">space</span> - stop</p>
+        <div id="start-group">
+          <p><span id="start-btn-label" class="lg-text">Start</span></p>
+          <img id="start-btn" src="img/player1start.png" alt="start-btn">
+        </div>
       </div>
     </div>
+
   </body>
 </html>

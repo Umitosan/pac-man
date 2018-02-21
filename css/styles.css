@@ -29,6 +29,10 @@ canvas {
   border-radius: 10px;
 }
 
+#clock {
+  font-size: 20px;
+}
+
 .title-div {
   width: 1196px;
   display: block;
@@ -66,6 +70,10 @@ canvas {
   font-size: 30px;
 }
 
+#start-group {
+  margin-top: 100px;
+}
+
 /*
 ←	&#8592;	&larr;	LEFTWARDS ARROW
 ↑	&#8593;	&uarr;	UPWARDS ARROW
@@ -94,8 +102,7 @@ th.key p {
   margin: 0px;
 }
 
-
-#sketch-holder-div {
+#canvas-container {
   padding-top: 4px;
   padding-left: 4px;
   padding-right: 4px;
@@ -103,6 +110,11 @@ th.key p {
   border-style: solid;
   border-color: #1532BC;
   border-radius: 10px;
+}
+
+#start-btn {
+  width: 140px;
+  height: auto;
 }
 
 /*reuseable classes*//*reuseable classes*//*reuseable classes*/
