@@ -27,6 +27,7 @@ canvas {
   border-style: solid;
   border-color: #1532BC;
   border-radius: 10px;
+  outline: none; /* prevents outline when gets focus */
 }
 
 #clock {

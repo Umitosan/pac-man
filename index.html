@@ -5,6 +5,8 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <link href="css/styles.css" rel="stylesheet" type="text/css" >
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
   </head>
   <body>
     <div class="title-div">
@@ -18,7 +20,8 @@
         <p id="score">000000</p>
       </div>
       <div id="canvas-container">
-        <canvas id="canvas" width="702" height="777"></canvas>
+        <!-- tabindex is used to set focus later, this way key events are bound only to the canvas and not window -->
+        <canvas id="canvas" width="702" height="777" tabindex="0"></canvas>
       </div>
       <div class="right-col">
         <table class="keycaps">

@@ -113,7 +113,7 @@ var State = {
   pageLoadTime: 0,
 };
 
-function Game(updateDur = 100) {
+function Game(updateDur) {
   this.paused = true;
   this.bg = new Image();
   this.started = false;
@@ -121,14 +121,14 @@ function Game(updateDur = 100) {
   this.ghosts = undefined;
   this.updateDuration = updateDur;
   this.lastUpdateTime = 0;
+  this.lastKey = 0;
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
-    // Pac(x,y,xVelocity,yVelocity,width,faceDirection,moveState)
+    // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             200,
                           /* y */             CANVAS.height/2,
-                          /* xVelocity */     2,
-                          /* yVelocity */     0,
+                          /* velocity */      2,
                           /* width */         42,
                           /* faceDirection */ 'right',
                           /* moveState */     'go'
@@ -150,16 +150,15 @@ function Game(updateDur = 100) {
   };
 }
 
-function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
+function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.x = x;
   this.y = y;
-  this.xVel = xVelocity;
-  this.yVel = yVelocity;
+  this.vel = velocity;
   this.diameter = diameter;
   this.radius = diameter/2;
-  this.mouthSize = 0.523599; // 30 degrees in radians
-  this.mouthVel = 0.0174533; // 1 degree in radians
-  this.baseMouthVel = 0.0174533; // 1 degree in radians
+  this.mouthSize = getRadianAngle(60); // 40 degree
+  this.mouthVel = getRadianAngle(2); // 1 degree in radians
+  this.baseMouthVel = getRadianAngle(2); // 1 degree in radians
   this.direction = direction;
   this.moveState = moveState;
   this.color = Colors.pacYellow;
@@ -172,13 +171,13 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
   // move pac in facing direction
   this.slide = function() {
     if (this.direction === 'left') {
-      this.x += this.xVel;
+      this.x += this.vel;
     } else if (this.direction === 'right') {
-      this.x += this.xVel;
+      this.x += this.vel;
     } else if (this.direction === 'up') {
-      this.y += this.yVel;
+      this.y += this.vel;
     } else if (this.direction === 'down') {
-      this.y += this.yVel;
+      this.y += this.vel;
     } else {
       console.log(' slide problems ');
     }
@@ -186,13 +185,13 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
 
   this.inBounds = function() { // is pac in bounds? (true/false)
     var bounds;
-    if ( (this.direction === 'left') && (this.x - this.radius < 6) ) {
+    if ( (this.direction === 'left') && (this.x - this.vel - this.radius < 1) ) {
       bounds = false;
-    } else if ( (this.direction === 'right') && (this.x + this.radius > CANVAS.width-6) ) {
+    } else if ( (this.direction === 'right') && (this.x - this.vel - this.radius > CANVAS.width-1) ) {
       bounds = false;
-    } else if ( (this.direction === 'down') && (this.y + this.radius > CANVAS.height-6) ) {
+    } else if ( (this.direction === 'down') && (this.x + this.vel + this.radius > CANVAS.height-1) ) {
       bounds = false;
-    } else if ( (this.direction === 'up') && (this.y - this.radius < 6) ) {
+    } else if ( (this.direction === 'up') && (this.y - this.vel - this.radius < 1) ) {
       bounds = false;
     } else {
       bounds = true;
@@ -202,33 +201,29 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
 
   this.changeDir = function() {
     if (this.direction === 'right') {
-      this.xVel *= -1;
-      this.direction = 'left';
+      this.vel = Math.abs(this.vel);
     } else if (this.direction === 'left') {
-      this.xVel *= -1;
-      this.direction = 'right';
+      this.vel = -(Math.abs(this.vel));
     } else if (this.direction === 'up') {
-      this.yVel *= -1;
-      this.direction = 'down';
+      this.vel = -(Math.abs(this.vel));
     } else if (this.direction === 'down') {
-      this.yVel *= -1;
-      this.direction = 'up';
+      this.vel = (Math.abs(this.vel));
     } else {
       console.log(' slide problems ');
     }
-    console.log('this.xVel = ', this.xVel);
+    console.log('this.vel = ', this.vel);
   };
 
-  this.nextMouth = function() {
-    if ( this.mouthSize >= Math.PI/3 ) {
-      this.mouthVel = -this.baseMouthVel;
-    } else if ( this.mouthSize <= 0 ) {
-      this.mouthVel = this.baseMouthVel;
-    } else {
-      // do nothing?
-    }
-    this.mouthSize += this.mouthVel;
-  };
+  // this.nextMouth = function() {
+  //   if ( (this.mouthSize+this.mouthVel) >= this.mouthSize ) {
+  //     this.mouthVel = -this.baseMouthVel;
+  //   } else if ( (this.mouthSize-this.mouthVel) <= 0 ) {
+  //     this.mouthVel = this.baseMouthVel;
+  //   } else {
+  //     // do nothing?
+  //   }
+  //   this.mouthSize += this.mouthVel;
+  // };
 
   this.draw = function() {
     // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
@@ -236,41 +231,77 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
     // eAngle	The ending angle, in radians
     // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
 
-    // ctx.fillStyle = this.color;
-    // ctx.beginPath();
-    // ctx.moveTo(this.x,this.y);
-    // ctx.arc(this.x,this.y,this.radius,(2*Math.PI)+Math.PI/6,(2*Math.PI)-Math.PI/6);
-    // ctx.lineTo(this.x,this.y);
-    // ctx.closePath();
-    // ctx.fill();
-
-    ctx.save();
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = this.lineW;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y); // new center of drawing map is center of pacman
-
     // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
     switch ( this.direction )  {
       case 'left':
-        ctx.arc(this.x, this.y, this.radius, ( (Math.PI*2/3)*this.mouthSize)-Math.PI, ( -(Math.PI*2/3)*this.mouthSize));  break;
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineW;
+        ctx.beginPath();
+        ctx.translate(this.x,this.y);
+        ctx.rotate(Math.PI);
+        // ctx.moveTo(0,0); // new center of drawing map is center of pacman
+        ctx.arc(0,0, this.radius, (Math.PI*6)*this.mouthSize, -(Math.PI/6)*this.mouthSize );
+        ctx.lineTo(0,0);
+        ctx.closePath();
+        ctx.stroke();  // draw the line
+        ctx.fill();   // fill the arc
+        ctx.rotate(-Math.PI);
+        ctx.translate(-this.x,-this.y);
+        break;
       case 'right':
-        ctx.arc(this.x, this.y, this.radius, (Math.PI/6)*this.mouthSize, -(Math.PI/6)*this.mouthSize   );  break;
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineW;
+        ctx.beginPath();
+        ctx.translate(this.x,this.y);
+        // ctx.moveTo(0, 0); // new center of drawing map is center of pacman
+        ctx.arc(0, 0, this.radius, (Math.PI/6)*this.mouthSize, -(Math.PI/6)*this.mouthSize );
+        ctx.lineTo(0,0);
+        ctx.closePath();
+        ctx.stroke();  // draw the line
+        ctx.fill();   // fill the arc
+        ctx.translate(-this.x,-this.y);
+        break;
       case 'up':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineW;
+        ctx.beginPath();
+        ctx.translate(this.x,this.y);
+        ctx.rotate(Math.PI*3/2);
+        // ctx.moveTo(0,0); // new center of drawing map is center of pacman
+        ctx.arc(0,0, this.radius, (Math.PI*6)*this.mouthSize, -(Math.PI/6)*this.mouthSize );
+        ctx.lineTo(0,0);
+        ctx.closePath();
+        ctx.stroke();  // draw the line
+        ctx.fill();   // fill the arc
+        ctx.rotate(-Math.PI*3/2);
+        ctx.translate(-this.x,-this.y);
+        break;
       case 'down':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
+      ctx.fillStyle = this.color;
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = this.lineW;
+      ctx.beginPath();
+      ctx.translate(this.x,this.y);
+      ctx.rotate(Math.PI/2);
+      // ctx.moveTo(0,0); // new center of drawing map is center of pacman
+      ctx.arc(0,0, this.radius, (Math.PI*6)*this.mouthSize, -(Math.PI/6)*this.mouthSize );
+      ctx.lineTo(0,0);
+      ctx.closePath();
+      ctx.stroke();  // draw the line
+      ctx.fill();   // fill the arc
+      ctx.rotate(-Math.PI/2);
+      ctx.translate(-this.x,-this.y);
+        break;
       case 'stop':
-        ctx.arc(this.x, this.y, this.radius, (-(2*Math.PI)/3)*this.mouthSize, ((2*Math.PI)/3)*this.mouthSize);  break;
-      default: console.log("switch broke"); break;
+        console.log("stopped");
+        break;
+      default:
+        console.log("switch broke");
+        break;
     } // end switch
-
-    ctx.lineTo(this.x,this.y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-    ctx.restore();
 
   }; // draw
 
@@ -279,11 +310,9 @@ function Pac(x,y,xVelocity,yVelocity,diameter,direction,moveState)  {
       if (!this.inBounds()) {  // not in bounds so change direction
         console.log("time to change direction!");
         this.changeDir();
-        this.slide();
-        this.nextMouth();
       } else {  // is in bounds, proceed as normal
         this.slide();
-        this.nextMouth();
+        // this.nextMouth();
       }
     }
   }; // update
@@ -312,16 +341,21 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
+  // if ( (State.loopRunning) && (myGame.started) ) {
+  //   var now = performance.now();
+  //   if ( (now - myGame.lastUpdateTime) >= myGame.updateDuration ) {
+  //     var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.updateDuration);
+  //     for (var i=0; i < timesToUpdate; i++) {
+  //       myGame.update();
+  //     }
+  //     myGame.lastUpdateTime = performance.now();
+  //   }
+  // }
+
   if ( (State.loopRunning) && (myGame.started) ) {
-    var now = performance.now();
-    if ( (now - myGame.lastUpdateTime) >= myGame.updateDuration ) {
-      var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.updateDuration);
-      for (var i=0; i < timesToUpdate; i++) {
-        myGame.update();
-      }
-      myGame.lastUpdateTime = performance.now();
-    }
+    myGame.update();
   }
+
 
   clearCanvas();
   if (!myGame.started) {
@@ -332,6 +366,79 @@ function gameLoop(timestamp) {
 
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////////////
+// KEYBINDINGS
+//////////////////////////////////////////////////////////////////////////////////
+function keyDown(event) {
+    event.preventDefault(); // prevents window from moving around
+    myGame.lastKey = event.keyCode;
+    let code = event.keyCode;
+    switch (code) {
+        case 37: // Left key
+          console.log("key Left = ", code);
+          myGame.myPac.direction = 'left';
+          myGame.myPac.moveState = 'go';
+          break;
+        case 39: //Right key
+          console.log("key Right = ", code);
+          myGame.myPac.direction = 'right';
+          myGame.myPac.moveState = 'go';
+          break;
+        case 38: // Up key
+          console.log("key Up = ", code);
+          myGame.myPac.direction = 'up';
+          myGame.myPac.moveState = 'go';
+          break;
+        case 40: //Down key
+        console.log("key Down = ", code);
+          myGame.myPac.direction = 'down';
+          myGame.myPac.moveState = 'go';
+          break;
+        default: // Everything else
+          console.log("key = ", code);
+          break;
+    }
+}
+// function keyUp(event) {
+//     let code = event.keyCode;
+//     switch (code) {
+//         case 37: console.log("(key up) Left = ", code); break; //Left key
+//         case 38: console.log("(key up) Up = ", code); break; //Up key
+//         case 39: console.log("(key up) Right = ", code); break; //Right key
+//         case 40: console.log("(key up) Down = ", code); break; //Down key
+//         default: console.log('(key up) = ', code); //Everything else
+//     }
+// }
+
+// function keyPressed() {
+//     lastKey = keyCode;
+//     if (keyCode === LEFT_ARROW) {
+//       myPac.direction = 'left';
+//       myPac.moveState = 'go';
+//     } else if (keyCode === RIGHT_ARROW) {
+//       myPac.direction = 'right';
+//       myPac.moveState = 'go';
+//     } else if (keyCode === UP_ARROW) {
+//       myPac.direction = 'up';
+//       myPac.moveState = 'go';
+//     } else if (keyCode === DOWN_ARROW) {
+//       myPac.direction = 'down';
+//       myPac.moveState = 'go';
+//     } else if (keyCode === 32) { // spacebar = 32
+//       myPac.moveState = 'stop';
+//     } else if (keyCode === 80) { // P = 80
+//       // pause
+//       myLevel.buildLevel();
+//     } else if (keyCode === 71) { // G = 71
+//       toggleGrid();
+//     } else {
+//       // do nothing
+//     }
+//   }
+
+
 //////////////////////////////////////////////////////////////////////////////////
 // FRONT
 //////////////////////////////////////////////////////////////////////////////////
@@ -339,6 +446,9 @@ $(document).ready(function() {
 
   CANVAS =  $('#canvas')[0];
   ctx =  CANVAS.getContext('2d');
+
+  CANVAS.addEventListener('keydown',keyDown,false);
+  // CANVAS.addEventListener('keyup',keyUp,false);
 
   myGame = new Game();
   myGame.init();
@@ -348,12 +458,12 @@ $(document).ready(function() {
   setInterval(clockTimer, 1000);
 
   $('#start-btn').click(function() {
-    console.log("first game loop started");
-    myGame = new Game(16);
+    console.log("start button clicked");
+    myGame = new Game(60);
     State.loopRunning = true;
     myGame.init();
     myGame.started = true;
-    State.myReq = requestAnimationFrame(gameLoop);
+    CANVAS.focus();  // set focus to canvas on start so keybindings work
   });
 
   $("#stop").click(function() {
