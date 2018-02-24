@@ -112,6 +112,7 @@ var State = {
   lastFrameTimeMs: 0, // The last time the loop was run
   maxFPS: 60, // The maximum FPS we want to allow
   pageLoadTime: 0,
+  frameCounter: 0,
 };
 
 function Game(updateDur) {
@@ -128,9 +129,9 @@ function Game(updateDur) {
     // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             200,
                           /* y */             CANVAS.height/2,
-                          /* velocity */      -5,
+                          /* velocity */      5,
                           /* width */         42,
-                          /* faceDirection */ 'up',
+                          /* faceDirection */ 'right',
                           /* moveState */     'go'
                         );
     // init ghosts
@@ -157,9 +158,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.vel = velocity;
   this.diameter = diameter;
   this.radius = diameter/2;
-  this.mouthSize = getRadianAngle(60); // 40 degree
-  this.mouthVel = getRadianAngle(2); // 1 degree in radians
-  this.baseMouthVel = getRadianAngle(2); // 1 degree in radians
+  this.mouthSize = getRadianAngle(50);
+  this.mouthVel = getRadianAngle(2); // 2 degree in radians
   this.direction = direction;
   this.rotateFace = 0;
   this.moveState = moveState;
@@ -175,7 +175,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       this.moveState = 'stop';
     } else if (this.moveState === 'stop') {
       this.moveState = 'go';
+    } else {
+      // nothin
     }
+    console.log('pac state = ', this.moveState);
   };
 
   this.inBounds = function() { // is pac in bounds? (true/false)
@@ -195,24 +198,26 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   }; // inBounds
 
   this.changeDir = function(dir) {
-    if (dir === 'left') {
-      this.direction = 'left';
-      this.vel = -Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'right') {
-      this.direction = 'right';
-      this.vel = Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'up') {
-      this.direction = 'up';
-      this.vel = -Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'down') {
-      this.direction = 'down';
-      this.vel = Math.abs(this.vel);
-      this.rotatePacFace();
-    } else {
-      console.log(' changeDir problems ');
+    if (this.moveState === 'go') {
+      if (dir === 'left') {
+        this.direction = 'left';
+        this.vel = -Math.abs(this.vel);
+        this.rotatePacFace();
+      } else if (dir === 'right') {
+        this.direction = 'right';
+        this.vel = Math.abs(this.vel);
+        this.rotatePacFace();
+      } else if (dir === 'up') {
+        this.direction = 'up';
+        this.vel = -Math.abs(this.vel);
+        this.rotatePacFace();
+      } else if (dir === 'down') {
+        this.direction = 'down';
+        this.vel = Math.abs(this.vel);
+        this.rotatePacFace();
+      } else {
+        console.log(' changeDir problems ');
+      }
     }
   };
 
@@ -242,16 +247,18 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } // end switch
   };
 
-  // this.nextMouth = function() {
-  //   if ( (this.mouthSize+this.mouthVel) >= this.mouthSize ) {
-  //     this.mouthVel = -this.baseMouthVel;
-  //   } else if ( (this.mouthSize-this.mouthVel) <= 0 ) {
-  //     this.mouthVel = this.baseMouthVel;
-  //   } else {
-  //     // do nothing?
-  //   }
-  //   this.mouthSize += this.mouthVel;
-  // };
+  this.nextMouth = function() {
+    if ( (this.mouthSize+this.mouthVel) >= getRadianAngle(50) ) {
+      console.log('mouth too BIG');
+      this.mouthVel = -Math.abs(this.mouthVel);
+    } else if ( (this.mouthSize+this.mouthVel) <= 0.07 ) {
+      console.log('mouth too SMALL');
+      this.mouthVel = Math.abs(this.mouthVel);
+    } else {
+      // nothing
+    }
+    this.mouthSize += this.mouthVel;
+  };
 
   // move pac in facing direction
   this.movePac = function() {
@@ -276,11 +283,12 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     ctx.translate(this.x,this.y);
     ctx.rotate(this.rotateFace);
     // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
-    ctx.arc(0,0, this.radius, (Math.PI/4)*this.mouthSize, -(Math.PI/4)*this.mouthSize );
+    // ctx.arc(0,0, this.radius, (Math.PI/4)*this.mouthSize, -(Math.PI/4)*this.mouthSize );
+    ctx.arc(0,0, this.radius, this.mouthSize, -this.mouthSize );
     ctx.lineTo(0,0);
     ctx.closePath();
-    ctx.stroke();  // draw the line
     ctx.fill();   // fill the arc
+    ctx.stroke();  // draw the line
     ctx.rotate(-this.rotateFace);
     ctx.translate(-this.x,-this.y);
   }; // draw
@@ -292,10 +300,12 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
         this.toggleDir(this.direction);
       } else {  // is in bounds, proceed as normal
         this.movePac();
-        // this.nextMouth();
+        this.nextMouth();
       }
-    } else {
+    } else if (this.moveState === 'stop') {
       // pac is stopped
+    } else {
+      // nothin
     }
   }; // update
 
@@ -333,8 +343,17 @@ function gameLoop(timestamp) {
   //     myGame.lastUpdateTime = performance.now();
   //   }
   // }
+  //
+  // if ( (State.loopRunning) && (State.gameStarted) ) {
+  //   if (State.frameCounter >= myGame.updateDuration) {
+  //     State.frameCounter = 0;
+  //     myGame.update();
+  //   } else {
+  //     State.frameCounter += 1;
+  //   }
+  // }
 
-  if ( (State.loopRunning) && (State.gameStarted) ) {
+  if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
     myGame.update();
   }
 
@@ -353,6 +372,10 @@ function gameLoop(timestamp) {
   } else {
     myGame.draw();
   }
+
+
+
+
 
 }
 
@@ -401,32 +424,6 @@ function keyDown(event) {
 //     }
 // }
 
-// function keyPressed() {
-//     lastKey = keyCode;
-//     if (keyCode === LEFT_ARROW) {
-//       myPac.direction = 'left';
-//       myPac.moveState = 'go';
-//     } else if (keyCode === RIGHT_ARROW) {
-//       myPac.direction = 'right';
-//       myPac.moveState = 'go';
-//     } else if (keyCode === UP_ARROW) {
-//       myPac.direction = 'up';
-//       myPac.moveState = 'go';
-//     } else if (keyCode === DOWN_ARROW) {
-//       myPac.direction = 'down';
-//       myPac.moveState = 'go';
-//     } else if (keyCode === 32) { // spacebar = 32
-//       myPac.moveState = 'stop';
-//     } else if (keyCode === 80) { // P = 80
-//       // pause
-//       myLevel.buildLevel();
-//     } else if (keyCode === 71) { // G = 71
-//       toggleGrid();
-//     } else {
-//       // do nothing
-//     }
-//   }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 // FRONT
@@ -447,7 +444,7 @@ $(document).ready(function() {
 
   $('#start-btn').click(function() {
     console.log("start button clicked");
-    myGame = new Game(60);
+    myGame = new Game(0.5);
     State.loopRunning = true;
     myGame.init();
     State.gameStarted = true;
