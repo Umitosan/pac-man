@@ -251,7 +251,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     if ( (this.mouthSize+this.mouthVel) >= getRadianAngle(50) ) {
       console.log('mouth too BIG');
       this.mouthVel = -Math.abs(this.mouthVel);
-    } else if ( (this.mouthSize+this.mouthVel) <= 0.07 ) {
+    } else if ( (this.mouthSize+this.mouthVel) <= 0 ) {
       console.log('mouth too SMALL');
       this.mouthVel = Math.abs(this.mouthVel);
     } else {
@@ -434,6 +434,10 @@ $(document).ready(function() {
   ctx =  CANVAS.getContext('2d');
   CANVAS.addEventListener('keydown',keyDown,false);
   // CANVAS.addEventListener('keyup',keyUp,false);
+
+  // this is to correct for canvas blurryness on single pixel wide lines etc
+  // this is extremely important when animating to reduce rendering artifacts and other oddities
+  ctx.translate(0.5, 0.5);
 
   myGame = new Game();
   myGame.init();
