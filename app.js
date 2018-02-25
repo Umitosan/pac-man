@@ -42,7 +42,6 @@ function TxtBox(x,y,txt) {
   };
 }
 
-
 function clockTimer() {
   State.pageLoadTime += 1;
   $('#clock').text(State.pageLoadTime);
@@ -95,6 +94,16 @@ function invertRGBAstr(str) {
   return 'rgba('+r+','+g+','+b+','+a+')';
 }
 
+function drawLine(x1,y1,x2,y2,width,color) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  ctx.restore();
+}
 
 ///////////////////
 // GAME
@@ -120,8 +129,9 @@ function Game(updateDur) {
   this.bg = new Image();
   this.myPac = undefined;
   this.ghosts = undefined;
-  this.updateDuration = updateDur;
-  this.lastUpdateTime = 0;
+  this.updateDuration = updateDur;  // milliseconds duration between update()
+  this.lastUpdate = 0;
+  this.timeGap = 0;
   this.lastKey = 0;
 
   this.init = function() {
@@ -129,7 +139,7 @@ function Game(updateDur) {
     // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             200,
                           /* y */             CANVAS.height/2,
-                          /* velocity */      5,
+                          /* velocity */      2,
                           /* width */         42,
                           /* faceDirection */ 'right',
                           /* moveState */     'go'
@@ -145,10 +155,18 @@ function Game(updateDur) {
     if (this.myPac) {
       this.myPac.draw();
     }
-    // this.ghosts.each( (g) => { g.update() });
   };
   this.update = function() {
-    this.myPac.update();
+    this.timeGap = performance.now() - this.lastUpdate;
+    if ( this.timeGap >= this.updateDuration ) {
+      let timesToUpdate = this.timeGap / this.updateDuration;
+      if (this.myPac.moveState === 'go') {
+        for (let i=0; i < timesToUpdate; i++) {
+          this.myPac.update();
+        }
+      }
+      this.lastUpdate = performance.now();
+    }
   };
 }
 
@@ -158,7 +176,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.vel = velocity;
   this.diameter = diameter;
   this.radius = diameter/2;
-  this.mouthSize = getRadianAngle(50);
+  this.mouthSize = getRadianAngle(100);
+  this.maxMouthSize = getRadianAngle(60);
   this.mouthVel = getRadianAngle(2); // 2 degree in radians
   this.direction = direction;
   this.rotateFace = 0;
@@ -173,6 +192,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.toggleState = function() {
     if (this.moveState === 'go') {
       this.moveState = 'stop';
+      myGame.savedLastUpdate = performance.now() - myGame.lastUpdate;
     } else if (this.moveState === 'stop') {
       this.moveState = 'go';
     } else {
@@ -248,7 +268,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.nextMouth = function() {
-    if ( (this.mouthSize+this.mouthVel) >= getRadianAngle(50) ) {
+    if ( (this.mouthSize+this.mouthVel) >= this.maxMouthSize ) {
       console.log('mouth too BIG');
       this.mouthVel = -Math.abs(this.mouthVel);
     } else if ( (this.mouthSize+this.mouthVel) <= 0 ) {
@@ -333,51 +353,36 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  // if ( (State.loopRunning) && (State.gameStarted) ) {
-  //   var now = performance.now();
-  //   if ( (now - myGame.lastUpdateTime) >= myGame.updateDuration ) {
-  //     var timesToUpdate = Math.ceil( (now - myGame.lastUpdateTime) / myGame.updateDuration);
-  //     for (var i=0; i < timesToUpdate; i++) {
-  //       myGame.update();
-  //     }
-  //     myGame.lastUpdateTime = performance.now();
-  //   }
-  // }
-  //
-  // if ( (State.loopRunning) && (State.gameStarted) ) {
-  //   if (State.frameCounter >= myGame.updateDuration) {
-  //     State.frameCounter = 0;
-  //     myGame.update();
-  //   } else {
-  //     State.frameCounter += 1;
-  //   }
-  // }
-
-  if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
+  // performance based update: myGame.update() run every myGame.updateDuration milliseconds
+  if ( (State.loopRunning) && (State.gameStarted) ) {
     myGame.update();
   }
 
   clearCanvas();
-
-  // ctx.beginPath();
-  // ctx.strokeStyle = Colors.white;
-  // ctx.lineWidth = 1;
-  // ctx.moveTo(CANVAS.width-5,0);
-  // ctx.lineTo(CANVAS.width-5,CANVAS.height);
-  // ctx.stroke();
-
-
   if (!State.gameStarted) {
     myGame.drawBG();
   } else {
+    // drawLine(x1,y1,x2,y2,width,color)
+    // drawLine(200,0,200,CANVAS.height,1,Colors.white);
     myGame.draw();
   }
 
-
-
-
-
 }
+
+// simpler fps-based update based on overall fps limmiter
+// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
+//   if (State.frameCounter >= myGame.updateDuration) {
+//     State.frameCounter = 0;
+//     myGame.update();
+//   } else {
+//     State.frameCounter += 1;
+//   }
+// }
+
+// simplest update() every frame aprox 60/sec
+// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
+//   myGame.update();
+// }
 
 
 
@@ -448,7 +453,7 @@ $(document).ready(function() {
 
   $('#start-btn').click(function() {
     console.log("start button clicked");
-    myGame = new Game(0.5);
+    myGame = new Game(10); // param = ms per update()
     State.loopRunning = true;
     myGame.init();
     State.gameStarted = true;
