@@ -8,102 +8,6 @@
 // sample level image
 // http://samentries.com/wp-content/uploads/2015/10/PacmanLevel-1.png
 
-//////////////////////
-// HELPER FUNCTIONS
-//////////////////////
-
-// ref https://www.w3schools.com/colors/colors_shades.asp
-var Colors = {
-  black:    'rgba(0, 0, 0, 1)',
-  darkGrey: 'rgba(50, 50, 50, 1)',
-  lightGreyTrans: 'rgba(50, 50, 50, 0.3)',
-  greyReset: 'rgb(211,211,211)',
-  lighterGreyReset: 'rgb(240,240,240)',
-  white: 'rgba(250, 250, 250, 1)',
-  red: 'rgba(230, 0, 0, 1)',
-  green: 'rgba(0, 230, 0, 1)',
-  blue: 'rgba(0, 0, 230, 0.7)',
-  pacYellow: 'rgba(255,255,1,1)'
-};
-
-function TxtBox(x,y,txt) {
-  this.x = x;
-  this.y = y;
-  this.font = "32px Georgia";
-  this.color = myColors.blue;
-  this.txt = txt;
-
-  this.draw = function() {
-    var ctx = canvas.getContext('2d');
-    ctx.font = this.font;
-    ctx.fillStyle = this.color;
-    ctx.textAlign = 'center';
-    ctx.fillText(this.txt,this.x,this.y);
-  };
-}
-
-function clockTimer() {
-  State.pageLoadTime += 1;
-  $('#clock').text(State.pageLoadTime);
-}
-
-function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
-}
-
-function getRadianAngle(degreeValue) {
-  return degreeValue * Math.PI / 180;
-}
-
-function randSign() {
-  let num = getRandomIntInclusive(1,2);
-  if (num === 1) {
-    return 1;
-  } else {
-    return -1;
-  }
-}
-
-function randColor(type) {
-  // more muted colors example
-      // return ( "#" + Math.round((getRandomIntInclusive(0,99999999) + 0x77000000)).toString(16) );
-  // full spectum below
-  if (type === 'hex') {
-    return ( "#" + Math.round((getRandomIntInclusive(0,0xffffff))).toString(16) );
-  } else if (type === 'rgba') {
-    return ( 'rgba('+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+1+')' );
-  } else {
-    console.log("Not valid option for randColor()");
-    return undefined;
-  }
-}
-
-function invertRGBAstr(str) {
-  let arr1 = str.slice(5,-1); // arr1 = "173,216,230,0.2"
-  let arr2 = arr1.split(','); // arr2 = ["173","216","230","0.2"]
-  let r = -1 * arr2[0] + 255;
-  let g = -1 * arr2[1] + 255;
-  let b = -1 * arr2[2] + 255;
-  let a = arr2[3];
-  return 'rgba('+r+','+g+','+b+','+a+')';
-}
-
-function drawLine(x1,y1,x2,y2,width,color) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = width;
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
-  ctx.stroke();
-  ctx.restore();
-}
 
 ///////////////////
 // GAME
@@ -142,7 +46,7 @@ function Game(updateDur) {
                           /* velocity */      2,
                           /* width */         42,
                           /* faceDirection */ 'right',
-                          /* moveState */     'go'
+                          /* moveState */     'stop'
                         );
     // init ghosts
     this.myPac.init();
@@ -157,6 +61,7 @@ function Game(updateDur) {
     }
   };
   this.update = function() {
+    // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
     this.timeGap = performance.now() - this.lastUpdate;
     if ( this.timeGap >= this.updateDuration ) {
       let timesToUpdate = this.timeGap / this.updateDuration;
@@ -170,180 +75,6 @@ function Game(updateDur) {
   };
 }
 
-function Pac(x,y,velocity,diameter,direction,moveState)  {
-  this.x = x;
-  this.y = y;
-  this.vel = velocity;
-  this.diameter = diameter;
-  this.radius = diameter/2;
-  this.mouthSize = getRadianAngle(100);
-  this.maxMouthSize = getRadianAngle(60);
-  this.mouthVel = getRadianAngle(2); // 2 degree in radians
-  this.direction = direction;
-  this.rotateFace = 0;
-  this.moveState = moveState;
-  this.color = Colors.pacYellow;
-  this.lineW = 2;
-
-  this.init = function() {
-    this.rotatePacFace();
-  }; // init
-
-  this.toggleState = function() {
-    if (this.moveState === 'go') {
-      this.moveState = 'stop';
-      myGame.savedLastUpdate = performance.now() - myGame.lastUpdate;
-    } else if (this.moveState === 'stop') {
-      this.moveState = 'go';
-    } else {
-      // nothin
-    }
-    console.log('pac state = ', this.moveState);
-  };
-
-  this.inBounds = function() { // is pac in bounds? (true/false)
-    var bounds;
-    if ( (this.direction === 'left') && (this.x - Math.abs(this.vel) - this.radius < 0) ) {
-      bounds = false;
-    } else if ( (this.direction === 'right') && (this.x + this.vel + this.radius >= CANVAS.width) ) {
-      bounds = false;
-    } else if ( (this.direction === 'up') && (this.y - Math.abs(this.vel) - this.radius < 0) ) {
-      bounds = false;
-    } else if ( (this.direction === 'down') && (this.y + this.vel + this.radius >= CANVAS.height) ) {
-      bounds = false;
-    } else {
-      bounds = true;
-    }
-    return bounds;
-  }; // inBounds
-
-  this.changeDir = function(dir) {
-    if (this.moveState === 'go') {
-      if (dir === 'left') {
-        this.direction = 'left';
-        this.vel = -Math.abs(this.vel);
-        this.rotatePacFace();
-      } else if (dir === 'right') {
-        this.direction = 'right';
-        this.vel = Math.abs(this.vel);
-        this.rotatePacFace();
-      } else if (dir === 'up') {
-        this.direction = 'up';
-        this.vel = -Math.abs(this.vel);
-        this.rotatePacFace();
-      } else if (dir === 'down') {
-        this.direction = 'down';
-        this.vel = Math.abs(this.vel);
-        this.rotatePacFace();
-      } else {
-        console.log(' changeDir problems ');
-      }
-    }
-  };
-
-  this.toggleDir = function(dir) {
-    switch (dir) {
-      case 'left':  this.changeDir('right');  break;
-      case 'right':  this.changeDir('left');  break;
-      case 'up':  this.changeDir('down');  break;
-      case 'down':  this.changeDir('up');  break;
-      default:
-        console.log("toggleDir broke");
-        break;
-    }
-  };
-
-  this.rotatePacFace = function() {
-    console.log("rotatePacFace");
-    switch ( this.direction )  {
-      case 'left':  this.rotateFace = Math.PI;  break;
-      case 'right':  this.rotateFace = 0;  break;
-      case 'up':  this.rotateFace = Math.PI*3/2;  break;
-      case 'down':  this.rotateFace = Math.PI/2;  break;
-      case 'stop': console.log("stopped");  break;
-      default:
-        console.log("rotatePacFace broke");
-        break;
-    } // end switch
-  };
-
-  this.nextMouth = function() {
-    if ( (this.mouthSize+this.mouthVel) >= this.maxMouthSize ) {
-      console.log('mouth too BIG');
-      this.mouthVel = -Math.abs(this.mouthVel);
-    } else if ( (this.mouthSize+this.mouthVel) <= 0 ) {
-      console.log('mouth too SMALL');
-      this.mouthVel = Math.abs(this.mouthVel);
-    } else {
-      // nothing
-    }
-    this.mouthSize += this.mouthVel;
-  };
-
-  // move pac in facing direction
-  this.movePac = function() {
-    if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      this.x += this.vel;
-    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-      this.y += this.vel;
-    } else {
-      console.log(' slide problems ');
-    }
-  }; // slide
-
-  this.draw = function() {
-    // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
-    // sAngle	The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
-    // eAngle	The ending angle, in radians
-    // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = this.lineW;
-    ctx.beginPath();
-    ctx.translate(this.x,this.y);
-    ctx.rotate(this.rotateFace);
-    // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
-    // ctx.arc(0,0, this.radius, (Math.PI/4)*this.mouthSize, -(Math.PI/4)*this.mouthSize );
-    ctx.arc(0,0, this.radius, this.mouthSize, -this.mouthSize );
-    ctx.lineTo(0,0);
-    ctx.closePath();
-    ctx.fill();   // fill the arc
-    ctx.stroke();  // draw the line
-    ctx.rotate(-this.rotateFace);
-    ctx.translate(-this.x,-this.y);
-  }; // draw
-
-  this.update = function() {
-    if (this.moveState === 'go') {
-      if (!this.inBounds()) {  // not in bounds so change direction
-        console.log("change direction");
-        this.toggleDir(this.direction);
-      } else {  // is in bounds, proceed as normal
-        this.movePac();
-        this.nextMouth();
-      }
-    } else if (this.moveState === 'stop') {
-      // pac is stopped
-    } else {
-      // nothin
-    }
-  }; // update
-
-} // PAC
-
-function Ghost() {
-
-  this.init = function() {
-    // init
-  };
-  this.draw = function() {
-    // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  };
-  this.update = function() {
-    // update positions
-  };
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////
 // GAME LOOP
@@ -353,10 +84,7 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  // performance based update: myGame.update() run every myGame.updateDuration milliseconds
-  if ( (State.loopRunning) && (State.gameStarted) ) {
-    myGame.update();
-  }
+  if ( (State.loopRunning) && (State.gameStarted) ) { myGame.update();  }
 
   clearCanvas();
   if (!State.gameStarted) {
@@ -397,18 +125,22 @@ function keyDown(event) {
         case 37: // Left key
           console.log("key Left = ", code);
           myGame.myPac.changeDir('left');
+          myGame.myPac.moveState = 'go';
           break;
         case 39: //Right key
           console.log("key Right = ", code);
           myGame.myPac.changeDir('right');
+          myGame.myPac.moveState = 'go';
           break;
         case 38: // Up key
           console.log("key Up = ", code);
           myGame.myPac.changeDir('up');
+          myGame.myPac.moveState = 'go';
           break;
         case 40: //Down key
         console.log("key Down = ", code);
           myGame.myPac.changeDir('down');
+          myGame.myPac.moveState = 'go';
           break;
         case 32: // spacebar
           myGame.myPac.toggleState();
