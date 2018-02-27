@@ -67,10 +67,10 @@ function Game(updateDur) {
     // console.log("vert horiz : "+vertTotal+"  "+horizTotal);
     for (let i = 0; i < vertTotal; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
-      drawLine(i*spacing,0,i*spacing,CANVAS.height,1,'white');
+      drawLine(i*spacing,0,i*spacing,CANVAS.height,1,'green');
     }
     for (let i = 0; i < horizTotal; i++) {
-      drawLine(0,i*spacing,CANVAS.width,i*spacing,1,'grey');
+      drawLine(0,i*spacing,CANVAS.width,i*spacing,1,'green');
     }
   };
   this.update = function() {

@@ -40,7 +40,7 @@ function clockTimer() {
 }
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(-1, -1, canvas.width+1, canvas.height+1);
 }
 
 function getRandomIntInclusive(min, max) {
