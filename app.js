@@ -1,8 +1,8 @@
 /*jshint esversion: 6 */
 
 // original 1980s dimentions
-// 26-28 tiles wide 26 dots fit 28 tiles with edge
-// 29-31 tiles tall 29 dots fit 31 tiles with edge
+// width: 30 tiles wide - 26 dots + 4 tiles of edge
+// height: 33 tiles tall 29 dots fit 33 tiles with edge
 // canvas width="702" height="777"
 
 // sample level image

@@ -8,12 +8,12 @@ red #C7402E rgb(199, 64, 46)
 
 @font-face {
     font-family: "joystix";
-    src: url("../css/joystix.ttf") format('truetype');
+    src: url("../css/Joystix.TTF") format('truetype');
 }
 
 @font-face {
     font-family: "pac-font";
-    src: url("../css/pac-font.ttf") format('truetype');
+    src: url("../css/pac-font.TTF") format('truetype');
 }
 
 body {

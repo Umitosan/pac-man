@@ -5,11 +5,13 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server -a localhost -p 1234 -o"
+    "_comment": "-a override ip, -p port, -o open",
+    "start": "http-server -a localhost -p 1234 --cors -o "
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Umitosan/pac-man.git"
+
   },
   "author": "Dominic Brown",
   "license": "ISC",
