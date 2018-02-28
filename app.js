@@ -42,21 +42,21 @@ function Game(updateDur) {
   this.timeGap = 0;
   this.lastKey = 0;
   this.gridOn = false;
-  this.lvlOn = false;
-
+  this.lvlOn = true;
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
     // Pac(x,y,velocity,width,faceDirection,moveState)
-    this.myPac = new Pac( /* x */             200,
-                          /* y */             CANVAS.height/2,
+    this.myPac = new Pac( /* x */             (13*State.gridSpacing)+(State.gridSpacing/2),
+                          /* y */             23*State.gridSpacing,
                           /* velocity */      2,
-                          /* width */         (State.gridSpacing*2)-6,
+                          /* width */         (State.gridSpacing*2)-12,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
                         );
     // init ghosts
     this.myPac.init();
+    this.myLevel.init();
   };
   this.drawGrid = function() {
     for (let i = 0; i < State.gridWidth+2; i++) {
