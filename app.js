@@ -26,18 +26,24 @@ var State = {
   maxFPS: 60, // The maximum FPS we want to allow
   pageLoadTime: 0,
   frameCounter: 0,
+  gridSpacing: 25, // dimentions of grid in pixels
+  gridWidth: 26,
+  gridHeight: 29
 };
 
 function Game(updateDur) {
   this.paused = true;
   this.bg = new Image();
   this.myPac = undefined;
+  this.myLevel = new Level();
   this.ghosts = undefined;
   this.updateDuration = updateDur;  // milliseconds duration between update()
   this.lastUpdate = 0;
   this.timeGap = 0;
   this.lastKey = 0;
   this.gridOn = false;
+  this.lvlOn = false;
+
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
@@ -45,12 +51,21 @@ function Game(updateDur) {
     this.myPac = new Pac( /* x */             200,
                           /* y */             CANVAS.height/2,
                           /* velocity */      2,
-                          /* width */         42,
+                          /* width */         (State.gridSpacing*2)-6,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
                         );
     // init ghosts
     this.myPac.init();
+  };
+  this.drawGrid = function() {
+    for (let i = 0; i < State.gridWidth+2; i++) {
+      // function drawLine(x1,y1,x2,y2,width,color)
+      drawLine(i*State.gridSpacing,0,i*State.gridSpacing,CANVAS.height,1,'green');
+    }
+    for (let i = 0; i < State.gridHeight+2; i++) {
+      drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
+    }
   };
   this.drawBG = function() {
     ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
@@ -58,20 +73,8 @@ function Game(updateDur) {
   };
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
+    if (this.lvlOn) this.myLevel.draw();
     if (this.myPac) this.myPac.draw();
-  };
-  this.drawGrid = function() {
-    let spacing = 30;
-    let vertTotal = Math.floor(CANVAS.width / spacing)+1;
-    let horizTotal = Math.floor(CANVAS.height / spacing)+1;
-    // console.log("vert horiz : "+vertTotal+"  "+horizTotal);
-    for (let i = 0; i < vertTotal; i++) {
-      // function drawLine(x1,y1,x2,y2,width,color)
-      drawLine(i*spacing,0,i*spacing,CANVAS.height,1,'green');
-    }
-    for (let i = 0; i < horizTotal; i++) {
-      drawLine(0,i*spacing,CANVAS.width,i*spacing,1,'green');
-    }
   };
   this.update = function() {
     // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
@@ -149,7 +152,7 @@ function keyDown(event) {
           myGame.myPac.moveState = 'go';
           break;
         case 40: //Down key
-        console.log("key Down = ", code);
+          console.log("key Down = ", code);
           myGame.myPac.changeDir('down');
           myGame.myPac.moveState = 'go';
           break;
@@ -159,6 +162,10 @@ function keyDown(event) {
         case 71: // G key
           console.log('toggle grid');
           (myGame.gridOn) ? (myGame.gridOn = false) : (myGame.gridOn = true);
+          break;
+        case 68: // D key
+          console.log('toggle dots');
+          (myGame.lvlOn) ? (myGame.lvlOn = false) : (myGame.lvlOn = true);
           break;
         default: // Everything else
           console.log("key = ", code);

@@ -34,13 +34,13 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
   this.inBounds = function() {
     var bounds;
-    if ( (this.direction === 'left') && (this.x - Math.abs(this.vel) - this.radius < 0) ) {
+    if ( (this.direction === 'left') && (this.x - Math.abs(this.vel) - this.radius < 2) ) {
       bounds = false;
-    } else if ( (this.direction === 'right') && (this.x + this.vel + this.radius >= CANVAS.width) ) {
+    } else if ( (this.direction === 'right') && (this.x + this.vel + this.radius >= CANVAS.width-2) ) {
       bounds = false;
-    } else if ( (this.direction === 'up') && (this.y - Math.abs(this.vel) - this.radius < 0) ) {
+    } else if ( (this.direction === 'up') && (this.y - Math.abs(this.vel) - this.radius < 2) ) {
       bounds = false;
-    } else if ( (this.direction === 'down') && (this.y + this.vel + this.radius >= CANVAS.height) ) {
+    } else if ( (this.direction === 'down') && (this.y + this.vel + this.radius >= CANVAS.height-2) ) {
       bounds = false;
     } else {
       bounds = true;
