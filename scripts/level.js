@@ -27,7 +27,7 @@ function Level() {
       }
     }
   };
-  this.drawWalls = function() {
+  this.drawWalls1 = function() {
     let s = State.gridSpacing;
     let corner = 10;
 
@@ -100,10 +100,36 @@ function Level() {
     roundRect(s*19, s*24, s*1, s*3, corner);
     roundRect(s*25, s*24, s*2, s*1, corner);
 
+    ctx.clearRect(s*4-4, s*21+2, s*1-4, s*1-4);
+    ctx.clearRect(s*13+2, s*19-4, s*1-4, s*1);
+    ctx.clearRect(s*23-4, s*21+2, s*1-4, s*1-4);
+
+    ctx.clearRect(s*7+2, s*27-6, s*1-4, s*1-4);
+    ctx.clearRect(s*13+2, s*25-6, s*1-4, s*1-4);
+    ctx.clearRect(s*19+2, s*27-6, s*1-4, s*1-4);
+
+  };
+  this.drawWalls2 = function() {
+    for (let r = 0; r < this.currentLevel.length; r++) {
+      for (let c = 0; c < this.currentLevel[r].length; c++) {
+        if (this.currentLevel[r][c] === '#') {
+          ctx.beginPath();
+          ctx.fillStyle = Colors.blue;
+          ctx.strokeStyle = Colors.white;
+          ctx.lineWidth = 1;
+          ctx.rect( (State.gridSpacing-5 + c * State.gridSpacing), (State.gridSpacing-5 + r * State.gridSpacing), 10, 10 ); // x y width height
+          ctx.stroke();
+          ctx.fill();
+        } else {
+          // nothin
+        }
+      }
+    }
   };
   this.draw = function() {
     this.drawDots();
-    this.drawWalls();
+    this.drawWalls1();
+    // this.drawWalls2();
   };
 }
 
@@ -113,6 +139,7 @@ function Level() {
 // B = big dot
 // - = space
 // S = start
+// W = white wall
 
 var level1 = [
   [ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,'#','#', 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],
@@ -126,7 +153,7 @@ var level1 = [
   ['#','#','#','#','#', 0 ,'#','#','#','#','#','-','#','#','-','#','#','#','#','#', 0 ,'#','#','#','#','#'],
   ['-','-','-','-','#', 0 ,'#','#','#','#','#','-','#','#','-','#','#','#','#','#', 0 ,'#','-','-','-','-'], // 10
   ['-','-','-','-','#', 0 ,'#','#','-','-','-','-','-','-','-','-','-','-','#','#', 0 ,'#','-','-','-','-'],
-  ['-','-','-','-','#', 0 ,'#','#','-','#','#','#','-','-','#','#','#','-','#','#', 0 ,'#','-','-','-','-'],
+  ['-','-','-','-','#', 0 ,'#','#','-','#','#','#','W','W','#','#','#','-','#','#', 0 ,'#','-','-','-','-'],
   ['#','#','#','#','#', 0 ,'#','#','-','#','-','-','-','-','-','-','#','-','#','#', 0 ,'#','#','#','#','#'],
   ['-','-','-','-','-', 0 ,'-','-','-','#','-','-','-','-','-','-','#','-','-','-', 0 ,'-','-','-','-','-'], // center
   ['#','#','#','#','#', 0 ,'#','#','-','#','-','-','-','-','-','-','#','-','#','#', 0 ,'#','#','#','#','#'], // 15

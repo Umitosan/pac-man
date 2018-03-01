@@ -49,7 +49,7 @@ function Game(updateDur) {
     // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             (13*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             23*State.gridSpacing,
-                          /* velocity */      2,
+                          /* velocity */      1.5,
                           /* width */         (State.gridSpacing*2)-12,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
@@ -132,7 +132,7 @@ function gameLoop(timestamp) {
 // KEYBINDINGS
 //////////////////////////////////////////////////////////////////////////////////
 function keyDown(event) {
-    event.preventDefault(); // prevents window from moving around
+    event.preventDefault(); // prevents page from scrolling within window frame
     myGame.lastKey = event.keyCode;
     let code = event.keyCode;
     switch (code) {

@@ -9,7 +9,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.mouthSize = getRadianAngle(60);
   this.maxMouthSize = getRadianAngle(60);
   this.minMouthSize = getRadianAngle(2);
-  this.mouthVel = getRadianAngle(2); // 2 degree in radians
+  this.mouthVel = getRadianAngle(3);
   this.direction = direction;
   this.rotateFace = 0;
   this.moveState = moveState;

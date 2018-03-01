@@ -138,3 +138,25 @@ th.key p {
   outline-style: solid;
   outline-width: 1px;
 }
+
+.bonus-row {
+  display: inline-flex;
+  width: 1185px;
+  height: 100px;
+  display: block;
+}
+
+.bonus-row img {
+  height: 42px;
+}
+
+#life1 {
+  padding-left: 300px;
+  padding-top: 10px;
+}
+#life2 {
+  padding-left: 14px;
+}
+#cherry {
+  padding-left: 450px;
+}
