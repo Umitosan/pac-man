@@ -4,7 +4,7 @@ function Level() {
   this.currentLevel = level1;
 
   this.init = function() {
-    console.log("currentLevel = ", this.currentLevel);
+    
   };
   this.drawDots = function() {
     for (let r = 0; r < this.currentLevel.length; r++) {

@@ -72,7 +72,7 @@ canvas {
 }
 
 #start-group {
-  margin-top: 100px;
+  margin-top: 40px;
 }
 
 /*
@@ -118,25 +118,8 @@ th.key p {
   height: auto;
 }
 
-/*reuseable classes*//*reuseable classes*//*reuseable classes*/
-.center {
-  text-align: center;
-}
-
-.lg-text {
-  font-size: 24px;
-  color: #FFFF01;
-}
-
-.green-out {
-  outline-color: green;
-  outline-style: solid;
-  outline-width: 1px;
-}
-.red-out {
-  outline-color: red;
-  outline-style: solid;
-  outline-width: 1px;
+.debug-container {
+  margin-top: 50px;
 }
 
 .bonus-row {
@@ -159,4 +142,28 @@ th.key p {
 }
 #cherry {
   padding-left: 450px;
+}
+
+
+
+/*reuseable classes*//*reuseable classes*//*reuseable classes*/
+/*reuseable classes*//*reuseable classes*//*reuseable classes*/
+.center {
+  text-align: center;
+}
+
+.lg-text {
+  font-size: 24px;
+  color: #FFFF01;
+}
+
+.green-out {
+  outline-color: green;
+  outline-style: solid;
+  outline-width: 1px;
+}
+.red-out {
+  outline-color: red;
+  outline-style: solid;
+  outline-width: 1px;
 }

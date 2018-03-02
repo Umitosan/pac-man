@@ -158,6 +158,7 @@ function keyDown(event) {
           break;
         case 32: // spacebar
           myGame.myPac.toggleState();
+          console.log( ctx.getImageData(myGame.myPac.x, myGame.myPac.y, 1, 1) );
           break;
         case 71: // G key
           console.log('toggle grid');
