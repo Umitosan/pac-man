@@ -111,23 +111,6 @@ function gameLoop(timestamp) {
 
 }
 
-// simpler fps-based update based on overall fps limiter
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   if (State.frameCounter >= myGame.updateDuration) {
-//     State.frameCounter = 0;
-//     myGame.update();
-//   } else {
-//     State.frameCounter += 1;
-//   }
-// }
-
-// simplest update() every frame aprox 60/sec
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   myGame.update();
-// }
-
-
-
 //////////////////////////////////////////////////////////////////////////////////
 // KEYBINDINGS
 //////////////////////////////////////////////////////////////////////////////////
@@ -173,17 +156,6 @@ function keyDown(event) {
           break;
     }
 }
-// function keyUp(event) {
-//     let code = event.keyCode;
-//     switch (code) {
-//         case 37: console.log("(key up) Left = ", code); break; //Left key
-//         case 38: console.log("(key up) Up = ", code); break; //Up key
-//         case 39: console.log("(key up) Right = ", code); break; //Right key
-//         case 40: console.log("(key up) Down = ", code); break; //Down key
-//         default: console.log('(key up) = ', code); //Everything else
-//     }
-// }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 // FRONT

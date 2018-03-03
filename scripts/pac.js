@@ -15,6 +15,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.moveState = moveState;
   this.color = Colors.pacYellow;
   this.lineW = 2;
+  this.pixX = 0;
+  this.pixY = 0;
 
   this.init = function() {
     this.rotatePacFace();
@@ -123,10 +125,18 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       console.log('pixTestFront issues');
     }
-    let pxData =  ctx.getImageData( (this.x+(+this.lineW+1+this.radius*xCoef)),
-                                    (this.y+(this.lineW+1+this.radius*yCoef)), 1, 1).data;
+    this.pixX = (this.x+((this.lineW+this.radius+1)*xCoef));
+    this.pixY = (this.y+((this.lineW+this.radius+1)*yCoef));
+    let pxData =  ctx.getImageData(this.pixX, this.pixY, 1, 1).data;
     let pxRgba = 'rgba('+pxData[0]+','+pxData[1]+','+pxData[2]+','+pxData[3]+')';
     return { 0: pxData, 1: pxRgba };
+  };
+
+  this.drawPixTestBox = function() {
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.rect(this.pixX-1,this.pixY-1,3,3);
+    ctx.stroke();
   };
 
   // move pac in facing direction
@@ -161,6 +171,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     ctx.stroke();  // draw the line
     ctx.rotate(-this.rotateFace);
     ctx.translate(-this.x,-this.y);
+    // this.drawPixTestBox();
   }; // draw
 
   this.update = function() {

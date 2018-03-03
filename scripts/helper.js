@@ -109,3 +109,21 @@ function roundRect(x, y, w, h, r) {
   ctx.closePath();
   ctx.stroke();
 }
+
+
+// Older game loops
+//
+// simpler fps-based update based on overall fps limiter
+// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
+//   if (State.frameCounter >= myGame.updateDuration) {
+//     State.frameCounter = 0;
+//     myGame.update();
+//   } else {
+//     State.frameCounter += 1;
+//   }
+// }
+
+// simplest update() every frame aprox 60/sec
+// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
+//   myGame.update();
+// }
