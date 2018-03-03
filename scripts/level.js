@@ -4,8 +4,9 @@ function Level() {
   this.currentLevel = level1;
 
   this.init = function() {
-    
+
   };
+
   this.drawDots = function() {
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
@@ -27,6 +28,7 @@ function Level() {
       }
     }
   };
+
   this.drawWalls1 = function() {
     let s = State.gridSpacing;
     let corner = 10;
@@ -109,6 +111,7 @@ function Level() {
     ctx.clearRect(s*19+2, s*27-6, s*1-4, s*1-4);
 
   };
+
   this.drawWalls2 = function() {
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
@@ -126,12 +129,14 @@ function Level() {
       }
     }
   };
+
   this.draw = function() {
     this.drawDots();
     this.drawWalls1();
     // this.drawWalls2();
   };
-}
+
+} // level
 
 
 // 0 = dot

@@ -109,6 +109,26 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     this.mouthSize += this.mouthVel;
   };
 
+  this.pixTestFront = function() {
+    var xCoef = 0;
+    var yCoef = 0;
+    if ( this.direction === 'left' ) {
+      xCoef = -1;
+    } else if (this.direction === 'right') {
+      xCoef = 1;
+    } else if (this.direction === 'up') {
+      yCoef = -1;
+    } else if (this.direction === 'down') {
+      yCoef = 1;
+    } else {
+      console.log('pixTestFront issues');
+    }
+    let pxData =  ctx.getImageData( (this.x+(+this.lineW+1+this.radius*xCoef)),
+                                    (this.y+(this.lineW+1+this.radius*yCoef)), 1, 1).data;
+    let pxRgba = 'rgba('+pxData[0]+','+pxData[1]+','+pxData[2]+','+pxData[3]+')';
+    return { 0: pxData, 1: pxRgba };
+  };
+
   // move pac in facing direction
   this.movePac = function() {
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
@@ -118,6 +138,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       console.log(' slide problems ');
     }
+    $('.pixel-window').css( 'background-color', this.pixTestFront()[1] );
   }; // slide
 
   this.draw = function() {
