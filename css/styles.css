@@ -4,6 +4,7 @@ COLORS
 pac yellow = #FFFF01
 teal #82B9C0 rgb(130, 185, 192)
 red #C7402E rgb(199, 64, 46)
+light pac blue: #1532BC
 */
 
 @font-face {
@@ -20,13 +21,20 @@ body {
   background-color: black;
 }
 
+#canvas-container {
+  padding-top: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  /* outline-color: #1532BC;
+  outline-style: solid;
+  outline-width: 2px; */
+}
 canvas {
   padding: 5px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: #1532BC;
-  border-radius: 10px;
-  outline: none; /* prevents outline when gets focus */
+  outline: none; // prevents outline when gets focus
+  /* outline-color: #1532BC;
+  outline-style: solid;
+  outline-width: 2px; */
 }
 
 #clock {
@@ -34,7 +42,7 @@ canvas {
 }
 
 .title-div {
-  width: 1185px;
+  width: 1264px;
   display: block;
   font-family: "pac-font";
 }
@@ -57,7 +65,7 @@ canvas {
 
 .left-col, .right-col {
   text-align: center;
-  width: 240px;
+  width: 260px;
   color: #1532BC;
 }
 
@@ -96,16 +104,6 @@ th.key p {
   font-size: 30px;
   padding: 0px;
   margin: 0px;
-}
-
-#canvas-container {
-  padding-top: 4px;
-  padding-left: 4px;
-  padding-right: 4px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: #1532BC;
-  border-radius: 10px;
 }
 
 #start-group {

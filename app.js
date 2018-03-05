@@ -1,9 +1,9 @@
 /*jshint esversion: 6 */
 
 // original 1980s dimentions
-// width: 30 tiles wide - 26 dots + 4 tiles of edge
-// height: 33 tiles tall 29 dots fit 33 tiles with edge
-// canvas width="702" height="777"
+// width: 38 tiles wide - 26 dots + 2 tiles of edge
+// height: 31 tiles tall 29 dots fit 31 tiles with edge
+// canvas width="676" height="751"
 
 // sample level image
 // http://samentries.com/wp-content/uploads/2015/10/PacmanLevel-1.png
@@ -27,8 +27,8 @@ var State = {
   pageLoadTime: 0,
   frameCounter: 0,
   gridSpacing: 25, // dimentions of grid in pixels
-  gridWidth: 26,
-  gridHeight: 29
+  gridWidth: 28,
+  gridHeight: 31
 };
 
 function Game(updateDur) {
@@ -43,14 +43,15 @@ function Game(updateDur) {
   this.lastKey = 0;
   this.gridOn = false;
   this.lvlOn = true;
+  this.pxBoxOn = true;
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
     // Pac(x,y,velocity,width,faceDirection,moveState)
-    this.myPac = new Pac( /* x */             (13*State.gridSpacing)+(State.gridSpacing/2),
-                          /* y */             23*State.gridSpacing,
+    this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
+                          /* y */             24*State.gridSpacing,
                           /* velocity */      1.5,
-                          /* width */         (State.gridSpacing*2)-12,
+                          /* width */         (State.gridSpacing*2+2)-12,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
                         );
@@ -121,27 +122,30 @@ function keyDown(event) {
     switch (code) {
         case 37: // Left key
           console.log("key Left = ", code);
-          myGame.myPac.changeDir('left');
+          myGame.myPac.lastKeyDir = 'left';
           myGame.myPac.moveState = 'go';
+          // myGame.myPac.changeDir('left');
           break;
         case 39: //Right key
           console.log("key Right = ", code);
-          myGame.myPac.changeDir('right');
+          myGame.myPac.lastKeyDir = 'right';
           myGame.myPac.moveState = 'go';
+          // myGame.myPac.changeDir('right');
           break;
         case 38: // Up key
           console.log("key Up = ", code);
-          myGame.myPac.changeDir('up');
+          myGame.myPac.lastKeyDir = 'up';
           myGame.myPac.moveState = 'go';
+          // myGame.myPac.changeDir('up');
           break;
         case 40: //Down key
           console.log("key Down = ", code);
-          myGame.myPac.changeDir('down');
+          myGame.myPac.lastKeyDir = 'down';
           myGame.myPac.moveState = 'go';
+          // myGame.myPac.changeDir('down');
           break;
         case 32: // spacebar
-          myGame.myPac.toggleState();
-          console.log( ctx.getImageData(myGame.myPac.x, myGame.myPac.y, 1, 1) );
+          myGame.myPac.togglePacGo();
           break;
         case 71: // G key
           console.log('toggle grid');
@@ -150,6 +154,10 @@ function keyDown(event) {
         case 68: // D key
           console.log('toggle dots');
           (myGame.lvlOn) ? (myGame.lvlOn = false) : (myGame.lvlOn = true);
+          break;
+        case 88: // X key
+          console.log('toggle px test box');
+          (myGame.pxBoxOn) ? (myGame.pxBoxOn = false) : (myGame.pxBoxOn = true);
           break;
         default: // Everything else
           console.log("key = ", code);
@@ -190,5 +198,12 @@ $(document).ready(function() {
   $("#stop").click(function() {
     cancelAnimationFrame(State.myReq);
   });
+
+  myGame = new Game(10); // param = ms per update()
+  State.loopRunning = true;
+  myGame.init();
+  State.gameStarted = true;
+  CANVAS.focus();  // set focus to canvas on start so keybindings work
+
 
 });

@@ -17,12 +17,13 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.lineW = 2;
   this.pixX = 0;
   this.pixY = 0;
+  this.lastKeyDir = 'none';
 
   this.init = function() {
     this.rotatePacFace();
   }; // init
 
-  this.toggleState = function() {
+  this.togglePacGo = function() {
     if (this.moveState === 'go') {
       this.moveState = 'stop';
       myGame.savedLastUpdate = performance.now() - myGame.lastUpdate;
@@ -34,41 +35,46 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     console.log('pac state = ', this.moveState);
   };
 
-  this.inBounds = function() {
+  this.inBounds = function(tDir) {
     var bounds;
-    if ( (this.direction === 'left') && (this.x - Math.abs(this.vel) - this.radius < 0) ) {
+    if ( (tDir === 'left') && (this.x - Math.abs(this.vel) - this.radius < 0) ) {
       bounds = false;
-    } else if ( (this.direction === 'right') && (this.x + this.vel + this.radius >= CANVAS.width) ) {
+    } else if ( (tDir === 'right') && (this.x + this.vel + this.radius >= CANVAS.width) ) {
       bounds = false;
-    } else if ( (this.direction === 'up') && (this.y - Math.abs(this.vel) - this.radius < 0) ) {
+    } else if ( (tDir === 'up') && (this.y - Math.abs(this.vel) - this.radius < 0) ) {
       bounds = false;
-    } else if ( (this.direction === 'down') && (this.y + this.vel + this.radius >= CANVAS.height) ) {
+    } else if ( (tDir === 'down') && (this.y + this.vel + this.radius >= CANVAS.height) ) {
       bounds = false;
+    // } else if ( (this.pixTest(tDir).data[0] < 10) && (this.pixTest(tDir).data[2] > 200) ) {
+    //   bounds = false;
     } else {
       bounds = true;
     }
     return bounds;
   }; // inBounds
 
-  this.changeDir = function(dir) {
-    if (dir === 'left') {
-      this.direction = 'left';
-      this.vel = -Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'right') {
-      this.direction = 'right';
-      this.vel = Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'up') {
-      this.direction = 'up';
-      this.vel = -Math.abs(this.vel);
-      this.rotatePacFace();
-    } else if (dir === 'down') {
-      this.direction = 'down';
-      this.vel = Math.abs(this.vel);
-      this.rotatePacFace();
-    } else {
-      console.log(' changeDir problems ');
+  this.changeDir = function(newDir) {
+    if ( this.inBounds(newDir) ) { // don't allow pac to turn or go if not in bounds
+          if (newDir === 'left') {
+            this.direction = 'left';
+            this.vel = -Math.abs(this.vel);
+            this.rotatePacFace();
+          } else if (newDir === 'right') {
+            this.direction = 'right';
+            this.vel = Math.abs(this.vel);
+            this.rotatePacFace();
+          } else if (newDir === 'up') {
+            this.direction = 'up';
+            this.vel = -Math.abs(this.vel);
+            this.rotatePacFace();
+          } else if (newDir === 'down') {
+            this.direction = 'down';
+            this.vel = Math.abs(this.vel);
+            this.rotatePacFace();
+          } else {
+            console.log(' changeDir problems ');
+          }
+          myGame.myPac.moveState = 'go';
     }
   };
 
@@ -86,24 +92,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } // end switch
   };
 
-  this.toggleDir = function(dir) { // for bouncing mechanic only
-    switch (dir) {
-      case 'left':  this.changeDir('right');  break;
-      case 'right':  this.changeDir('left');  break;
-      case 'up':  this.changeDir('down');  break;
-      case 'down':  this.changeDir('up');  break;
-      default:
-        console.log("toggleDir broke");
-        break;
-    }
-  };
-
   this.nextMouth = function() {
     if ( (this.mouthSize+this.mouthVel) >= this.maxMouthSize ) {
-      // console.log('mouth too BIG');
       this.mouthVel = -Math.abs(this.mouthVel);
     } else if ( (this.mouthSize+this.mouthVel) <= this.minMouthSize ) {
-      // console.log('mouth too SMALL');
       this.mouthVel = Math.abs(this.mouthVel);
     } else {
       // nothing
@@ -111,16 +103,16 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     this.mouthSize += this.mouthVel;
   };
 
-  this.pixTestFront = function() {
+  this.pixTest = function(sDir) {
     var xCoef = 0;
     var yCoef = 0;
-    if ( this.direction === 'left' ) {
+    if ( sDir === 'left' ) {
       xCoef = -1;
-    } else if (this.direction === 'right') {
+    } else if (sDir === 'right') {
       xCoef = 1;
-    } else if (this.direction === 'up') {
+    } else if (sDir === 'up') {
       yCoef = -1;
-    } else if (this.direction === 'down') {
+    } else if (sDir === 'down') {
       yCoef = 1;
     } else {
       console.log('pixTestFront issues');
@@ -129,14 +121,16 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     this.pixY = (this.y+((this.lineW+this.radius+1)*yCoef));
     let pxData =  ctx.getImageData(this.pixX, this.pixY, 1, 1).data;
     let pxRgba = 'rgba('+pxData[0]+','+pxData[1]+','+pxData[2]+','+pxData[3]+')';
-    return { 0: pxData, 1: pxRgba };
+    return { data: pxData,
+             rgbastr: pxRgba };
   };
 
   this.drawPixTestBox = function() {
     ctx.beginPath();
     ctx.strokeStyle = 'green';
-    ctx.rect(this.pixX-1,this.pixY-1,3,3);
+    ctx.rect(this.pixX-4,this.pixY-4,8,8);
     ctx.stroke();
+    $('.pixel-window').css( 'background-color', this.pixTest(this.direction).rgbastr );
   };
 
   // move pac in facing direction
@@ -148,7 +142,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       console.log(' slide problems ');
     }
-    $('.pixel-window').css( 'background-color', this.pixTestFront()[1] );
   }; // slide
 
   this.draw = function() {
@@ -171,14 +164,13 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     ctx.stroke();  // draw the line
     ctx.rotate(-this.rotateFace);
     ctx.translate(-this.x,-this.y);
-    // this.drawPixTestBox();
+    if (myGame.pxBoxOn) this.drawPixTestBox();
   }; // draw
 
   this.update = function() {
     if (this.moveState === 'go') {
-      if (!this.inBounds()) {  // not in bounds so change direction
-        console.log("change direction");
-        // this.toggleDir(this.direction);
+      if (!this.inBounds(this.direction)) {  // not in bounds so change direction
+        console.log('collision!');
         this.moveState = 'stop';
       } else {  // is in bounds, proceed as normal
         this.movePac();
