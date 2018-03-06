@@ -28,7 +28,8 @@ var State = {
   frameCounter: 0,
   gridSpacing: 25, // dimentions of grid in pixels
   gridWidth: 28,
-  gridHeight: 31
+  gridHeight: 31,
+  lastDirKey: 'none'
 };
 
 function Game(updateDur) {
@@ -43,14 +44,14 @@ function Game(updateDur) {
   this.lastKey = 0;
   this.gridOn = false;
   this.lvlOn = true;
-  this.pxBoxOn = true;
+  this.pxBoxOn = false;
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
     // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
-                          /* velocity */      1.5,
+                          /* velocity */      3.0,
                           /* width */         (State.gridSpacing*2+2)-12,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
@@ -82,10 +83,9 @@ function Game(updateDur) {
     this.timeGap = performance.now() - this.lastUpdate;
     if ( this.timeGap >= this.updateDuration ) {
       let timesToUpdate = this.timeGap / this.updateDuration;
-      if (this.myPac.moveState === 'go') {
-        for (let i=0; i < timesToUpdate; i++) {
-          this.myPac.update();
-        }
+      // console.log('timesToUpdate = ', timesToUpdate);
+      for (let i=1; i < timesToUpdate; i++) {
+        this.myPac.update();
       }
       this.lastUpdate = performance.now();
     }
@@ -122,25 +122,25 @@ function keyDown(event) {
     switch (code) {
         case 37: // Left key
           console.log("key Left = ", code);
-          myGame.myPac.lastKeyDir = 'left';
+          State.lastKeyDir = 'left';
           myGame.myPac.moveState = 'go';
           // myGame.myPac.changeDir('left');
           break;
         case 39: //Right key
           console.log("key Right = ", code);
-          myGame.myPac.lastKeyDir = 'right';
+          State.lastKeyDir = 'right';
           myGame.myPac.moveState = 'go';
           // myGame.myPac.changeDir('right');
           break;
         case 38: // Up key
           console.log("key Up = ", code);
-          myGame.myPac.lastKeyDir = 'up';
+          State.lastKeyDir = 'up';
           myGame.myPac.moveState = 'go';
           // myGame.myPac.changeDir('up');
           break;
         case 40: //Down key
           console.log("key Down = ", code);
-          myGame.myPac.lastKeyDir = 'down';
+          State.lastKeyDir = 'down';
           myGame.myPac.moveState = 'go';
           // myGame.myPac.changeDir('down');
           break;
