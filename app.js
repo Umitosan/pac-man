@@ -121,27 +121,23 @@ function keyDown(event) {
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          if (State.lastDirKey !== 'left') {
+          if (myGame.myPac.direction !== 'left') {
             State.lastDirKey = 'left';
-            console.log("key Left = ", code);
           }
           break;
         case 39: //Right key
-          if (State.lastDirKey !== 'right') {
+          if (myGame.myPac.direction !== 'right') {
             State.lastDirKey = 'right';
-            console.log("key Right = ", code);
           }
           break;
         case 38: // Up key
-          if (State.lastDirKey !== 'up') {
+          if (myGame.myPac.direction !== 'up') {
             State.lastDirKey = 'up';
-            console.log("key Up = ", code);
           }
           break;
         case 40: //Down key
-          if (State.lastDirKey !== 'down') {
+          if (myGame.myPac.direction !== 'down') {
             State.lastDirKey = 'down';
-            console.log("key Down = ", code);
           }
           break;
         case 32: // spacebar
