@@ -48,12 +48,12 @@ function Game(updateDur) {
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
-    // Pac(x,y,velocity,width,faceDirection,moveState)
+    // Pac(x,y,velocity,width,direction,moveState)
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
                           /* velocity */      3,
                           /* width */         (State.gridSpacing*2+2)-12,
-                          /* faceDirection */ 'right',
+                          /* direction */     'right',
                           /* moveState */     'stop'
                         );
     // init ghosts
@@ -121,22 +121,22 @@ function keyDown(event) {
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          if (myGame.myPac.direction !== 'left') {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'left') || (State.lastDirKey !== 'left')) ) {
             State.lastDirKey = 'left';
           }
           break;
         case 39: //Right key
-          if (myGame.myPac.direction !== 'right') {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'right') || (State.lastDirKey !== 'right')) ) {
             State.lastDirKey = 'right';
           }
           break;
         case 38: // Up key
-          if (myGame.myPac.direction !== 'up') {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'up') || (State.lastDirKey !== 'up')) ) {
             State.lastDirKey = 'up';
           }
           break;
         case 40: //Down key
-          if (myGame.myPac.direction !== 'down') {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'down') || (State.lastDirKey !== 'down')) ) {
             State.lastDirKey = 'down';
           }
           break;

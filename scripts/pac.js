@@ -19,7 +19,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.pixY = 0;
 
   this.init = function() {
-    this.rotatePacFace();
   }; // init
 
   this.togglePacGo = function() {
@@ -40,16 +39,16 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     var off = 10;
 
     if ( (tDir === 'left') && ( this.getNearestIntersection(this.x-sp+off,this.y).char === "#") )  {
-      console.log("LEFT bounds hit ", this.getNearestIntersection(this.x-sp+off,this.y) );
+      // console.log("LEFT bounds hit ", this.getNearestIntersection(this.x-sp+off,this.y) );
       bounds = false;
     } else if ( (tDir === 'right') && ( this.getNearestIntersection(this.x+sp-off,this.y).char === "#") ) {
-              console.log("RIGHT bounds hit ", this.getNearestIntersection(this.x+sp-off,this.y) );
+      // console.log("RIGHT bounds hit ", this.getNearestIntersection(this.x+sp-off,this.y) );
       bounds = false;
     } else if ( (tDir === 'up') && ( this.getNearestIntersection(this.x,this.y-sp+off).char === "#") ) {
-           console.log("UP bounds hit ", this.getNearestIntersection(this.x,this.y-sp+off) );
+      // console.log("UP bounds hit ", this.getNearestIntersection(this.x,this.y-sp+off) );
       bounds = false;
     } else if ( (tDir === 'down') && ( this.getNearestIntersection(this.x,this.y+sp-off).char === "#") ) {
-             console.log("DOWN bounds hit ", this.getNearestIntersection(this.x,this.y+sp-off) );
+      // console.log("DOWN bounds hit ", this.getNearestIntersection(this.x,this.y+sp-off) );
       bounds = false;
     } else {
       bounds = true;
@@ -110,7 +109,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.rotatePacFace = function() {
-    console.log("rotatePacFace");
+    // console.log("rotatePacFace");
     switch ( this.direction )  {
       case 'left':  this.rotateFace = Math.PI;  break;
       case 'right':  this.rotateFace = 0;  break;
@@ -167,7 +166,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.drawPixTestBox = function() {
     ctx.beginPath();
     ctx.strokeStyle = 'green';
-    ctx.rect(this.pixX-4,this.pixY-4,8,8);
+    ctx.rect(this.pixX-5,this.pixY-5,10,10);
     ctx.stroke();
     $('.pixel-window').css( 'background-color', this.pixTest(this.direction).rgbastr );
   };
@@ -193,8 +192,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     ctx.beginPath();
     ctx.translate(this.x,this.y);
     ctx.rotate(this.rotateFace);
-    // ctx.arc(x,y,r,sAngle,eAngle,[counterclockwise]);
-    // ctx.arc(0,0, this.radius, (Math.PI/4)*this.mouthSize, -(Math.PI/4)*this.mouthSize );
     ctx.arc(0,0, this.radius, this.mouthSize, -this.mouthSize );
     ctx.lineTo(0,0);
     ctx.closePath();
