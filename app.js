@@ -51,7 +51,7 @@ function Game(updateDur) {
     // Pac(x,y,velocity,width,faceDirection,moveState)
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
-                          /* velocity */      3.0,
+                          /* velocity */      3,
                           /* width */         (State.gridSpacing*2+2)-12,
                           /* faceDirection */ 'right',
                           /* moveState */     'stop'
@@ -121,28 +121,28 @@ function keyDown(event) {
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          console.log("key Left = ", code);
-          State.lastKeyDir = 'left';
-          myGame.myPac.moveState = 'go';
-          // myGame.myPac.changeDir('left');
+          if (State.lastDirKey !== 'left') {
+            State.lastDirKey = 'left';
+            console.log("key Left = ", code);
+          }
           break;
         case 39: //Right key
-          console.log("key Right = ", code);
-          State.lastKeyDir = 'right';
-          myGame.myPac.moveState = 'go';
-          // myGame.myPac.changeDir('right');
+          if (State.lastDirKey !== 'right') {
+            State.lastDirKey = 'right';
+            console.log("key Right = ", code);
+          }
           break;
         case 38: // Up key
-          console.log("key Up = ", code);
-          State.lastKeyDir = 'up';
-          myGame.myPac.moveState = 'go';
-          // myGame.myPac.changeDir('up');
+          if (State.lastDirKey !== 'up') {
+            State.lastDirKey = 'up';
+            console.log("key Up = ", code);
+          }
           break;
         case 40: //Down key
-          console.log("key Down = ", code);
-          State.lastKeyDir = 'down';
-          myGame.myPac.moveState = 'go';
-          // myGame.myPac.changeDir('down');
+          if (State.lastDirKey !== 'down') {
+            State.lastDirKey = 'down';
+            console.log("key Down = ", code);
+          }
           break;
         case 32: // spacebar
           myGame.myPac.togglePacGo();
