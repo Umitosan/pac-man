@@ -121,22 +121,22 @@ function keyDown(event) {
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'left') || (State.lastDirKey !== 'left')) ) {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
             State.lastDirKey = 'left';
           }
           break;
         case 39: //Right key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'right') || (State.lastDirKey !== 'right')) ) {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
             State.lastDirKey = 'right';
           }
           break;
         case 38: // Up key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'up') || (State.lastDirKey !== 'up')) ) {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
             State.lastDirKey = 'up';
           }
           break;
         case 40: //Down key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction === 'down') || (State.lastDirKey !== 'down')) ) {
+          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
             State.lastDirKey = 'down';
           }
           break;
