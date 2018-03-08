@@ -43,7 +43,7 @@ function Game(updateDur) {
   this.timeGap = 0;
   this.lastKey = 0;
   this.gridOn = false;
-  this.lvlOn = true;
+  this.lvlOnType = 1;
   this.pxBoxOn = false;
 
   this.init = function() {
@@ -60,6 +60,13 @@ function Game(updateDur) {
     this.myPac.init();
     this.myLevel.init();
   };
+  this.toggleLvl = function() {
+    if (this.lvlOnType === 2) {
+      this.lvlOnType = 0;
+    } else {
+      this.lvlOnType += 1;
+    }
+  };
   this.drawGrid = function() {
     for (let i = 0; i < State.gridWidth+2; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
@@ -75,7 +82,7 @@ function Game(updateDur) {
   };
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
-    if (this.lvlOn) this.myLevel.draw();
+    if (this.lvlOnType !== 0) this.myLevel.draw();
     if (this.myPac) this.myPac.draw();
   };
   this.update = function() {
@@ -145,15 +152,15 @@ function keyDown(event) {
           break;
         case 71: // G key
           console.log('toggle grid');
-          (myGame.gridOn) ? (myGame.gridOn = false) : (myGame.gridOn = true);
+          myGame.gridOn = (myGame.gridOn) ? false : true;
           break;
         case 68: // D key
-          console.log('toggle dots');
-          (myGame.lvlOn) ? (myGame.lvlOn = false) : (myGame.lvlOn = true);
+          console.log('toggle level');
+          myGame.toggleLvl();
           break;
         case 88: // X key
           console.log('toggle px test box');
-          (myGame.pxBoxOn) ? (myGame.pxBoxOn = false) : (myGame.pxBoxOn = true);
+          myGame.pxBoxOn = (myGame.pxBoxOn) ? false : true;
           break;
         default: // Everything else
           console.log("key = ", code);

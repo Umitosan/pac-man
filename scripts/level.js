@@ -253,8 +253,13 @@ function Level() {
 
   this.draw = function() {
     this.drawDots();
-    this.drawWalls1();
-    // this.drawWalls2();
+    if (myGame.lvlOnType === 1) {
+      this.drawWalls1();
+    } else if (myGame.lvlOnType === 2) {
+      this.drawWalls2();
+    } else {
+      // don't draw level
+    }
   };
 
 } // level
