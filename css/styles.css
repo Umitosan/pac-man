@@ -99,6 +99,7 @@ canvas {
   border-style: solid;
   border-width: 2px;
   border-radius: 8px;
+  font-family: "Segoe UI Symbol";  /* need this just for IE left and right arrow unicode to work */
 }
 th.key p {
   font-size: 30px;
