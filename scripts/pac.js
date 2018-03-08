@@ -124,10 +124,18 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
   this.hopToIn = function() {
     let data = this.getNearestIntersection(this.x,this.y);
-    // console.log('data.col: ', data.col);
     this.x = (data.col+1)*State.gridSpacing;
     this.y = (data.row+1)*State.gridSpacing;
     console.log('pac x,y = '+ this.x +","+this.y );
+  };
+
+  this.tryEatPill = function() {
+    let data = this.getNearestIntersection(this.x,this.y);
+    let r = data.row;
+    let c = data.col;
+    if ( (data.char === 0) || (data.char === 'B') ) {
+      myGame.myLevel.currentLevel[r][c] = '-';
+    }
   };
 
   this.nextMouth = function() {
@@ -219,6 +227,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
               State.lastDirKey = 'none';
               this.hopToIn();
             } else {
+              this.tryEatPill();
               this.movePac();
               this.nextMouth();
             }
@@ -234,6 +243,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
             State.lastDirKey = 'none';
             this.hopToIn();
           } else {
+            this.tryEatPill();
             this.movePac();
             this.nextMouth();
           }
@@ -247,6 +257,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           this.moveState = "go";
           this.changeDir(State.lastDirKey);
           State.lastDirKey = 'none';
+          this.tryEatPill();
           this.movePac();
           this.nextMouth();
         } else { // change direction failed so reset key, but DO rotate pacman
