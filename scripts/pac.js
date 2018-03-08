@@ -6,10 +6,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.vel = velocity;
   this.diameter = diameter;
   this.radius = diameter/2;
-  this.mouthSize = getRadianAngle(60);
-  this.maxMouthSize = getRadianAngle(60);
+  this.mouthSize = getRadianAngle(70);
+  this.maxMouthSize = getRadianAngle(70);
   this.minMouthSize = getRadianAngle(2);
-  this.mouthVel = getRadianAngle(6);
+  this.mouthVel = getRadianAngle(8);
   this.direction = direction;
   this.rotateFace = 0;
   this.moveState = moveState;
@@ -155,8 +155,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       console.log('pixTestFront issues');
     }
-    this.pixX = (this.x+((this.lineW+this.radius+1)*xCoef));
-    this.pixY = (this.y+((this.lineW+this.radius+1)*yCoef));
+    this.pixX = (this.x+((this.lineW+this.radius+2)*xCoef));
+    this.pixY = (this.y+((this.lineW+this.radius+2)*yCoef));
     let pxData =  ctx.getImageData(this.pixX, this.pixY, 1, 1).data;
     let pxRgba = 'rgba('+pxData[0]+','+pxData[1]+','+pxData[2]+','+pxData[3]+')';
     return { data: pxData,
