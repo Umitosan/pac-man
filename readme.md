@@ -2,6 +2,10 @@
 
 The classic arcade game recreated using HTML5's canvas.
 
+## links
+
+* [Live site](https://umitosan.github.io/pac-man/)
+
 ## Technologies
 
 * HTML5 Canvas

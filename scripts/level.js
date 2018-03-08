@@ -238,10 +238,18 @@ function Level() {
         if (this.currentLevel[r][c] === '#') {
           ctx.beginPath();
           ctx.fillStyle = Colors.blue;
-          ctx.strokeStyle = Colors.white;
           ctx.lineWidth = 1;
           ctx.rect( (State.gridSpacing-5 + c * State.gridSpacing), (State.gridSpacing-5 + r * State.gridSpacing), 10, 10 ); // x y width height
-          ctx.stroke();
+          ctx.fill();
+        } else if (this.currentLevel[r][c] === 'W') {
+          ctx.beginPath();
+          ctx.fillStyle = Colors.white;
+          ctx.rect( (State.gridSpacing-10 + c * State.gridSpacing), (State.gridSpacing-2 + r * State.gridSpacing), 22, 5 ); // x y width height
+          ctx.fill();
+        } else if (this.currentLevel[r][c] === 'T') {
+          ctx.beginPath();
+          ctx.fillStyle = Colors.aqua;
+          ctx.rect( (State.gridSpacing-2 + c * State.gridSpacing), (State.gridSpacing-10 + r * State.gridSpacing), 4, 20 ); // x y width height
           ctx.fill();
         } else {
           // nothin
