@@ -13,7 +13,7 @@ function Level() {
           ctx.beginPath();
           ctx.fillStyle = Colors.white;
           // ctx.arc(x,y,radius,sAngle,eAngle);
-          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 4 , 0 , Math.PI*2 );
+          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 3 , 0 , Math.PI*2 );
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'B') {  // bonus dots
           ctx.beginPath();
@@ -169,21 +169,59 @@ function Level() {
       //
       roundRect(s*3, s*7, s*3, s*1, corner);
 
-      roundRect(s*8, s*7, s*1, s*7, corner);
-      roundRect(s*9, s*10, s*3, s*1, corner);
-      ctx.clearRect(s*9-2, s*10+2, s*1-4, s*1-4);
+      ctx.beginPath();
+      ctx.moveTo(s*8,s*8);
+      ctx.arcTo(s*8,s*7,s*8+half,s*7,half);
+      ctx.arcTo(s*9,s*7,s*9,s*7+half,half);
+      ctx.lineTo(s*9,s*9+half);
+      ctx.arcTo(s*9,s*10,s*9+half,s*10,half);
+      ctx.lineTo(s*11+half,s*10);
+      ctx.arcTo(s*12,s*10,s*12,s*10+half,half);
+      ctx.arcTo(s*12,s*11,s*12-half,s*11,half);
+      ctx.lineTo(s*9+half,s*11);
+      ctx.arcTo(s*9,s*11,s*9,s*11+half,half);
+      ctx.lineTo(s*9,s*13+half);
+      ctx.arcTo(s*9,s*14,s*8+half,s*14,half);
+      ctx.arcTo(s*8,s*14,s*8,s*13+half,half);
+      ctx.lineTo(s*8,s*8);
+      ctx.stroke();
 
-      roundRect(s*11, s*7, s*7, s*1, corner);
-      roundRect(s*14, s*8, s*1, s*3, corner);
-      ctx.clearRect(s*14+2, s*8-4, s*1-4, s*1);
+      ctx.beginPath();  // middle T1
+      ctx.moveTo(s*11+half,s*7);
+      ctx.lineTo(s*17+half,s*7);
+      ctx.arcTo(s*18,s*7,s*18,s*7+half,half);
+      ctx.arcTo(s*18,s*8,s*17+half,s*8,half);
+      ctx.lineTo(s*15+half,s*8);
+      ctx.arcTo(s*15,s*8,s*15,s*8+half,half);
+      ctx.lineTo(s*15,s*10+half);
+      ctx.arcTo(s*15,s*11,s*14+half,s*11,half);
+      ctx.arcTo(s*14,s*11,s*14,s*10+half,half);
+      ctx.lineTo(s*14,s*8+half);
+      ctx.arcTo(s*14,s*8,s*13+half,s*8,half);
+      ctx.lineTo(s*11+half,s*8);
+      ctx.arcTo(s*11,s*8,s*11,s*7+half,half);
+      ctx.arcTo(s*11,s*7,s*11+half,s*7,half);
+      ctx.stroke();
 
-      roundRect(s*20, s*7, s*1, s*7, corner);
-      roundRect(s*17, s*10, s*3, s*1, corner);
-      ctx.clearRect(s*20-4, s*10+2, s*1-4, s*1-4);
+      ctx.beginPath();
+      ctx.moveTo(s*20,s*8);
+      ctx.arcTo(s*20,s*7,s*20+half,s*7,half);
+      ctx.arcTo(s*21,s*7,s*21,s*7+half,half);
+      ctx.lineTo(s*21,s*13+half);
+      ctx.arcTo(s*21,s*14,s*20+half,s*14,half);
+      ctx.arcTo(s*20,s*14,s*20,s*13+half,half);
+      ctx.lineTo(s*20,s*11+half);
+      ctx.arcTo(s*20,s*11,s*19+half,s*11,half);
+      ctx.lineTo(s*17+half,s*11);
+      ctx.arcTo(s*17,s*11,s*17,s*10+half,half);
+      ctx.arcTo(s*17,s*10,s*17+half,s*10,half);
+      ctx.lineTo(s*19+half,s*10);
+      ctx.arcTo(s*20,s*10,s*20,s*9+half,half);
+      ctx.lineTo(s*20,s*8);
+      ctx.stroke();
 
       roundRect(s*23, s*7, s*3, s*1, corner);
 
-      // ctx.rect(x,y,width,height)
       // GHOST HOME
       ctx.beginPath();
       ctx.moveTo(s*13,s*13);
@@ -210,35 +248,82 @@ function Level() {
       // roundRect(x, y, width, height, radius);
       roundRect(s*8, s*16, s*1, s*4, corner);
 
-      roundRect(s*11, s*19, s*7, s*1, corner);
-      roundRect(s*14, s*20, s*1, s*3, corner);
-      ctx.clearRect(s*14+2, s*20-4, s*1-4, s*1);
+      ctx.beginPath();  // middle T2
+      ctx.moveTo(s*11+half,s*19);
+      ctx.lineTo(s*17+half,s*19);
+      ctx.arcTo(s*18,s*19,s*18,s*19+half,half);
+      ctx.arcTo(s*18,s*20,s*17+half,s*20,half);
+      ctx.lineTo(s*15+half,s*20);
+      ctx.arcTo(s*15,s*20,s*15,s*20+half,half);
+      ctx.lineTo(s*15,s*22+half);
+      ctx.arcTo(s*15,s*23,s*14+half,s*23,half);
+      ctx.arcTo(s*14,s*23,s*14,s*22+half,half);
+      ctx.lineTo(s*14,s*20+half);
+      ctx.arcTo(s*14,s*20,s*13+half,s*20,half);
+      ctx.lineTo(s*11+half,s*20);
+      ctx.arcTo(s*11,s*20,s*11,s*19+half,half);
+      ctx.arcTo(s*11,s*19,s*11+half,s*19,half);
+      ctx.stroke();
 
       roundRect(s*20, s*16, s*1, s*4, corner);
 
-      roundRect(s*3, s*22, s*2, s*1, corner);
-      roundRect(s*5, s*22, s*1, s*4, corner);
-      ctx.clearRect(s*5-4, s*22+2, s*1-4, s*1-4);
+      ctx.beginPath();
+      ctx.moveTo(s*3+half,s*22);
+      ctx.lineTo(s*5+half,s*22);
+      ctx.arcTo(s*6,s*22,s*6,s*22+half,half);
+      ctx.lineTo(s*6,s*25+half);
+      ctx.arcTo(s*6,s*26,s*5+half,s*26,half);
+      ctx.arcTo(s*5,s*26,s*5,s*25+half,half);
+      ctx.lineTo(s*5,s*23+half);
+      ctx.arcTo(s*5,s*23,s*4+half,s*23,half);
+      ctx.lineTo(s*3+half,s*23);
+      ctx.arcTo(s*3,s*23,s*3,s*22+half,half);
+      ctx.arcTo(s*3,s*22,s*3+half,s*22,half);
+      ctx.stroke();
 
       roundRect(s*8, s*22, s*4, s*1, corner);
 
       roundRect(s*17, s*22, s*4, s*1, corner);
 
-      roundRect(s*23, s*22, s*1, s*4, corner);
-      roundRect(s*24, s*22, s*2, s*1, corner);
-      ctx.clearRect(s*24-4, s*22+2, s*1-4, s*1-4);
+      ctx.beginPath();
+      ctx.moveTo(s*23,s*23);
+      ctx.arcTo(s*23,s*22,s*23+half,s*22,half);
+      ctx.lineTo(s*25+half,s*22);
+      ctx.arcTo(s*26,s*22,s*26,s*22+half,half);
+      ctx.arcTo(s*26,s*23,s*25+half,s*23,half);
+      ctx.lineTo(s*25,s*23);
+      ctx.arcTo(s*24,s*23,s*24,s*23+half,half);
+      ctx.lineTo(s*24,s*25+half);
+      ctx.arcTo(s*24,s*26,s*23+half,s*26,half);
+      ctx.arcTo(s*23,s*26,s*23,s*25+half,half);
+      ctx.lineTo(s*23,s*23);
+      ctx.stroke();
 
       roundRect(s*3, s*28, s*9, s*1, corner);
       roundRect(s*8, s*25, s*1, s*3, corner);
-      ctx.clearRect(s*8+2, s*28-6, s*1-4, s*1-4);
 
-      roundRect(s*11, s*25, s*7, s*1, corner);
-      roundRect(s*14, s*26, s*1, s*3, corner);
-      ctx.clearRect(s*14+2, s*26-6, s*1-4, s*1-4);
+      // roundRect(s*11, s*25, s*7, s*1, corner);
+      // roundRect(s*14, s*26, s*1, s*3, corner);
+
+      ctx.beginPath();  // middle T3
+      ctx.moveTo(s*11+half,s*25);
+      ctx.lineTo(s*17+half,s*25);
+      ctx.arcTo(s*18,s*25,s*18,s*25+half,half);
+      ctx.arcTo(s*18,s*26,s*17+half,s*26,half);
+      ctx.lineTo(s*15+half,s*26);
+      ctx.arcTo(s*15,s*26,s*15,s*26+half,half);
+      ctx.lineTo(s*15,s*28+half);
+      ctx.arcTo(s*15,s*29,s*14+half,s*29,half);
+      ctx.arcTo(s*14,s*29,s*14,s*28+half,half);
+      ctx.lineTo(s*14,s*26+half);
+      ctx.arcTo(s*14,s*26,s*13+half,s*26,half);
+      ctx.lineTo(s*11+half,s*26);
+      ctx.arcTo(s*11,s*26,s*11,s*25+half,half);
+      ctx.arcTo(s*11,s*25,s*11+half,s*25,half);
+      ctx.stroke();
 
       roundRect(s*17, s*28, s*9, s*1, corner);
       roundRect(s*20, s*25, s*1, s*3, corner);
-      ctx.clearRect(s*20+2, s*28-6, s*1-4, s*1-4);
     } // islands
 
   };
