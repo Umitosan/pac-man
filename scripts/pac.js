@@ -47,7 +47,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else if ( (tDir === 'up') && ( this.getNearestIntersection(this.x,this.y-sp+off).char === "#") ) {
       // console.log("UP bounds hit ", this.getNearestIntersection(this.x,this.y-sp+off) );
       bounds = false;
-    } else if ( (tDir === 'down') && ( this.getNearestIntersection(this.x,this.y+sp-off).char === "#") ) {
+    } else if ( (tDir === 'down') && (( this.getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( this.getNearestIntersection(this.x,this.y+sp-off).char === "W")) ) {
       // console.log("DOWN bounds hit ", this.getNearestIntersection(this.x,this.y+sp-off) );
       bounds = false;
     } else {
@@ -124,10 +124,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
   this.hopToIn = function() {
     let data = this.getNearestIntersection(this.x,this.y);
-    console.log('data.col: ', data.col);
+    // console.log('data.col: ', data.col);
     this.x = (data.col+1)*State.gridSpacing;
     this.y = (data.row+1)*State.gridSpacing;
-    console.log('pac x y = '+ this.x +"  "+this.y );
+    console.log('pac x,y = '+ this.x +","+this.y );
   };
 
   this.nextMouth = function() {
@@ -260,7 +260,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       console.log("[move state problems]");
     }
-
   }; // update
 
 } // PAC

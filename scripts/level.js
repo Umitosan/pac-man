@@ -90,7 +90,6 @@ function Level() {
       ctx.stroke();
     } // outter border
 
-
     { // inner border
         ctx.beginPath();
         ctx.moveTo(s*0+half,s*14);
@@ -162,73 +161,85 @@ function Level() {
         ctx.stroke();
     } // inner border
 
-    roundRect(s*3, s*3, s*3, s*2, corner);
-    roundRect(s*8, s*3, s*4, s*2, corner);
-    roundRect(s*17, s*3, s*4, s*2, corner);
-    roundRect(s*23, s*3, s*3, s*2, corner);
-    //
-    roundRect(s*3, s*7, s*3, s*1, corner);
+    { // islands
+      roundRect(s*3, s*3, s*3, s*2, corner);
+      roundRect(s*8, s*3, s*4, s*2, corner);
+      roundRect(s*17, s*3, s*4, s*2, corner);
+      roundRect(s*23, s*3, s*3, s*2, corner);
+      //
+      roundRect(s*3, s*7, s*3, s*1, corner);
 
-    roundRect(s*8, s*7, s*1, s*7, corner);
-    roundRect(s*9, s*10, s*3, s*1, corner);
-    ctx.clearRect(s*9-2, s*10+2, s*1-4, s*1-4);
+      roundRect(s*8, s*7, s*1, s*7, corner);
+      roundRect(s*9, s*10, s*3, s*1, corner);
+      ctx.clearRect(s*9-2, s*10+2, s*1-4, s*1-4);
 
-    roundRect(s*11, s*7, s*7, s*1, corner);
-    roundRect(s*14, s*8, s*1, s*3, corner);
-    ctx.clearRect(s*14+2, s*8-4, s*1-4, s*1);
+      roundRect(s*11, s*7, s*7, s*1, corner);
+      roundRect(s*14, s*8, s*1, s*3, corner);
+      ctx.clearRect(s*14+2, s*8-4, s*1-4, s*1);
 
-    roundRect(s*20, s*7, s*1, s*7, corner);
-    roundRect(s*17, s*10, s*3, s*1, corner);
-    ctx.clearRect(s*20-4, s*10+2, s*1-4, s*1-4);
+      roundRect(s*20, s*7, s*1, s*7, corner);
+      roundRect(s*17, s*10, s*3, s*1, corner);
+      ctx.clearRect(s*20-4, s*10+2, s*1-4, s*1-4);
 
-    roundRect(s*23, s*7, s*3, s*1, corner);
+      roundRect(s*23, s*7, s*3, s*1, corner);
 
-    // ctx.rect(x,y,width,height)
-    ctx.beginPath();
-    ctx.rect(s*11,s*13,s*7,s*4);
-    ctx.rect(s*11+10,s*13+10,s*6+5,s*3+5); // inner
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.fillStyle = Colors.white;
-    ctx.strokeStyle = Colors.white;
-    ctx.rect(s*13+14,s*13,s*2,12); // white exit
-    ctx.fill();
-    ctx.stroke();
+      // ctx.rect(x,y,width,height)
+      // GHOST HOME
+      ctx.beginPath();
+      ctx.moveTo(s*13,s*13);
+      ctx.lineTo(s*11,s*13);
+      ctx.lineTo(s*11,s*17);
+      ctx.lineTo(s*18,s*17);
+      ctx.lineTo(s*18,s*13);
+      ctx.lineTo(s*16,s*13);
+      ctx.moveTo(s*13,s*13+half);
+      ctx.lineTo(s*12-half,s*13+half);
+      ctx.lineTo(s*12-half,s*17-half);
+      ctx.lineTo(s*18-half,s*17-half);
+      ctx.lineTo(s*18-half,s*13+half);
+      ctx.lineTo(s*16,s*13+half);
+      ctx.stroke();
 
-    ctx.strokeStyle = Colors.blue;
+      ctx.beginPath();
+      ctx.fillStyle = Colors.white;
+      ctx.rect(s*13,s*13+2,s*3,8); // white exit
+      ctx.fill();
 
-    // roundRect(x, y, width, height, radius);
-    roundRect(s*8, s*16, s*1, s*4, corner);
+      ctx.strokeStyle = Colors.blue;
 
-    roundRect(s*11, s*19, s*7, s*1, corner);
-    roundRect(s*14, s*20, s*1, s*3, corner);
-    ctx.clearRect(s*14+2, s*20-4, s*1-4, s*1);
+      // roundRect(x, y, width, height, radius);
+      roundRect(s*8, s*16, s*1, s*4, corner);
 
-    roundRect(s*20, s*16, s*1, s*4, corner);
+      roundRect(s*11, s*19, s*7, s*1, corner);
+      roundRect(s*14, s*20, s*1, s*3, corner);
+      ctx.clearRect(s*14+2, s*20-4, s*1-4, s*1);
 
-    roundRect(s*3, s*22, s*2, s*1, corner);
-    roundRect(s*5, s*22, s*1, s*4, corner);
-    ctx.clearRect(s*5-4, s*22+2, s*1-4, s*1-4);
+      roundRect(s*20, s*16, s*1, s*4, corner);
 
-    roundRect(s*8, s*22, s*4, s*1, corner);
+      roundRect(s*3, s*22, s*2, s*1, corner);
+      roundRect(s*5, s*22, s*1, s*4, corner);
+      ctx.clearRect(s*5-4, s*22+2, s*1-4, s*1-4);
 
-    roundRect(s*17, s*22, s*4, s*1, corner);
+      roundRect(s*8, s*22, s*4, s*1, corner);
 
-    roundRect(s*23, s*22, s*1, s*4, corner);
-    roundRect(s*24, s*22, s*2, s*1, corner);
-    ctx.clearRect(s*24-4, s*22+2, s*1-4, s*1-4);
+      roundRect(s*17, s*22, s*4, s*1, corner);
 
-    roundRect(s*3, s*28, s*9, s*1, corner);
-    roundRect(s*8, s*25, s*1, s*3, corner);
-    ctx.clearRect(s*8+2, s*28-6, s*1-4, s*1-4);
+      roundRect(s*23, s*22, s*1, s*4, corner);
+      roundRect(s*24, s*22, s*2, s*1, corner);
+      ctx.clearRect(s*24-4, s*22+2, s*1-4, s*1-4);
 
-    roundRect(s*11, s*25, s*7, s*1, corner);
-    roundRect(s*14, s*26, s*1, s*3, corner);
-    ctx.clearRect(s*14+2, s*26-6, s*1-4, s*1-4);
+      roundRect(s*3, s*28, s*9, s*1, corner);
+      roundRect(s*8, s*25, s*1, s*3, corner);
+      ctx.clearRect(s*8+2, s*28-6, s*1-4, s*1-4);
 
-    roundRect(s*17, s*28, s*9, s*1, corner);
-    roundRect(s*20, s*25, s*1, s*3, corner);
-    ctx.clearRect(s*20+2, s*28-6, s*1-4, s*1-4);
+      roundRect(s*11, s*25, s*7, s*1, corner);
+      roundRect(s*14, s*26, s*1, s*3, corner);
+      ctx.clearRect(s*14+2, s*26-6, s*1-4, s*1-4);
+
+      roundRect(s*17, s*28, s*9, s*1, corner);
+      roundRect(s*20, s*25, s*1, s*3, corner);
+      ctx.clearRect(s*20+2, s*28-6, s*1-4, s*1-4);
+    } // islands
 
   };
 
@@ -272,6 +283,7 @@ function Level() {
 } // level
 
 
+// MAP LEGEND
 // 0 = dot
 // # = wall
 // B = big dot
