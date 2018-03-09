@@ -88,7 +88,7 @@ function Level() {
       ctx.lineTo(s*0+half,s*16+half);
 
       ctx.stroke();
-    } // outter border
+    } // end outter border
 
     { // inner border
         ctx.beginPath();
@@ -159,7 +159,7 @@ function Level() {
         ctx.lineTo(s*0+half,s*16);
 
         ctx.stroke();
-    } // inner border
+    } // end inner border
 
     { // islands
       roundRect(s*3, s*3, s*3, s*2, corner);
@@ -299,13 +299,24 @@ function Level() {
       ctx.lineTo(s*23,s*23);
       ctx.stroke();
 
-      roundRect(s*3, s*28, s*9, s*1, corner);
-      roundRect(s*8, s*25, s*1, s*3, corner);
+      ctx.beginPath();  // bot left
+      ctx.moveTo(s*3+half,s*28);
+      ctx.lineTo(s*7+half,s*28);
+      ctx.arcTo(s*8,s*28,s*8,s*27+half,half);
+      ctx.lineTo(s*8,s*25+half);
+      ctx.arcTo(s*8,s*25,s*8+half,s*25,half);
+      ctx.arcTo(s*9,s*25,s*9,s*25+half,half);
+      ctx.lineTo(s*9,s*27+half);
+      ctx.arcTo(s*9,s*28,s*9+half,s*28,half);
+      ctx.lineTo(s*11+half,s*28);
+      ctx.arcTo(s*12,s*28,s*12,s*28+half,half);
+      ctx.arcTo(s*12,s*29,s*11+half,s*29,half);
+      ctx.lineTo(s*3+half,s*29);
+      ctx.arcTo(s*3,s*29,s*3,s*28+half,half);
+      ctx.arcTo(s*3,s*28,s*3+half,s*28,half);
+      ctx.stroke();
 
-      // roundRect(s*11, s*25, s*7, s*1, corner);
-      // roundRect(s*14, s*26, s*1, s*3, corner);
-
-      ctx.beginPath();  // middle T3
+      ctx.beginPath();  // bottom T3
       ctx.moveTo(s*11+half,s*25);
       ctx.lineTo(s*17+half,s*25);
       ctx.arcTo(s*18,s*25,s*18,s*25+half,half);
@@ -322,9 +333,24 @@ function Level() {
       ctx.arcTo(s*11,s*25,s*11+half,s*25,half);
       ctx.stroke();
 
-      roundRect(s*17, s*28, s*9, s*1, corner);
-      roundRect(s*20, s*25, s*1, s*3, corner);
-    } // islands
+      ctx.beginPath();  // bot right
+      ctx.moveTo(s*17+half,s*28);
+      ctx.lineTo(s*19+half,s*28);
+      ctx.arcTo(s*20,s*28,s*20,s*27+half,half);
+      ctx.lineTo(s*20,s*25+half);
+      ctx.arcTo(s*20,s*25,s*20+half,s*25,half);
+      ctx.arcTo(s*21,s*25,s*21,s*25+half,half);
+      ctx.lineTo(s*21,s*27+half);
+      ctx.arcTo(s*21,s*28,s*21+half,s*28,half);
+      ctx.lineTo(s*25+half,s*28);
+      ctx.arcTo(s*26,s*28,s*26,s*28+half,half);
+      ctx.arcTo(s*26,s*29,s*25+half,s*29,half);
+      ctx.lineTo(s*17+half,s*29);
+      ctx.arcTo(s*17,s*29,s*17,s*28+half,half);
+      ctx.arcTo(s*17,s*28,s*17+half,s*28,half);
+      ctx.stroke();
+
+    } // end islands
 
   };
 
@@ -363,7 +389,7 @@ function Level() {
     } else {
       // don't draw level
     }
-  };
+  }; // draw
 
 } // level
 
