@@ -260,11 +260,12 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           this.tryEatPill();
           this.movePac();
           this.nextMouth();
-        } else { // change direction failed so reset key, but DO rotate pacman
-          this.direction = State.lastDirKey;
-          this.rotatePacFace();
-          State.lastDirKey = 'none';
         }
+        // else { // change direction failed so reset key, but DO rotate pacman if in
+        //   this.direction = State.lastDirKey;
+        //   this.rotatePacFace();
+        //   State.lastDirKey = 'none';
+        // }
       } else {
         // sit idle
       }

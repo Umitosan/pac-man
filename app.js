@@ -23,7 +23,7 @@ var State = {
   myReq: undefined,
   playTime: 0,
   lastFrameTimeMs: 0, // The last time the loop was run
-  maxFPS: 60, // The maximum FPS we want to allow
+  maxFPS: 60, // The maximum FPS allowed
   pageLoadTime: 0,
   frameCounter: 0,
   gridSpacing: 25, // dimentions of grid in pixels
@@ -33,10 +33,10 @@ var State = {
 };
 
 function Game(updateDur) {
-  this.paused = true;
+  this.paused = false;
   this.bg = new Image();
   this.myPac = undefined;
-  this.myLevel = new Level();
+  this.myLevel = undefined;
   this.ghosts = undefined;
   this.updateDuration = updateDur;  // milliseconds duration between update()
   this.lastUpdate = 0;
@@ -58,6 +58,7 @@ function Game(updateDur) {
                         );
     // init ghosts
     this.myPac.init();
+    this.myLevel = new Level();
     this.myLevel.init();
   };
   this.toggleLvl = function() {
@@ -78,7 +79,7 @@ function Game(updateDur) {
   };
   this.drawBG = function() {
     ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
-    ctx.drawImage(this.bg,0,0,CANVAS.width,CANVAS.height);
+    ctx.drawImage(this.bg,4,4,CANVAS.width-9,CANVAS.height-9);
   };
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
@@ -88,6 +89,12 @@ function Game(updateDur) {
   this.update = function() {
     // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
     this.timeGap = performance.now() - this.lastUpdate;
+
+    if (this.paused === true) { // this prevents pac from updating many times after UNpausing
+      this.lastUpdate = performance.now();
+      this.timeGap = 0;
+    }
+
     if ( this.timeGap >= this.updateDuration ) {
       let timesToUpdate = this.timeGap / this.updateDuration;
       // console.log('timesToUpdate = ', timesToUpdate);
@@ -113,6 +120,11 @@ function gameLoop(timestamp) {
   clearCanvas();
   if (!State.gameStarted) {
     myGame.drawBG();
+    ctx.beginPath();
+    ctx.strokeStyle = Colors.blue;
+    ctx.lineWidth = 4;
+    ctx.rect(2, 2, CANVAS.width-4, CANVAS.height-4);
+    ctx.stroke();
   } else {
     myGame.draw();
   }
@@ -128,27 +140,43 @@ function keyDown(event) {
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
-            State.lastDirKey = 'left';
+          if (myGame.paused === false) {
+            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+              State.lastDirKey = 'left';
+            }
           }
           break;
         case 39: //Right key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
-            State.lastDirKey = 'right';
+          if (myGame.paused === false) {
+            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+              State.lastDirKey = 'right';
+            }
           }
           break;
         case 38: // Up key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
-            State.lastDirKey = 'up';
+          if (myGame.paused === false) {
+            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+              State.lastDirKey = 'up';
+            }
           }
           break;
         case 40: //Down key
-          if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
-            State.lastDirKey = 'down';
+          if (myGame.paused === false) {
+            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+              State.lastDirKey = 'down';
+            }
           }
           break;
         case 32: // spacebar
           myGame.myPac.togglePacGo();
+          if (myGame.paused === true) {
+            myGame.paused = false;
+          } else if (myGame.paused === false) {
+            myGame.paused = true;
+          } else {
+            //nothin
+          }
+          console.log('myGame.paused NOW = ', myGame.paused);
           break;
         case 71: // G key
           console.log('toggle grid');
@@ -182,7 +210,8 @@ $(document).ready(function() {
   // this is extremely important when animating to reduce rendering artifacts and other oddities
   ctx.translate(0.5, 0.5);
 
-  myGame = new Game();
+  // start things up so that the background image can be drawn
+  myGame = new Game(10);
   myGame.init();
   State.loopRunning = true;
   State.myReq = requestAnimationFrame(gameLoop);
@@ -191,22 +220,23 @@ $(document).ready(function() {
 
   $('#start-btn').click(function() {
     console.log("start button clicked");
+    if (State.myReq !== undefined) {
+      cancelAnimationFrame(State.myReq);
+      State.myReq = null;
+      console.log('canceled old anim frame');
+      console.log('State.myReq = ', State.myReq);
+    }  // reset game loop if already started
     myGame = new Game(10); // param = ms per update()
     State.loopRunning = true;
     myGame.init();
+    console.log('myGame.myLevel.currentLevel = ', myGame.myLevel.currentLevel);
     State.gameStarted = true;
     CANVAS.focus();  // set focus to canvas on start so keybindings work
+    State.myReq = requestAnimationFrame(gameLoop);
   });
 
-  $("#stop").click(function() {
-    cancelAnimationFrame(State.myReq);
-  });
-
-  myGame = new Game(10); // param = ms per update()
-  State.loopRunning = true;
-  myGame.init();
-  State.gameStarted = true;
-  CANVAS.focus();  // set focus to canvas on start so keybindings work
-
+  // $("#stop").click(function() {
+  //   cancelAnimationFrame(State.myReq);
+  // });
 
 });
