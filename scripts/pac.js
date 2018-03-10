@@ -134,6 +134,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     let r = data.row;
     let c = data.col;
     if ( (data.char === 0) || (data.char === 'B') ) {
+      myGame.updateScore(data.char);
       myGame.myLevel.currentLevel[r][c] = '-';
     }
   };

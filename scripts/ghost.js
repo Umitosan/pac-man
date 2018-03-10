@@ -1,12 +1,17 @@
 /*jshint esversion: 6 */
 
-function Ghost() {
+function Ghost(x,y,name) {
+  this.x = x;
+  this.y = y;
+  this.name = name;
+  this.spriteFrameDur = 100;
 
   this.init = function() {
     // init
   };
   this.draw = function() {
     // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+    
   };
   this.update = function() {
     // update positions
@@ -51,8 +56,8 @@ function Ghost() {
 //                                             -
 //  there are some SAFE ZONES in some levels where pac and go and never be attacked
 //
-// PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
-//
+//  PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
+//  Ghosts MOVE SLOWER in tunnel
 //
 //  level start - INKY-PINKY-CLYDE are in the ghost house at the beginning - two side facing up and PINKY facing down
 //              - only BLINKY is outside and facing left

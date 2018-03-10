@@ -33,10 +33,11 @@ var State = {
   lastDirKey: 'none'
 };
 
-// scoring
-// 200 PTS for eating a ghost
-// 10 for small DOT
-// 50 for large DOT
+// SCORING
+// Pac-Dot - 10 points.
+// Power Pellet - 50 points.
+// Vulnerable Ghosts: #1 in succession - 200 points. #2 in succession - 400 points. #3 in succession - 800 points. #4 in succession - 1600 points.
+// Fruit: Cherry: 100 points. Strawberry: 300 points. Orange: 500 points. Apple: 700 points. Melon: 1000 points
 
 
 function Game(updateDur) {
@@ -44,7 +45,8 @@ function Game(updateDur) {
   this.bg = new Image();
   this.myPac = undefined;
   this.myLevel = undefined;
-  this.ghosts = undefined;
+  this.ghosts = [];
+  this.score = 0;
   this.updateDuration = updateDur;  // milliseconds duration between update()
   this.lastUpdate = 0;
   this.timeGap = 0;
@@ -81,6 +83,18 @@ function Game(updateDur) {
     State.playTime = performance.now() - State.playStart;
     let roundedPlayTime = Math.floor(State.playTime / 1000);
     $('#clock').text(roundedPlayTime);
+  };
+
+  this.updateScore = function(lvlChar) {
+    if (lvlChar === 0) {
+      this.score += 10;
+      $('#score').text(myGame.score);
+    } else if (lvlChar === 'B') {
+      this.score += 50;
+      $('#score').text(myGame.score);
+    } else {
+      console.log('updateScore problems, char is = ', lvlChar);
+    }
   };
 
   this.drawGrid = function() {
@@ -246,6 +260,7 @@ $(document).ready(function() {
       cancelAnimationFrame(State.myReq);
       State.myReq = null;
     }
+    $('#score').text('0000');
     myGame = new Game(10); // param = ms per update()
     State.loopRunning = true;
     myGame.init();
