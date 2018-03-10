@@ -35,11 +35,6 @@ function TxtBox(x,y,txt) {
   };
 }
 
-function clockTimer() {
-  State.pageLoadTime += 1;
-  $('#clock').text(State.pageLoadTime);
-}
-
 function clearCanvas() {
   ctx.clearRect(-1, -1, canvas.width+1, canvas.height+1);
 }

@@ -2,6 +2,9 @@
 
 function Level() {
   this.currentLevel = undefined;
+  this.bigDotOffDur = 300;   // milliseconds
+  this.bigDotBlinkTimer = 600;  // milliseconds
+
   this.allLevels = {
     lvl1: [
       ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'], // 0
@@ -42,20 +45,27 @@ function Level() {
     this.currentLevel = this.allLevels.lvl1;
   };
 
+  this.timeToBlink = function() {
+    let blinkIt = false;
+    if ((State.playTime % this.bigDotBlinkTimer) < this.bigDotOffDur) {
+      blinkIt = true;
+    }
+    return blinkIt;
+  };
+
   this.drawDots = function() {
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
         if (this.currentLevel[r][c] === 0) { // it's a dot! so print it!
           ctx.beginPath();
           ctx.fillStyle = Colors.white;
-          // ctx.arc(x,y,radius,sAngle,eAngle);
-          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 3 , 0 , Math.PI*2 );
+          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 3 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
           ctx.fill();
-        } else if (this.currentLevel[r][c] === 'B') {  // bonus dots
+        } else if ( (this.currentLevel[r][c] === 'B') && (this.timeToBlink() === false) ) {  // bonus dots
           ctx.beginPath();
           ctx.fillStyle = Colors.white;
-          // ctx.arc(x,y,radius,sAngle,eAngle);
-          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 12 , 0 , Math.PI*2 );
+
+          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 14 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
           ctx.fill();
         } else {
           // it's not a dot
@@ -258,7 +268,7 @@ function Level() {
 
       roundRect(s*23, s*7, s*3, s*1, corner);
 
-      // GHOST HOME
+      // GHOST HOUSE
       ctx.beginPath();
       ctx.moveTo(s*13,s*13);
       ctx.lineTo(s*11,s*13);

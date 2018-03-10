@@ -22,6 +22,7 @@ var State = {
   gameStarted: false,
   myReq: undefined,
   playTime: 0,
+  playStart: undefined,
   lastFrameTimeMs: 0, // The last time the loop was run
   maxFPS: 60, // The maximum FPS allowed
   pageLoadTime: 0,
@@ -31,6 +32,12 @@ var State = {
   gridHeight: 31,
   lastDirKey: 'none'
 };
+
+// scoring
+// 200 PTS for eating a ghost
+// 10 for small DOT
+// 50 for large DOT
+
 
 function Game(updateDur) {
   this.paused = false;
@@ -61,6 +68,7 @@ function Game(updateDur) {
     this.myLevel = new Level();
     this.myLevel.init();
   };
+
   this.toggleLvl = function() {
     if (this.lvlOnType === 2) {
       this.lvlOnType = 0;
@@ -68,6 +76,13 @@ function Game(updateDur) {
       this.lvlOnType += 1;
     }
   };
+
+  this.updatePlayTime = function() {
+    State.playTime = performance.now() - State.playStart;
+    let roundedPlayTime = Math.floor(State.playTime / 1000);
+    $('#clock').text(roundedPlayTime);
+  };
+
   this.drawGrid = function() {
     for (let i = 0; i < State.gridWidth+2; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
@@ -77,15 +92,18 @@ function Game(updateDur) {
       drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
     }
   };
+
   this.drawBG = function() {
     ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
     ctx.drawImage(this.bg,4,4,CANVAS.width-9,CANVAS.height-9);
   };
+
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
     if (this.myPac) this.myPac.draw();
   };
+
   this.update = function() {
     // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
     this.timeGap = performance.now() - this.lastUpdate;
@@ -103,6 +121,8 @@ function Game(updateDur) {
       }
       this.lastUpdate = performance.now();
     }
+
+    this.updatePlayTime();
   };
 }
 
@@ -201,6 +221,8 @@ function keyDown(event) {
 //////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
 
+  State.pageLoadTime = performance.now();
+
   CANVAS =  $('#canvas')[0];
   ctx =  CANVAS.getContext('2d');
   CANVAS.addEventListener('keydown',keyDown,false);
@@ -216,16 +238,14 @@ $(document).ready(function() {
   State.loopRunning = true;
   State.myReq = requestAnimationFrame(gameLoop);
 
-  setInterval(clockTimer, 1000);
+  // setInterval(clockTimer, 1000);
 
   $('#start-btn').click(function() {
     console.log("start button clicked");
-    if (State.myReq !== undefined) {
+    if (State.myReq !== undefined) {  // reset game loop if already started
       cancelAnimationFrame(State.myReq);
       State.myReq = null;
-      console.log('canceled old anim frame');
-      console.log('State.myReq = ', State.myReq);
-    }  // reset game loop if already started
+    }
     myGame = new Game(10); // param = ms per update()
     State.loopRunning = true;
     myGame.init();
@@ -233,6 +253,7 @@ $(document).ready(function() {
     State.gameStarted = true;
     CANVAS.focus();  // set focus to canvas on start so keybindings work
     State.myReq = requestAnimationFrame(gameLoop);
+    State.playStart = performance.now();
   });
 
   // $("#stop").click(function() {
