@@ -4,15 +4,17 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.spriteSheet = null;
+  this.spriteSheet = new Image();
   this.spriteFrameDur = 100;
 
   this.init = function(img) {
-    this.spriteSheet = 'img/blinky.png';
+    this.spriteSheet.src = 'img/blinky.png';
   };
   this.draw = function() {
-    // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-
+    // void ctx.drawImage(image, dx, dy);
+    // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+    // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    ctx.drawImage(this.spriteSheet, this.x-State.gridSpacing+2, this.y-State.gridSpacing+2,State.gridSpacing*2-4,State.gridSpacing*2-4);
   };
   this.update = function() {
     // update positions

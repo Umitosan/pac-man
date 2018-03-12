@@ -70,8 +70,8 @@ function Game(updateDur) {
     this.myPac.init();
     this.myLevel = new Level();
     this.myLevel.init();
-    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*13,
-                                /*   y  */  State.gridSpacing*13,
+    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14+State.gridSpacing/2,
+                                /*   y  */  State.gridSpacing*12,
                                 /* name */  "blinky"
                               ));
     this.ghosts[0].init();
@@ -121,6 +121,7 @@ function Game(updateDur) {
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
+    if (this.ghosts[0] !== undefined) this.ghosts[0].draw();
     if (this.myPac) this.myPac.draw();
   };
 
