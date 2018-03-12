@@ -4,14 +4,15 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
+  this.spriteSheet = null;
   this.spriteFrameDur = 100;
 
-  this.init = function() {
-    // init
+  this.init = function(img) {
+    this.spriteSheet = 'img/blinky.png';
   };
   this.draw = function() {
     // draw slice of image:   drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-    
+
   };
   this.update = function() {
     // update positions

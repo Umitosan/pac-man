@@ -13,6 +13,7 @@
 // GAME
 ///////////////////
 
+
 var CANVAS = undefined;
 var ctx = undefined;
 var myGame = undefined;
@@ -61,7 +62,7 @@ function Game(updateDur) {
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
                           /* velocity */      3,
-                          /* width */         (State.gridSpacing*2+2)-12,
+                          /* width */         (State.gridSpacing*2)-10,
                           /* direction */     'right',
                           /* moveState */     'stop'
                         );
@@ -69,6 +70,11 @@ function Game(updateDur) {
     this.myPac.init();
     this.myLevel = new Level();
     this.myLevel.init();
+    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*13,
+                                /*   y  */  State.gridSpacing*13,
+                                /* name */  "blinky"
+                              ));
+    this.ghosts[0].init();
   };
 
   this.toggleLvl = function() {
@@ -264,7 +270,6 @@ $(document).ready(function() {
     myGame = new Game(10); // param = ms per update()
     State.loopRunning = true;
     myGame.init();
-    console.log('myGame.myLevel.currentLevel = ', myGame.myLevel.currentLevel);
     State.gameStarted = true;
     CANVAS.focus();  // set focus to canvas on start so keybindings work
     State.myReq = requestAnimationFrame(gameLoop);
