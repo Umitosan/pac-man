@@ -165,9 +165,9 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       this.y += this.vel;
     } else {
-      console.log(' slide problems ');
+      console.log(' move pac problems ');
     }
-  }; // slide
+  }; //move
 
   this.draw = function() {
     // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
@@ -211,7 +211,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
             this.changeDir(State.lastDirKey);
             State.lastDirKey = 'none';
           } else if ( atGridIntersection(this.x,this.y) && (this.inBounds(this.direction) === false) ) {
-            console.log('collision!');
+            // console.log('collision!');
             this.moveState = 'stop';
             State.lastDirKey = 'none';
             this.hopToIn();

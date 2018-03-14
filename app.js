@@ -74,7 +74,10 @@ function Game(updateDur) {
                                 /*   y  */  State.gridSpacing*12,
                                 /* name */  "blinky"
                               ));
-    this.ghosts[0].init();
+    for (let g=0;g < this.ghosts.length; g++ ) {
+      this.ghosts[g].init('img/blinky_chase.png');
+      let src = this.ghosts[g].spriteSheet.src;
+    }
   };
 
   this.toggleLvl = function() {
@@ -121,7 +124,11 @@ function Game(updateDur) {
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
-    if (this.ghosts[0] !== undefined) this.ghosts[0].draw();
+    if (this.ghosts.length > 0) {
+      for (let g=0;g < this.ghosts.length; g++ ) {
+        this.ghosts[g].draw();
+      }
+    }
     if (this.myPac) this.myPac.draw();
   };
 
@@ -139,6 +146,9 @@ function Game(updateDur) {
       // console.log('timesToUpdate = ', timesToUpdate);
       for (let i=1; i < timesToUpdate; i++) {
         this.myPac.update();
+        for (let g=0;g < this.ghosts.length; g++ ) {
+          this.ghosts[g].update();
+        }
       }
       this.lastUpdate = performance.now();
     }

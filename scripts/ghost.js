@@ -4,31 +4,55 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.velocity = 3;
+  this.velocity = 2;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
   this.moveState = 'chase'; // chase, flee, base
-  this.spriteSheet = new Image();
-  this.spriteFrameDur = 100;
 
-  this.init = function(img) {
-    this.spriteSheet.src = 'img/blinky.png';
+  this.spriteSheet = new Image();
+  this.curFrame = 3;
+  this.spriteFrameDur = 100;
+  this.spriteFrameWidth = 64;  // in pixels
+
+  this.init = function(imgSrc) {
+    this.spriteSheet.src = imgSrc;
   };
 
   this.moveGhost = function() {
-
-  };
+    if ( (this.direction === 'left') || (this.direction === 'right') ) {
+      this.x += this.velocity;
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
+      this.y += this.vel;
+    } else {
+      console.log(' move ghost problems ');
+    }
+  }; // move
 
   this.findBestDirection = function() {
 
-  };
+  }; // findBestDirection
 
   this.draw = function() {
     // void ctx.drawImage(image, dx, dy);
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    ctx.drawImage(this.spriteSheet, this.x-State.gridSpacing+2, this.y-State.gridSpacing+3,State.gridSpacing*2-4,State.gridSpacing*2-4);
+    // ctx.drawImage(this.spriteSheet,
+    //               this.x-State.gridSpacing+2,
+    //               this.y-State.gridSpacing+3,
+    //               State.gridSpacing*2-4,
+    //               State.gridSpacing*2-4
+    //               );
+    ctx.drawImage( /*image*/   this.spriteSheet,
+                   /* sx */    this.curFrame*(this.spriteFrameWidth+1), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+                   /* sy */    1,
+                   /*sWidth*/  this.spriteFrameWidth-1,
+                   /*sHeight*/ this.spriteFrameWidth-1,
+                   /* dx */    this.x-State.gridSpacing+2,
+                   /* dy */    this.y-State.gridSpacing+3,
+                   /*dWidth*/  State.gridSpacing*2-4,
+                   /*dHidth*/  State.gridSpacing*2-4
+                );
   };
 
   this.update = function() {
@@ -38,8 +62,17 @@ function Ghost(x,y,name) {
     //  always prefer going in a direction that will reduce the distance to targetX or targetY
     //    maybe add randomization when 2 options are equally good
     // set new direction
+    if ( (this.moveState === 'chase') && (myGame.myPac.moveState === 'go') ) {
+      this.moveGhost();
+    } else if (this.moveState === 'flee') {
 
-  };
+    } else if (this.moveState === 'base') {
+
+    } else {
+      // ghost doesn't move
+    }
+
+  }; // update
 
 } // GHOST
 
