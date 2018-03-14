@@ -57,17 +57,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     return bounds;
   }; // inBounds
 
-  this.atGridIntersection = function() {
-    var atInter = false;
-    var xDis = ( (this.x) % State.gridSpacing );
-    var yDis = ( (this.y) % State.gridSpacing );
-    if ( (xDis <= 3) && (yDis <= 3) ) {
-      atInter = true;
-    }
-    // console.log("at interseciton ");
-    return atInter;
-  };
-
   this.getNearestIntersection = function(someX, someY) {
     let sp = State.gridSpacing;
 
@@ -234,11 +223,11 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
             }
         } else if (State.lastDirKey !== 'none') {
           // console.log('else if 2');
-          if ( this.atGridIntersection() && (this.inBounds(State.lastDirKey) === true) ) {
+          if ( atGridIntersection(this.x,this.y) && (this.inBounds(State.lastDirKey) === true) ) {
             this.hopToIn();
             this.changeDir(State.lastDirKey);
             State.lastDirKey = 'none';
-          } else if ( this.atGridIntersection() && (this.inBounds(this.direction) === false) ) {
+          } else if ( atGridIntersection(this.x,this.y) && (this.inBounds(this.direction) === false) ) {
             console.log('collision!');
             this.moveState = 'stop';
             State.lastDirKey = 'none';

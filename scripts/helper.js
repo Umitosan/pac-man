@@ -106,6 +106,16 @@ function roundRect(x, y, w, h, r) {
   ctx.stroke();
 }
 
+function atGridIntersection(x,y) {
+  var atInter = false;
+  var xDis = ( (x) % State.gridSpacing );
+  var yDis = ( (y) % State.gridSpacing );
+  if ( (xDis <= 3) && (yDis <= 3) ) {
+    atInter = true;
+  }
+  return atInter;
+};
+
 
 // Older game loops
 //
