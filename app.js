@@ -8,6 +8,7 @@
 // sample level image
 // http://samentries.com/wp-content/uploads/2015/10/PacmanLevel-1.png
 
+// more info here http://pacman.wikia.com/wiki/Pac-Man_(game)
 
 ///////////////////
 // GAME
@@ -34,12 +35,31 @@ var State = {
   lastDirKey: 'none'
 };
 
+function hardReset() {
+  myGame = undefined;
+  State = {
+    loopRunning: false,
+    gameStarted: false,
+    myReq: undefined,
+    playTime: 0,
+    playStart: undefined,
+    lastFrameTimeMs: 0, // The last time the loop was run
+    maxFPS: 60, // The maximum FPS allowed
+    pageLoadTime: 0,
+    frameCounter: 0,
+    gridSpacing: 25, // dimentions of grid in pixels
+    gridWidth: 28,
+    gridHeight: 31,
+    lastDirKey: 'none'
+  };
+  clearCanvas();
+}
+
 // SCORING
 // Pac-Dot - 10 points.
 // Power Pellet - 50 points.
 // Vulnerable Ghosts: #1 in succession - 200 points. #2 in succession - 400 points. #3 in succession - 800 points. #4 in succession - 1600 points.
 // Fruit: Cherry: 100 points. Strawberry: 300 points. Orange: 500 points. Apple: 700 points. Melon: 1000 points
-
 
 function Game(updateDur) {
   this.paused = false;
@@ -78,6 +98,11 @@ function Game(updateDur) {
       this.ghosts[g].init('img/blinky_chase.png');
       let src = this.ghosts[g].spriteSheet.src;
     }
+  };
+
+  this.resetUpdateGap = function() {
+    this.timeGap = 0;
+    this.lastUpdate = 0;
   };
 
   this.toggleLvl = function() {
@@ -136,14 +161,14 @@ function Game(updateDur) {
     // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
     this.timeGap = performance.now() - this.lastUpdate;
 
-    if (this.paused === true) { // this prevents pac from updating many times after UNpausing
+    if ( (this.paused === true) || (State.playTime < 1) ) { // this prevents pac from updating many times after UNpausing
       this.lastUpdate = performance.now();
       this.timeGap = 0;
     }
 
     if ( this.timeGap >= this.updateDuration ) {
       let timesToUpdate = this.timeGap / this.updateDuration;
-      // console.log('timesToUpdate = ', timesToUpdate);
+      // if (timesToUpdate > 2) { console.log('timesToUpdate = ', timesToUpdate); }
       for (let i=1; i < timesToUpdate; i++) {
         this.myPac.update();
         for (let g=0;g < this.ghosts.length; g++ ) {
@@ -154,7 +179,7 @@ function Game(updateDur) {
     }
 
     this.updatePlayTime();
-  };
+  }; // game update
 }
 
 
@@ -166,10 +191,10 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  if ( (State.loopRunning) && (State.gameStarted) ) { myGame.update();  }
+  if ( (State.loopRunning === true) && (State.gameStarted === true) ) { myGame.update();  }
 
   clearCanvas();
-  if (!State.gameStarted) {
+  if (State.gameStarted === false) {
     myGame.drawBG();
     ctx.beginPath();
     ctx.strokeStyle = Colors.blue;
@@ -269,26 +294,21 @@ $(document).ready(function() {
   State.loopRunning = true;
   State.myReq = requestAnimationFrame(gameLoop);
 
-  // setInterval(clockTimer, 1000);
-
   $('#start-btn').click(function() {
     console.log("start button clicked");
     if (State.myReq !== undefined) {  // reset game loop if already started
+      console.log('tried to cancel');
       cancelAnimationFrame(State.myReq);
-      State.myReq = null;
+      hardReset();
     }
     $('#score').text('0000');
     myGame = new Game(10); // param = ms per update()
-    State.loopRunning = true;
     myGame.init();
-    State.gameStarted = true;
     CANVAS.focus();  // set focus to canvas on start so keybindings work
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();
+    State.loopRunning = true;
+    State.gameStarted = true;
   });
-
-  // $("#stop").click(function() {
-  //   cancelAnimationFrame(State.myReq);
-  // });
 
 });

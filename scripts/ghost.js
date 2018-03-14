@@ -4,7 +4,7 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.velocity = 2;
+  this.vel = 1;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
@@ -19,26 +19,75 @@ function Ghost(x,y,name) {
     this.spriteSheet.src = imgSrc;
   };
 
-  // this.checkSides = function() {
-  //   let sides = null;
-  //   if (this.inBounds(this.direction) === false) {
-  //     sides = 'none';
-  //   } else {
-  //     sides = 'F';
-  //   }
-  //   return sides;
-  // };
+  this.updateTarget = function() {
+    this.targetX = myGame.myPac.x;
+    this.targetY = myGame.myPac.y;
+    console.log('target updated x,y = '+this.targetX+','+this.targetY);
+  };
 
   this.getNewDirection = function() {
-    // if () {
-    //
-    // } else if {
-    //
-    // } else if {
-    //
-    // } else {
-    //
-    // }
+    console.log('get new direction for ghost');
+    // only allow ghost to turn right or left, no turning back the way he came
+    let xDif = this.x - myGame.myPac.x;
+    let yDif = this.y - myGame.myPac.y;
+    if ( (this.direction === 'right') || (this.direction === 'left') ) {
+        if (yDif <= 0) { // pac below ghost - try down then up then remain forward
+          if (this.inBounds('down') === true) {
+            this.changeDir('down');
+          } else {
+            // keep same direction
+          }
+          console.log("ghost dir = ", this.direction);
+        } else if (yDif > 0) {  // pac above ghost -  try up then down then remain forward
+          if (this.inBounds('up') === true) {
+            this.changeDir('up');
+          } else {
+            // keep same direction
+          }
+          console.log("ghost dir = ", this.direction);
+        } else {
+          // nothing
+        }
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
+        if (xDif <= 0) { // pac right of ghost - try going right else left
+          if (this.inBounds('right') === true) {
+            this.changeDir('right');
+          } else {
+            // keep same direction
+          }
+          console.log("ghost dir = ", this.direction);
+        } else if (xDif > 0) {  // pac above ghost - try going up else down
+          if (this.inBounds('left') === true) {
+            this.changeDir('left');
+          } else {
+            // keep same direction
+          }
+          console.log("ghost dir = ", this.direction);
+        } else {
+          // keep going in same direction
+        }
+    } else {
+      console.log('ghost getNewDirection problems');
+    }
+  };
+
+  this.changeDir = function(newDir) {
+    this.direction = newDir;
+    if (newDir === 'left') {
+      this.vel = -Math.abs(this.vel);
+    } else if (newDir === 'right') {
+      this.vel = Math.abs(this.vel);
+    } else if (newDir === 'up') {
+      this.vel = -Math.abs(this.vel);
+    } else if (newDir === 'down') {
+      this.vel = Math.abs(this.vel);
+    } else {
+      console.log(' changeDir problems ');
+    }
+    console.log('changeDir to ', this.direction);
+    this.hopToIn();
+    this.moveGhost();
+    this.moveState = 'chase';
   };
 
   this.inBounds = function(tDir) {
@@ -67,6 +116,13 @@ function Ghost(x,y,name) {
     return bounds;
   }; // inBounds
 
+  this.hopToIn = function() {
+    let data = getNearestIntersection(this.x,this.y);
+    this.x = (data.col+1)*State.gridSpacing;
+    this.y = (data.row+1)*State.gridSpacing;
+    // console.log('pac x,y = '+ this.x +","+this.y );
+  };
+
   this.nextFrame = function() {
     if (this.curFrame === 3) {
       this.curFrame = 4;
@@ -78,8 +134,9 @@ function Ghost(x,y,name) {
   }; // nextFrame
 
   this.moveGhost = function() {
+    console.log("trying to move ghost = ", this.direction);
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      this.x += this.velocity;
+      this.x += this.vel;
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       this.y += this.vel;
     } else {
@@ -96,9 +153,9 @@ function Ghost(x,y,name) {
                    /*sWidth*/  this.spriteFrameWidth,
                    /*sHeight*/ this.spriteFrameWidth,
                    /* dx */    this.x-State.gridSpacing+2,
-                   /* dy */    this.y-State.gridSpacing+3,
-                   /*dWidth*/  State.gridSpacing*2-4,
-                   /*dHidth*/  State.gridSpacing*2-4
+                   /* dy */    this.y-State.gridSpacing+2,
+                   /*dWidth*/  State.gridSpacing*2-6,
+                   /*dHidth*/  State.gridSpacing*2-6
                 );
   };
 
@@ -109,20 +166,19 @@ function Ghost(x,y,name) {
     //  always prefer going in a direction that will reduce the distance to targetX or targetY
     //    maybe add randomization when 2 options are equally good
     // set new direction
-    if ( (this.moveState === 'chase') && (myGame.myPac.moveState === 'go') ) {
+    if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
         // if at intersection check which way to go
-        if ( atGridIntersection(this.x,this.y) ) {
-          if (this.inBounds(this.direction) === false) {
-            this.moveState = 'stop';
-            console.log('ghost stopped');
+        if ( atGridIntersection(this.x,this.y,this.vel) ) {
+          // if (this.inBounds(this.direction) === false) {
+            this.updateTarget();
             this.getNewDirection();
-          } else {
             this.moveGhost();
-          }
+          // } else {
+          //   this.moveGhost();
+          // }
         } else {
           this.moveGhost();
         }
-
     } else if (this.moveState === 'flee') {
       // run to designated corner of screen
     } else if (this.moveState === 'base') {

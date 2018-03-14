@@ -106,11 +106,12 @@ function roundRect(x, y, w, h, r) {
   ctx.stroke();
 }
 
-function atGridIntersection(x,y) {
+function atGridIntersection(x,y,vel) {
   var atInter = false;
+  var offset = Math.abs(vel);
   var xDis = ( (x) % State.gridSpacing );
   var yDis = ( (y) % State.gridSpacing );
-  if ( (xDis <= 3) && (yDis <= 3) ) {
+  if ( (xDis <= offset) && (yDis <= offset) ) {
     atInter = true;
   }
   return atInter;

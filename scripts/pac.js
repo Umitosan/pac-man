@@ -208,11 +208,11 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
             }
         } else if (State.lastDirKey !== 'none') {
           // console.log('else if 2');
-          if ( atGridIntersection(this.x,this.y) && (this.inBounds(State.lastDirKey) === true) ) {
+          if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(State.lastDirKey) === true) ) {
             this.hopToIn();
             this.changeDir(State.lastDirKey);
             State.lastDirKey = 'none';
-          } else if ( atGridIntersection(this.x,this.y) && (this.inBounds(this.direction) === false) ) {
+          } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
             // console.log('collision!');
             this.moveState = 'stop';
             State.lastDirKey = 'none';
