@@ -8,16 +8,74 @@ function Ghost(x,y,name) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
-  this.moveState = 'chase'; // chase, flee, base
+  this.moveState = 'chase'; // chase, flee, base, stop
 
   this.spriteSheet = new Image();
-  this.curFrame = 2;
+  this.curFrame = 3;
   this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
 
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
   };
+
+  // this.checkSides = function() {
+  //   let sides = null;
+  //   if (this.inBounds(this.direction) === false) {
+  //     sides = 'none';
+  //   } else {
+  //     sides = 'F';
+  //   }
+  //   return sides;
+  // };
+
+  this.getNewDirection = function() {
+    // if () {
+    //
+    // } else if {
+    //
+    // } else if {
+    //
+    // } else {
+    //
+    // }
+  };
+
+  this.inBounds = function(tDir) {
+    var bounds = 'none';
+    var sp = State.gridSpacing;
+    var off = 10;
+
+    switch (true) {
+      case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
+        console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
+        bounds = false;  break;
+      case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
+        console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
+        bounds = false;  break;
+      case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
+        console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
+        bounds = false;  break;
+      case ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ):
+        console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+        bounds = false;  break;
+      default:
+        // console.log('no bounds hit, keep going fwd');
+        bounds = true; break;
+    }
+
+    return bounds;
+  }; // inBounds
+
+  this.nextFrame = function() {
+    if (this.curFrame === 3) {
+      this.curFrame = 4;
+    } else if (this.curFrame === 4) {
+      this.curFrame = 3;
+    } else {
+      console.log('ghost nextFrame problmes');
+    }
+  }; // nextFrame
 
   this.moveGhost = function() {
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
@@ -29,35 +87,14 @@ function Ghost(x,y,name) {
     }
   }; // move
 
-  this.findBestDirection = function() {
-
-  }; // findBestDirection
-
-  this.nextFrame = function() {
-    if (this.curFrame === 2) {
-      this.curFrame = 3;
-    } else if (this.curFrame === 3) {
-      this.curFrame = 2;
-    } else {
-      console.log('ghost nextFrame problmes');
-    }
-  };
-
   this.draw = function() {
-    // void ctx.drawImage(image, dx, dy);
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    // ctx.drawImage(this.spriteSheet,
-    //               this.x-State.gridSpacing+2,
-    //               this.y-State.gridSpacing+3,
-    //               State.gridSpacing*2-4,
-    //               State.gridSpacing*2-4
-    //               );
     ctx.drawImage( /*image*/   this.spriteSheet,
-                   /* sx */    this.curFrame*(this.spriteFrameWidth+1), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
-                   /* sy */    1,
-                   /*sWidth*/  this.spriteFrameWidth-1,
-                   /*sHeight*/ this.spriteFrameWidth-1,
+                   /* sx */    (this.curFrame-1)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+                   /* sy */    0,
+                   /*sWidth*/  this.spriteFrameWidth,
+                   /*sHeight*/ this.spriteFrameWidth,
                    /* dx */    this.x-State.gridSpacing+2,
                    /* dy */    this.y-State.gridSpacing+3,
                    /*dWidth*/  State.gridSpacing*2-4,
@@ -73,16 +110,30 @@ function Ghost(x,y,name) {
     //    maybe add randomization when 2 options are equally good
     // set new direction
     if ( (this.moveState === 'chase') && (myGame.myPac.moveState === 'go') ) {
-      if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
-      this.moveGhost();
+        // if at intersection check which way to go
+        if ( atGridIntersection(this.x,this.y) ) {
+          if (this.inBounds(this.direction) === false) {
+            this.moveState = 'stop';
+            console.log('ghost stopped');
+            this.getNewDirection();
+          } else {
+            this.moveGhost();
+          }
+        } else {
+          this.moveGhost();
+        }
+
     } else if (this.moveState === 'flee') {
-
+      // run to designated corner of screen
     } else if (this.moveState === 'base') {
-
+      // ghost was eaten move to base
+    } else if (this.moveState === 'stop') {
+      // nothin
     } else {
-      // ghost doesn't move
+      // nothin
     }
-
+    // update the animation frame
+    if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
   }; // update
 
 } // GHOST
