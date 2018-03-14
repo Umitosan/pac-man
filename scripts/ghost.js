@@ -11,8 +11,8 @@ function Ghost(x,y,name) {
   this.moveState = 'chase'; // chase, flee, base
 
   this.spriteSheet = new Image();
-  this.curFrame = 3;
-  this.spriteFrameDur = 100;
+  this.curFrame = 2;
+  this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
 
   this.init = function(imgSrc) {
@@ -32,6 +32,16 @@ function Ghost(x,y,name) {
   this.findBestDirection = function() {
 
   }; // findBestDirection
+
+  this.nextFrame = function() {
+    if (this.curFrame === 2) {
+      this.curFrame = 3;
+    } else if (this.curFrame === 3) {
+      this.curFrame = 2;
+    } else {
+      console.log('ghost nextFrame problmes');
+    }
+  };
 
   this.draw = function() {
     // void ctx.drawImage(image, dx, dy);
@@ -63,6 +73,7 @@ function Ghost(x,y,name) {
     //    maybe add randomization when 2 options are equally good
     // set new direction
     if ( (this.moveState === 'chase') && (myGame.myPac.moveState === 'go') ) {
+      if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
       this.moveGhost();
     } else if (this.moveState === 'flee') {
 
