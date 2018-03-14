@@ -38,17 +38,17 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     var sp = State.gridSpacing;
     var off = 10;
 
-    if ( (tDir === 'left') && ( this.getNearestIntersection(this.x-sp+off,this.y).char === "#") )  {
-      // console.log("LEFT bounds hit ", this.getNearestIntersection(this.x-sp+off,this.y) );
+    if ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") )  {
+      // console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
       bounds = false;
-    } else if ( (tDir === 'right') && ( this.getNearestIntersection(this.x+sp-off,this.y).char === "#") ) {
-      // console.log("RIGHT bounds hit ", this.getNearestIntersection(this.x+sp-off,this.y) );
+    } else if ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ) {
+      // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
       bounds = false;
-    } else if ( (tDir === 'up') && ( this.getNearestIntersection(this.x,this.y-sp+off).char === "#") ) {
-      // console.log("UP bounds hit ", this.getNearestIntersection(this.x,this.y-sp+off) );
+    } else if ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ) {
+      // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
       bounds = false;
-    } else if ( (tDir === 'down') && (( this.getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( this.getNearestIntersection(this.x,this.y+sp-off).char === "W")) ) {
-      // console.log("DOWN bounds hit ", this.getNearestIntersection(this.x,this.y+sp-off) );
+    } else if ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ) {
+      // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
       bounds = false;
     } else {
       bounds = true;
@@ -56,23 +56,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
     return bounds;
   }; // inBounds
-
-  this.getNearestIntersection = function(someX, someY) {
-    let sp = State.gridSpacing;
-
-    let foundRow = 'none';
-    let foundCol = 'none';
-    let foundChar = 'none';
-
-    foundRow = Math.round(someY/sp)-1; // -1 to offset the fact that arrays count starting at 0
-    foundCol = Math.round(someX/sp)-1;
-
-    foundChar = myGame.myLevel.currentLevel[ foundRow ][ foundCol ];
-
-    return { char: foundChar,
-              row: foundRow,
-              col: foundCol };
-  };
 
   this.changeDir = function(newDir) {
     if (newDir === 'left') {
@@ -112,14 +95,14 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.hopToIn = function() {
-    let data = this.getNearestIntersection(this.x,this.y);
+    let data = getNearestIntersection(this.x,this.y);
     this.x = (data.col+1)*State.gridSpacing;
     this.y = (data.row+1)*State.gridSpacing;
     console.log('pac x,y = '+ this.x +","+this.y );
   };
 
   this.tryEatPill = function() {
-    let data = this.getNearestIntersection(this.x,this.y);
+    let data = getNearestIntersection(this.x,this.y);
     let r = data.row;
     let c = data.col;
     if ( (data.char === 0) || (data.char === 'B') ) {

@@ -4,22 +4,44 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
+  this.velocity = 3;
+  this.targetX = 'none';
+  this.targetY = 'none';
+  this.direction = 'right';
+  this.moveState = 'chase'; // chase, flee, base
   this.spriteSheet = new Image();
   this.spriteFrameDur = 100;
 
   this.init = function(img) {
     this.spriteSheet.src = 'img/blinky.png';
   };
+
+  this.moveGhost = function() {
+
+  };
+
+  this.findBestDirection = function() {
+
+  };
+
   this.draw = function() {
     // void ctx.drawImage(image, dx, dy);
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    ctx.drawImage(this.spriteSheet, this.x-State.gridSpacing+2, this.y-State.gridSpacing+2,State.gridSpacing*2-4,State.gridSpacing*2-4);
+    ctx.drawImage(this.spriteSheet, this.x-State.gridSpacing+2, this.y-State.gridSpacing+3,State.gridSpacing*2-4,State.gridSpacing*2-4);
   };
+
   this.update = function() {
-    // update positions
+    // move to intersection
+    // find best direction
+    // try left, forward, right  (the order depends on targetX and targetY)
+    //  always prefer going in a direction that will reduce the distance to targetX or targetY
+    //    maybe add randomization when 2 options are equally good
+    // set new direction
+
   };
-}
+
+} // GHOST
 
 // Ghost personality overview
 //
