@@ -4,7 +4,7 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.vel = 1;
+  this.vel = 2;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
@@ -30,41 +30,46 @@ function Ghost(x,y,name) {
     // only allow ghost to turn right or left, no turning back the way he came
     let xDif = this.x - myGame.myPac.x;
     let yDif = this.y - myGame.myPac.y;
+    let newDir = null;
     if ( (this.direction === 'right') || (this.direction === 'left') ) {
-        if (yDif <= 0) { // pac below ghost - try down then up then remain forward
+        if (yDif < 0) { // pac below ghost - try down then up then remain forward
           if (this.inBounds('down') === true) {
             this.changeDir('down');
           } else {
-            // keep same direction
+            newDir = this.direction;
           }
           console.log("ghost dir = ", this.direction);
         } else if (yDif > 0) {  // pac above ghost -  try up then down then remain forward
           if (this.inBounds('up') === true) {
             this.changeDir('up');
           } else {
-            // keep same direction
+            newDir = this.direction;
           }
           console.log("ghost dir = ", this.direction);
+        } else if (yDif === 0) {
+          newDir = this.direction;
         } else {
-          // nothing
+          console.log('getNewDir right left problems');
         }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-        if (xDif <= 0) { // pac right of ghost - try going right else left
+        if (xDif < 0) { // pac right of ghost - try going right else left
           if (this.inBounds('right') === true) {
             this.changeDir('right');
           } else {
-            // keep same direction
+            newDir = this.direction;
           }
           console.log("ghost dir = ", this.direction);
         } else if (xDif > 0) {  // pac above ghost - try going up else down
           if (this.inBounds('left') === true) {
             this.changeDir('left');
           } else {
-            // keep same direction
+            newDir = this.direction;
           }
           console.log("ghost dir = ", this.direction);
+        } else if (xDif === 0) {
+          newDir = this.direction;
         } else {
-          // keep going in same direction
+          console.log('getNewDir up down problems');
         }
     } else {
       console.log('ghost getNewDirection problems');
@@ -109,7 +114,6 @@ function Ghost(x,y,name) {
         console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
         bounds = false;  break;
       default:
-        // console.log('no bounds hit, keep going fwd');
         bounds = true; break;
     }
 
