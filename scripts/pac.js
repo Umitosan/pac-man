@@ -30,7 +30,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     } else {
       // nothin
     }
-    console.log('pac state = ', this.moveState);
+    // console.log('pac state = ', this.moveState);
   };
 
   this.inBounds = function(tDir) {

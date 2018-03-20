@@ -10,6 +10,10 @@ function Ghost(x,y,name) {
   this.direction = 'right';
   this.moveState = 'chase'; // chase, flee, base, stop
 
+  this.intersectionPauseStarted = false;
+  this.intersectionPauseBegin = null; // beginning of wait period - performance.now()
+  this.intersectionPauseDur = 300; // time to wait at intersection when changing directions
+
   this.spriteSheet = new Image();
   this.curFrame = 3;
   this.spriteFrameDur = 150;
@@ -22,58 +26,57 @@ function Ghost(x,y,name) {
   this.updateTarget = function() {
     this.targetX = myGame.myPac.x;
     this.targetY = myGame.myPac.y;
-    console.log('target updated x,y = '+this.targetX+','+this.targetY);
+    // console.log('target updated x,y = '+this.targetX+','+this.targetY);
   };
 
-  this.getNewDirection = function() {
-    console.log('get new direction for ghost');
+  // BLINKY
+  this.getNewDirection = function() { // returns new direction based on pac's coords
+    // console.log('ghost: get new dir');
     // only allow ghost to turn right or left, no turning back the way he came
     let xDif = this.x - myGame.myPac.x;
     let yDif = this.y - myGame.myPac.y;
     let newDir = null;
     if ( (this.direction === 'right') || (this.direction === 'left') ) {
-        if (yDif < 0) { // pac below ghost - try down then up then remain forward
-          if (this.inBounds('down') === true) {
-            this.changeDir('down');
-          } else {
+        if (yDif < 0) { // pac below ghost
+          if (this.inBounds('down') === true) { // try down
+            newDir = 'down';
+          } else { // else straight
             newDir = this.direction;
           }
-          console.log("ghost dir = ", this.direction);
-        } else if (yDif > 0) {  // pac above ghost -  try up then down then remain forward
-          if (this.inBounds('up') === true) {
-            this.changeDir('up');
-          } else {
+        } else if (yDif > 0) {  // pac above ghost
+          if (this.inBounds('up') === true) { // try up
+            newDir = 'up';
+          } else { // else straight
             newDir = this.direction;
           }
-          console.log("ghost dir = ", this.direction);
         } else if (yDif === 0) {
           newDir = this.direction;
         } else {
-          console.log('getNewDir right left problems');
+          console.log('ghost: getNewDir right left prob');
         }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-        if (xDif < 0) { // pac right of ghost - try going right else left
+        if (xDif < 0) { // pac right of ghost - try right else straight
           if (this.inBounds('right') === true) {
-            this.changeDir('right');
+            newDir = 'right';
           } else {
             newDir = this.direction;
           }
-          console.log("ghost dir = ", this.direction);
-        } else if (xDif > 0) {  // pac above ghost - try going up else down
+        } else if (xDif > 0) {  // pac above ghost - try going up else straight
           if (this.inBounds('left') === true) {
-            this.changeDir('left');
+            newDir = 'left';
           } else {
             newDir = this.direction;
           }
-          console.log("ghost dir = ", this.direction);
         } else if (xDif === 0) {
           newDir = this.direction;
         } else {
-          console.log('getNewDir up down problems');
+          console.log('ghost: getNewDir up down prob');
         }
     } else {
-      console.log('ghost getNewDirection problems');
+      console.log('ghostL getNewDir prob');
     }
+    console.log("ghost: new dir = ", newDir);
+    return newDir;
   };
 
   this.changeDir = function(newDir) {
@@ -90,9 +93,9 @@ function Ghost(x,y,name) {
       console.log(' changeDir problems ');
     }
     console.log('changeDir to ', this.direction);
-    this.hopToIn();
-    this.moveGhost();
-    this.moveState = 'chase';
+    // this.hopToIn();
+    // this.moveGhost();
+    // this.moveState = 'chase';
   };
 
   this.inBounds = function(tDir) {
@@ -138,7 +141,7 @@ function Ghost(x,y,name) {
   }; // nextFrame
 
   this.moveGhost = function() {
-    console.log("trying to move ghost = ", this.direction);
+    // console.log("trying to move ghost = ", this.direction);
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
       this.x += this.vel;
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
@@ -164,6 +167,7 @@ function Ghost(x,y,name) {
   };
 
   this.update = function() {
+    // console.log('ghost state = ', this.moveState);
     // move to intersection
     // find best direction
     // try left, forward, right  (the order depends on targetX and targetY)
@@ -173,13 +177,18 @@ function Ghost(x,y,name) {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
         // if at intersection check which way to go
         if ( atGridIntersection(this.x,this.y,this.vel) ) {
-          // if (this.inBounds(this.direction) === false) {
             this.updateTarget();
-            this.getNewDirection();
-            this.moveGhost();
-          // } else {
-          //   this.moveGhost();
-          // }
+            let newDir = this.getNewDirection();
+            if (newDir !== this.direction) {
+              this.changeDir(newDir);
+              this.hopToIn();
+              // pause the ghost's movement for a short duration before continuing
+              this.moveState = 'stop';
+              this.intersectionPauseStarted = true;
+              this.intersectionPauseBegin = performance.now();
+            } else {
+              this.moveGhost();
+            }
         } else {
           this.moveGhost();
         }
@@ -188,7 +197,19 @@ function Ghost(x,y,name) {
     } else if (this.moveState === 'base') {
       // ghost was eaten move to base
     } else if (this.moveState === 'stop') {
-      // nothin
+          // console.log('ghost stopped');
+          // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );
+          // check to see if it's time to resume movement after an intersection
+          if (this.intersectionPauseStarted === true) {
+            if ((performance.now() - this.intersectionPauseBegin) > this.intersectionPauseDur) {
+              console.log('pause dif = ',(performance.now() - this.intersectionPauseBegin) );
+              this.intersectionPauseStarted = false;
+              this.intersectionPauseBegin = null;
+              this.moveState = 'chase';
+              this.moveGhost();
+              this.moveGhost();
+            }
+          }
     } else {
       // nothin
     }
