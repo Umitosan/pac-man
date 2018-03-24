@@ -12,7 +12,7 @@ function Ghost(x,y,name) {
 
   this.intersectionPauseStarted = false;
   this.intersectionPauseBegin = null; // beginning of wait period - performance.now()
-  this.intersectionPauseDur = 300; // time to wait at intersection when changing directions
+  this.intersectionPauseDur = 100; // time to wait at intersection when changing directions
 
   this.spriteSheet = new Image();
   this.curFrame = 3;
@@ -36,46 +36,64 @@ function Ghost(x,y,name) {
     let xDif = this.x - myGame.myPac.x;
     let yDif = this.y - myGame.myPac.y;
     let newDir = null;
-    if ( (this.direction === 'right') || (this.direction === 'left') ) {
-        if (yDif < 0) { // pac below ghost
+    if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
+        if (yDif < 0) { // ghost below pac: try DOWN>STRAIGHT>UP
           if (this.inBounds('down') === true) { // try down
             newDir = 'down';
-          } else { // else straight
+          } else if (this.inBounds(this.direction) === true) { // try straight
             newDir = this.direction;
+          } else if (this.inBounds('up') === true) { // try up
+            newDir = 'up';
+          } else {
+            console.log("getNewDirection probs");
           }
-        } else if (yDif > 0) {  // pac above ghost
+        } else if (yDif > 0) {  // ghost above pac: try UP>STRAIGHT>DOWN
           if (this.inBounds('up') === true) { // try up
             newDir = 'up';
-          } else { // else straight
+          } else if (this.inBounds(this.direction) === true) { // try straight
             newDir = this.direction;
-          }
-        } else if (yDif === 0) {
-          newDir = this.direction;
-        } else {
-          console.log('ghost: getNewDir right left prob');
-        }
-    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-        if (xDif < 0) { // pac right of ghost - try right else straight
-          if (this.inBounds('right') === true) {
-            newDir = 'right';
+          } else if (this.inBounds('down') === true) {
+            newDir = 'down';
           } else {
-            newDir = this.direction;
+            console.log("getNewDirection probs");
           }
-        } else if (xDif > 0) {  // pac above ghost - try going up else straight
-          if (this.inBounds('left') === true) {
+        } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // ghost on same Y as pac
+          newDir = this.getRandomTurnDir();
+        } else {
+          newDir = this.direction;
+          console.log('ghost: getNewDir default dir');
+        }
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) { // get new right or left or straight
+        if (xDif < 0) { // ghost right of pac: RIGHT>STRAIGHT>LEFT
+          if (this.inBounds('right') === true) { // try right
+            newDir = 'right';
+          } else if (this.inBounds(this.direction) === true) { // try straight
+            newDir = this.direction;
+          } else if (this.inBounds('left') === true) {
             newDir = 'left';
           } else {
-            newDir = this.direction;
+            console.log('ghost: getNewDir default dir');
           }
-        } else if (xDif === 0) {
-          newDir = this.direction;
+        } else if (xDif > 0) {  // ghost left of pac: LEFT>STRAIGHT>RIGHT
+          if (this.inBounds('left') === true) { // try left
+            newDir = 'left';
+          } else if (this.inBounds(this.direction) === true) { // try straight
+            newDir = this.direction;
+          } else if (this.inBounds('right') === true) {
+            newDir = 'right';
+          } else {
+            console.log('ghost: getNewDir default dir');
+          }
+        } else if ( (xDif === 0) && (this.inBounds(this.direction) === false) ) { // pac on same X as ghost
+          newDir = this.getRandomTurnDir();
         } else {
-          console.log('ghost: getNewDir up down prob');
+          newDir = this.direction;
+          console.log('ghost: getNewDir default dir');
         }
     } else {
-      console.log('ghostL getNewDir prob');
+      console.log('ghost: getNewDir prob');
     }
-    console.log("ghost: new dir = ", newDir);
+    console.log("ghost: getNewDirection = ", newDir);
     return newDir;
   };
 
@@ -93,9 +111,32 @@ function Ghost(x,y,name) {
       console.log(' changeDir problems ');
     }
     console.log('changeDir to ', this.direction);
-    // this.hopToIn();
-    // this.moveGhost();
-    // this.moveState = 'chase';
+  };
+
+  this.getRandomTurnDir = function() {
+    let newDir = null;
+    let roll = getRandomIntInclusive(0,1);
+    if ( (this.direction === 'right') || (this.direction === 'left') ) {
+      if ( (roll === 1) && (this.inBounds('up')) ) {
+        newDir = 'up';
+      } else if ( (roll === 0) && (this.inBounds('down')) )  {
+        newDir = 'down';
+      } else {
+        console.log('ghost: getRandomTurnDir UD prob');
+      }
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
+      if ( (roll === 1) && (this.inBounds('right')) ) {
+        newDir = 'right';
+      } else if ( (roll === 0) && (this.inBounds('left')) )  {
+        newDir = 'left';
+      } else {
+        console.log('ghost: getRandomTurnDir LR prob');
+      }
+    } else {
+      console.log('ghost: getRandomTurnDir prob');
+    }
+    console.log('rand new turn dir: ', newDir);
+    return newDir;
   };
 
   this.inBounds = function(tDir) {
@@ -167,7 +208,6 @@ function Ghost(x,y,name) {
   };
 
   this.update = function() {
-    // console.log('ghost state = ', this.moveState);
     // move to intersection
     // find best direction
     // try left, forward, right  (the order depends on targetX and targetY)
@@ -187,9 +227,11 @@ function Ghost(x,y,name) {
               this.intersectionPauseStarted = true;
               this.intersectionPauseBegin = performance.now();
             } else {
+              console.log('default 1 move');
               this.moveGhost();
             }
         } else {
+          console.log('default 2 move');
           this.moveGhost();
         }
     } else if (this.moveState === 'flee') {
