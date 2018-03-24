@@ -92,7 +92,8 @@ function Game(updateDur) {
     this.myLevel.init();
     this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14+State.gridSpacing/2,
                                 /*   y  */  State.gridSpacing*12,
-                                /* name */  "blinky"
+                                /* name */  "blinky",
+                                /*frame0*/ 2
                               ));
     for (let g=0;g < this.ghosts.length; g++ ) {
       this.ghosts[g].init('img/blinky_chase.png');

@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-function Ghost(x,y,name) {
+function Ghost(x,y,name,frame0) {
   this.x = x;
   this.y = y;
   this.name = name;
@@ -15,7 +15,8 @@ function Ghost(x,y,name) {
   this.intersectionPauseDur = 60; // time to wait at intersection when changing directions
 
   this.spriteSheet = new Image();
-  this.curFrame = 3;
+  this.frame0 = frame0;
+  this.curFrame = frame0;
   this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
 
@@ -28,6 +29,34 @@ function Ghost(x,y,name) {
     this.targetY = myGame.myPac.y;
     // console.log('target updated x,y = '+this.targetX+','+this.targetY);
   };
+
+  this.updateSprite = function(dir) {
+    if (dir === 'right') {
+      this.frame0 = 2;
+      this.curFrame = 2;
+    } else if (dir === 'left') {
+      this.frame0 = 0;
+      this.curFrame = 0;
+    } else if (dir === 'up') {
+      this.frame0 = 4;
+      this.curFrame = 4;
+    } else if (dir === 'down') {
+      this.frame0 = 6;
+      this.curFrame = 6;
+    } else {
+      console.log('ghost updateSprite probs');
+    }
+  };
+
+  this.nextFrame = function() { // updates animation frame
+    if (this.curFrame === this.frame0) {
+      this.curFrame++;
+    } else if (this.curFrame === (this.frame0+1)) {
+      this.curFrame = this.frame0;
+    } else {
+      console.log('ghost nextFrame problmes');
+    }
+  }; // nextFrame
 
   // BLINKY
   this.getNewDirection = function() { // returns new direction based on pac's coords
@@ -197,16 +226,6 @@ function Ghost(x,y,name) {
     // console.log('pac x,y = '+ this.x +","+this.y );
   };
 
-  this.nextFrame = function() {
-    if (this.curFrame === 3) {
-      this.curFrame = 4;
-    } else if (this.curFrame === 4) {
-      this.curFrame = 3;
-    } else {
-      console.log('ghost nextFrame problmes');
-    }
-  }; // nextFrame
-
   this.moveGhost = function() {
     let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
@@ -228,7 +247,7 @@ function Ghost(x,y,name) {
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     ctx.drawImage( /*image*/   this.spriteSheet,
-                   /* sx */    (this.curFrame-1)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+                   /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
                    /* sy */    0,
                    /*sWidth*/  this.spriteFrameWidth,
                    /*sHeight*/ this.spriteFrameWidth,
@@ -253,6 +272,7 @@ function Ghost(x,y,name) {
             let newDir = this.getNewDirection();
             if (newDir !== this.direction) {
               this.changeDir(newDir);
+              this.updateSprite(newDir);
               this.hopToIn();
               // pause the ghost's movement for a short duration before continuing
               this.moveState = 'stop';
