@@ -155,12 +155,12 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.movePac = function() {
-    let gap = 10;
+    let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (CANVAS.width-gap)) {  // handle the teleport at edges
-        this.x = gap*2;
-      } else if ((this.x+this.vel) < gap) {
-        this.x = CANVAS.width-(gap*2);
+      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+        this.x = edgeGap*2;
+      } else if ((this.x+this.vel) < edgeGap) {
+        this.x = CANVAS.width-(edgeGap*2);
       } else {
         this.x += this.vel;
       }

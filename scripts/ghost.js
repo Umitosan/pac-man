@@ -4,7 +4,7 @@ function Ghost(x,y,name) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.vel = 2;
+  this.vel = 2.5;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
@@ -208,9 +208,15 @@ function Ghost(x,y,name) {
   }; // nextFrame
 
   this.moveGhost = function() {
-    // console.log("trying to move ghost = ", this.direction);
+    let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      this.x += this.vel;
+      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+        this.x = edgeGap*2;
+      } else if ((this.x+this.vel) < edgeGap) {
+        this.x = CANVAS.width-(edgeGap*2);
+      } else {
+        this.x += this.vel;
+      }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       this.y += this.vel;
     } else {
