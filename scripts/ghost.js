@@ -15,6 +15,7 @@ function Ghost(x,y,name,frame0) {
   this.intersectionPauseDur = 60; // time to wait at intersection when changing directions
 
   this.spriteSheet = new Image();
+  this.spriteRow = 0;
   this.frame0 = frame0;
   this.curFrame = frame0;
   this.spriteFrameDur = 150;
@@ -27,7 +28,6 @@ function Ghost(x,y,name,frame0) {
   this.updateTarget = function() {
     this.targetX = myGame.myPac.x;
     this.targetY = myGame.myPac.y;
-    // console.log('target updated x,y = '+this.targetX+','+this.targetY);
   };
 
   this.updateSprite = function(dir) {
@@ -248,7 +248,7 @@ function Ghost(x,y,name,frame0) {
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     ctx.drawImage( /*image*/   this.spriteSheet,
                    /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
-                   /* sy */    0,
+                   /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
                    /*sWidth*/  this.spriteFrameWidth,
                    /*sHeight*/ this.spriteFrameWidth,
                    /* dx */    this.x-State.gridSpacing+2,

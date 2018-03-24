@@ -76,6 +76,10 @@ function Game(updateDur) {
   this.lvlOnType = 1;
   this.pxBoxOn = false;
 
+  this.bigPillEffect = false;
+  this.bigPillEffectDur = null;
+  this.bigPillEffectStart = null;
+
   this.init = function() {
     this.bg.src = 'img/reference1.png';
     // Pac(x,y,velocity,width,direction,moveState)
@@ -96,7 +100,7 @@ function Game(updateDur) {
                                 /*frame0*/ 2
                               ));
     for (let g=0;g < this.ghosts.length; g++ ) {
-      this.ghosts[g].init('img/blinky_chase.png');
+      this.ghosts[g].init('img/blinky.png');
       let src = this.ghosts[g].spriteSheet.src;
     }
   };
