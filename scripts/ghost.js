@@ -12,7 +12,7 @@ function Ghost(x,y,name) {
 
   this.intersectionPauseStarted = false;
   this.intersectionPauseBegin = null; // beginning of wait period - performance.now()
-  this.intersectionPauseDur = 100; // time to wait at intersection when changing directions
+  this.intersectionPauseDur = 60; // time to wait at intersection when changing directions
 
   this.spriteSheet = new Image();
   this.curFrame = 3;
@@ -57,7 +57,8 @@ function Ghost(x,y,name) {
           } else {
             console.log("getNewDirection probs");
           }
-        } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // ghost on same Y as pac
+        // pac on same Y as ghost, pick random right turn
+      } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward
           newDir = this.getRandomTurnDir();
         } else {
           newDir = this.direction;
@@ -84,7 +85,8 @@ function Ghost(x,y,name) {
           } else {
             console.log('ghost: getNewDir default dir');
           }
-        } else if ( (xDif === 0) && (this.inBounds(this.direction) === false) ) { // pac on same X as ghost
+        // pac on same X as ghost, pick random right turn
+        } else if ( (xDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward
           newDir = this.getRandomTurnDir();
         } else {
           newDir = this.direction;
@@ -93,7 +95,7 @@ function Ghost(x,y,name) {
     } else {
       console.log('ghost: getNewDir prob');
     }
-    console.log("ghost: getNewDirection = ", newDir);
+    // console.log("ghost: getNewDirection = ", newDir);
     return newDir;
   };
 
@@ -117,25 +119,49 @@ function Ghost(x,y,name) {
     let newDir = null;
     let roll = getRandomIntInclusive(0,1);
     if ( (this.direction === 'right') || (this.direction === 'left') ) {
-      if ( (roll === 1) && (this.inBounds('up')) ) {
-        newDir = 'up';
-      } else if ( (roll === 0) && (this.inBounds('down')) )  {
-        newDir = 'down';
+      if (roll === 1) {
+        if (this.inBounds('up') === true) {
+          newDir = 'up';
+        } else if (this.inBounds('down') === true) {
+          newDir = 'down';
+        } else {
+          console.log('cant random any direction');
+        }
+      } else if (roll === 0)  {
+        if (this.inBounds('down') === true) {
+          newDir = 'down';
+        } else if (this.inBounds('up') === true) {
+          newDir = 'up';
+        } else {
+          console.log('cant random any direction');
+        }
       } else {
         console.log('ghost: getRandomTurnDir UD prob');
       }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-      if ( (roll === 1) && (this.inBounds('right')) ) {
-        newDir = 'right';
-      } else if ( (roll === 0) && (this.inBounds('left')) )  {
-        newDir = 'left';
+      if (roll === 1) {
+        if (this.inBounds('right') === true) {
+          newDir = 'right';
+        } else if (this.inBounds('left') === true) {
+          newDir = 'left';
+        } else {
+          console.log('cant random any direction');
+        }
+      } else if (roll === 0) {
+        if (this.inBounds('left') === true) {
+          newDir = 'left';
+        } else if (this.inBounds('right') === true) {
+          newDir = 'right';
+        } else {
+          console.log('cant random any direction');
+        }
       } else {
         console.log('ghost: getRandomTurnDir LR prob');
       }
     } else {
       console.log('ghost: getRandomTurnDir prob');
     }
-    console.log('rand new turn dir: ', newDir);
+    // console.log('rand new turn dir: ', newDir);
     return newDir;
   };
 
@@ -146,16 +172,16 @@ function Ghost(x,y,name) {
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
-        console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
+        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
-        console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
+        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
-        console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
+        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
         bounds = false;  break;
       case ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ):
-        console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
         bounds = false;  break;
       default:
         bounds = true; break;
@@ -227,11 +253,11 @@ function Ghost(x,y,name) {
               this.intersectionPauseStarted = true;
               this.intersectionPauseBegin = performance.now();
             } else {
-              console.log('default 1 move');
+              // console.log('default 1 move');
               this.moveGhost();
             }
         } else {
-          console.log('default 2 move');
+          // console.log('default 2 move');
           this.moveGhost();
         }
     } else if (this.moveState === 'flee') {
@@ -244,7 +270,7 @@ function Ghost(x,y,name) {
           // check to see if it's time to resume movement after an intersection
           if (this.intersectionPauseStarted === true) {
             if ((performance.now() - this.intersectionPauseBegin) > this.intersectionPauseDur) {
-              console.log('pause dif = ',(performance.now() - this.intersectionPauseBegin) );
+              // console.log('pause dif = ',(performance.now() - this.intersectionPauseBegin) );
               this.intersectionPauseStarted = false;
               this.intersectionPauseBegin = null;
               this.moveState = 'chase';
