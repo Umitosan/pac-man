@@ -105,12 +105,16 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
   this.tryEatPill = function() {
     let data = getNearestIntersection(this.x,this.y);
+    let pillType = 'not pill';
     let r = data.row;
     let c = data.col;
     if ( (data.char === 0) || (data.char === 'B') ) {
+      pillType = data.char;
       myGame.updateScore(data.char);
       myGame.myLevel.currentLevel[r][c] = '-';
+
     }
+    return pillType;
   };
 
   this.nextMouth = function() {
@@ -202,7 +206,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
               State.lastDirKey = 'none';
               this.hopToIn();
             } else {
-              this.tryEatPill();
+              let pill = this.tryEatPill();
+              if (pill === 'B') { myGame.startGhostFleeState(); }
               this.movePac();
               this.nextMouth();
             }
@@ -218,7 +223,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
             State.lastDirKey = 'none';
             this.hopToIn();
           } else {
-            this.tryEatPill();
+            let pill = this.tryEatPill();
+            if (pill === 'B') { myGame.startGhostFleeState(); }
             this.movePac();
             this.nextMouth();
           }
@@ -232,7 +238,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           this.moveState = "go";
           this.changeDir(State.lastDirKey);
           State.lastDirKey = 'none';
-          this.tryEatPill();
+          let pill = this.tryEatPill();
+          if (pill === 'B') { myGame.startGhostFleeState(); }
           this.movePac();
           this.nextMouth();
         }

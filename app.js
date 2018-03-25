@@ -77,7 +77,7 @@ function Game(updateDur) {
   this.pxBoxOn = false;
 
   this.bigPillEffect = false;
-  this.bigPillEffectDur = null;
+  this.bigPillEffectDur = 10000; // milliseconds
   this.bigPillEffectStart = null;
 
   this.init = function() {
@@ -136,6 +136,25 @@ function Game(updateDur) {
     }
   };
 
+  this.startGhostFleeState = function() {
+    console.log('start ghost flee state');
+    for (let i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].startFlee();
+    }
+    this.bigPillEffect = true;
+    this.bigPillEffectStart = performance.now();
+  };
+
+  this.stopGhostFleeState = function() {
+    console.log('stop ghost flee state');
+    for (let i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].stopFlee();
+    }
+    this.bigPillEffect = false;
+    this.bigPillEffectStart = null;
+
+  };
+
   this.drawGrid = function() {
     for (let i = 0; i < State.gridWidth+2; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
@@ -165,8 +184,8 @@ function Game(updateDur) {
   this.update = function() {
     // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
     this.timeGap = performance.now() - this.lastUpdate;
-
-    if ( (this.paused === true) || (State.playTime < 1) ) { // this prevents pac from updating many times after UNpausing
+    // this prevents pac from updating many times after UNpausing
+    if ( (this.paused === true) || (State.playTime < 1) ) {
       this.lastUpdate = performance.now();
       this.timeGap = 0;
     }
@@ -175,12 +194,18 @@ function Game(updateDur) {
       let timesToUpdate = this.timeGap / this.updateDuration;
       // if (timesToUpdate > 2) { console.log('timesToUpdate = ', timesToUpdate); }
       for (let i=1; i < timesToUpdate; i++) {
-        this.myPac.update();
-        for (let g=0;g < this.ghosts.length; g++ ) {
-          this.ghosts[g].update();
-        }
+          this.myPac.update();
+          for (let g=0;g < this.ghosts.length; g++ ) {
+            this.ghosts[g].update();
+          }
       }
       this.lastUpdate = performance.now();
+    }
+
+    if (this.bigPillEffect === true) {
+      if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
+        this.stopGhostFleeState();
+      }
     }
 
     this.updatePlayTime();
