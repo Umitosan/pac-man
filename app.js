@@ -77,7 +77,7 @@ function Game(updateDur) {
   this.pxBoxOn = false;
 
   this.bigPillEffect = false;
-  this.bigPillEffectDur = 10000; // milliseconds
+  this.bigPillEffectDur = 8000; // milliseconds
   this.bigPillEffectStart = null;
 
   this.init = function() {

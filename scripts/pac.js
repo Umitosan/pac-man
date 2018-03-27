@@ -117,6 +117,22 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     return pillType;
   };
 
+  this.checkHitGhost = function() {
+    // pac diameter
+    // ghost State.gridSpacing * 2
+    let xDif = Math.abs(myGame.ghosts[0].x - this.x);
+    let yDif = Math.abs(myGame.ghosts[0].y - this.y);
+    // let px = this.x;
+    // let py = this.y;
+    // let gx = myGame.ghosts[0].x;
+    // let gy = myGame.ghosts[0].x;
+    if ( ((xDif < 20) && (yDif < 20))
+       ){
+         console.log('pac hit ghost');
+         myGame.startGhostFleeState();
+       }
+  };
+
   this.nextMouth = function() {
     if ( (this.mouthSize+this.mouthVel) >= this.maxMouthSize ) {
       this.mouthVel = -Math.abs(this.mouthVel);
@@ -231,6 +247,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
         } else {
           console.log("[lastDirKey problems]");
         }
+      this.checkHitGhost();
     } else if (this.moveState === 'stop') {
       if (State.lastDirKey !== 'none') {
         // console.log('else if 3');

@@ -239,6 +239,14 @@ function Ghost(x,y,name,frame0) {
     this.updateSprite(this.direction);
   };
 
+  this.initEaten = function() {
+    // ghost eaten by pac
+    // small pause
+    // update sprite
+    // update goal to inside ghost house
+    // update velocity
+  };
+
   this.moveGhost = function() {
     let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
