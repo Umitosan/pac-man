@@ -217,8 +217,7 @@ function Game(updateDur) {
     if (this.bigPillEffect === true) {
       if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
         this.stopGhostFleeState();
-      }
-      if ((performance.now() - this.bigPillEffectStart) > 5000) { // blink ghosts for last 3 seconds of flee
+      } else if ((performance.now() - this.bigPillEffectStart) > 5000) { // blink ghosts for last 3 seconds of flee
         this.startGhostsBlinking();
       }
     }
