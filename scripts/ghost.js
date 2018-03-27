@@ -31,8 +31,18 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.updateTarget = function() {
-    this.targetX = myGame.myPac.x;
-    this.targetY = myGame.myPac.y;
+    if (this.moveState === 'chase') {
+      this.targetX = myGame.myPac.x;
+      this.targetY = myGame.myPac.y;
+    } else if (this.moveState === 'flee') {
+      this.targetX = State.gridSpacing*1;
+      this.targetY = State.gridSpacing*1;
+    } else if (this.moveState === 'base') {
+      this.targetX = State.gridSpacing*13;
+      this.targetY = State.gridSpacing*14;
+    } else {
+
+    }
   };
 
   // BLINKY
@@ -40,16 +50,10 @@ function Ghost(x,y,name,frame0) {
     // console.log('ghost: get new dir');
     // only allow ghost to turn right or left, no turning back the way he came
     let xDif, yDif;
-    if (this.moveState === 'chase') {
-      xDif = this.x - myGame.myPac.x;
-      yDif = this.y - myGame.myPac.y;
-    } else if (this.moveState === 'flee') { // blinky flees to top left corner
-      xDif = this.x - State.gridSpacing*1;
-      yDif = this.y - State.gridSpacing*1;
-    } else {
-      console.log('getNewDirection move state prob');
-    }
     let newDir = null;
+    this.updateTarget();
+    xDif = this.x - this.targetX;
+    yDif = this.y - this.targetY;
     if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
         if (yDif < 0) { // ghost below pac: try DOWN>STRAIGHT>UP
           if (this.inBounds('down') === true) { // try down
@@ -257,7 +261,6 @@ function Ghost(x,y,name,frame0) {
     this.frameTotal = 2;
     this.moveState = 'chase';
     this.updateSprite(this.direction);
-    console.log('frame total = ', this.frameTotal);
   };
 
   this.startBlinking = function() {
@@ -271,24 +274,15 @@ function Ghost(x,y,name,frame0) {
     // update sprite
     // update goal to inside ghost house
     // update velocity
-  };
+    this.moveState = 'base';
+    this.updateTarget();
+    this.tmpPause(200);
+    this.spriteRow = 1;
+    this.frameTotal = 1;
+    this.updateSpriteFlee();
 
-  this.moveGhost = function() {
-    let edgeGap = 10;
-    if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
-        this.x = edgeGap*2;
-      } else if ((this.x+this.vel) < edgeGap) {
-        this.x = CANVAS.width-(edgeGap*2);
-      } else {
-        this.x += this.vel;
-      }
-    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-      this.y += this.vel;
-    } else {
-      console.log(' move ghost problems ');
-    }
-  }; // move
+
+  };
 
   this.updateSprite = function(dir) {
     if (dir === 'right') {
@@ -308,6 +302,24 @@ function Ghost(x,y,name,frame0) {
     }
   };
 
+  this.updateSpriteFlee = function(dir) {
+    if (dir === 'right') {
+      this.frame0 = 5;
+      this.curFrame = 5;
+    } else if (dir === 'left') {
+      this.frame0 = 4;
+      this.curFrame = 4;
+    } else if (dir === 'up') {
+      this.frame0 = 6;
+      this.curFrame = 6;
+    } else if (dir === 'down') {
+      this.frame0 = 7;
+      this.curFrame = 7;
+    } else {
+      console.log('ghost updateSpriteFlee probs');
+    }
+  };
+
   this.nextFrame = function() { // updates animation frame
     if (this.curFrame < (this.frame0 + this.frameTotal-1)) {
       this.curFrame += 1;
@@ -315,6 +327,23 @@ function Ghost(x,y,name,frame0) {
       this.curFrame = this.frame0;
     }
   }; // nextFrame
+
+  this.moveGhost = function() {
+    let edgeGap = 10;
+    if ( (this.direction === 'left') || (this.direction === 'right') ) {
+      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+        this.x = edgeGap*2;
+      } else if ((this.x+this.vel) < edgeGap) {
+        this.x = CANVAS.width-(edgeGap*2);
+      } else {
+        this.x += this.vel;
+      }
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
+      this.y += this.vel;
+    } else {
+      console.log(' move ghost problems ');
+    }
+  }; // move
 
   this.draw = function() {
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
@@ -363,7 +392,19 @@ function Ghost(x,y,name,frame0) {
           this.moveGhost();
         }
     } else if (this.moveState === 'base') {
-      // ghost was eaten move to base
+        // ghost was eaten move to base
+        if ( atGridIntersection(this.x,this.y,this.vel) ) {
+            let newDir = this.getNewDirection();
+            if (newDir !== this.direction) {
+              this.changeDir(newDir);
+              this.updateSpriteFlee(newDir);
+              this.hopToIn();
+            } else {
+              this.moveGhost();
+            }
+        } else {
+          this.moveGhost();
+        }
     } else if (this.moveState === 'paused') {
           // console.log('ghost stopped');
           // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );
