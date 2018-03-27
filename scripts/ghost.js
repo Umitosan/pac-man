@@ -9,7 +9,7 @@ function Ghost(x,y,name,frame0) {
   this.targetY = 'none';
   this.direction = 'right';
   this.moveState = 'chase'; // chase, flee, base, stop, intersection
-  this.lastMoveState = 'intersection';
+  this.lastMoveState = 'paused';
 
   this.intersectionPauseStarted = false;
   this.intersectionPauseBegin = null; // beginning of wait period - performance.now()
@@ -25,6 +25,10 @@ function Ghost(x,y,name,frame0) {
 
   this.blinkDur = 30; // milliseconds
   this.blink = false;
+
+  this.tmpPauseState = false;
+  this.tmpPauseBegin = null;
+  this.tmpPauseDur = 0;
 
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
@@ -226,6 +230,22 @@ function Ghost(x,y,name,frame0) {
     }
   };
 
+  this.tmpPause = function(dur) {
+    this.tmpPauseState = true;
+    this.tmpPauseDur = dur;
+    this.tmpPauseBegin = performance.now();
+    this.lastMoveState = this.moveState;
+    this.moveState = 'paused';
+  };
+
+  this.tmpUnpause = function() {
+    this.tmpPauseState = false;
+    this.tmpPauseDur = 0;
+    this.tmpPauseBegin = null;
+    this.moveState = this.lastMoveState;
+    this.lastMoveState = 'paused';
+  };
+
   this.startFlee = function() {
     console.log('ghost flee started');
     this.moveState = 'flee';
@@ -246,6 +266,7 @@ function Ghost(x,y,name,frame0) {
   this.initEaten = function() {
     // ghost eaten by pac
     // small pause
+    // show score txt on game
     // update sprite
     // update goal to inside ghost house
     // update velocity
@@ -324,10 +345,7 @@ function Ghost(x,y,name,frame0) {
               this.updateSprite(newDir);
               this.hopToIn();
               // pause the ghost's movement for a short duration before continuing
-              this.lastMoveState = this.moveState;
-              this.moveState = 'intersection';
-              this.intersectionPauseStarted = true;
-              this.intersectionPauseBegin = performance.now();
+              this.tmpPause(100);
             } else {
               this.moveGhost();
             }
@@ -342,10 +360,7 @@ function Ghost(x,y,name,frame0) {
               this.changeDir(newDir);
               this.hopToIn();
               // pause the ghost's movement for a short duration before continuing
-              this.lastMoveState = this.moveState;
-              this.moveState = 'intersection';
-              this.intersectionPauseStarted = true;
-              this.intersectionPauseBegin = performance.now();
+              this.tmpPause(100);
             } else {
               this.moveGhost();
             }
@@ -354,17 +369,13 @@ function Ghost(x,y,name,frame0) {
         }
     } else if (this.moveState === 'base') {
       // ghost was eaten move to base
-    } else if (this.moveState === 'intersection') {
+    } else if (this.moveState === 'paused') {
           // console.log('ghost stopped');
           // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );
           // check to see if it's time to resume movement after an intersection
-          if (this.intersectionPauseStarted === true) {
-            if ((performance.now() - this.intersectionPauseBegin) > this.intersectionPauseDur) {
-              // console.log('pause dif = ',(performance.now() - this.intersectionPauseBegin) );
-              this.intersectionPauseStarted = false;
-              this.intersectionPauseBegin = null;
-              this.moveState = this.lastMoveState;
-              this.lastMoveState = 'intersection';
+          if (this.tmpPauseState === true) {
+            if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
+              this.tmpUnpause();
               this.moveGhost();
               this.moveGhost();
             }
