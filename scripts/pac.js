@@ -12,7 +12,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.mouthVel = getRadianAngle(8);
   this.direction = direction;
   this.rotateFace = 0;
-  this.moveState = moveState;
+  this.moveState = moveState; // go , stop, dying
+  this.lives = 2;
   this.color = Colors.pacYellow;
   this.lineW = 2;
   this.pixX = 0;
@@ -122,15 +123,26 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     // ghost State.gridSpacing * 2
     let xDif = Math.abs(myGame.ghosts[0].x - this.x);
     let yDif = Math.abs(myGame.ghosts[0].y - this.y);
-    // let px = this.x;
-    // let py = this.y;
-    // let gx = myGame.ghosts[0].x;
-    // let gy = myGame.ghosts[0].x;
-    if ( ((xDif < 20) && (yDif < 20))
-       ){
+    if ( ((xDif < 20) && (yDif < 20)) ) {
          console.log('pac hit ghost');
-         myGame.startGhostFleeState();
+         if (myGame.ghosts[0].moveState === 'chase') {
+           this.die();
+         } else if (myGame.ghosts[0].moveState === 'flee') {
+           myGame.ghosts[0].initEaten();
+         } else {
+           console.log('ghost state not chase or flee');
+         }
        }
+  };
+
+  this.die = function() {
+    // stop everything
+    // start death animation
+    // subtract -1 from pac lives
+    // start new life animation
+    console.log('pac died, hit by ghost');
+    this.moveState = 'dying';
+    myGame.stopAllGhosts();
   };
 
   this.nextMouth = function() {
@@ -265,6 +277,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
         //   this.rotatePacFace();
         //   State.lastDirKey = 'none';
         // }
+      } else if (this.moveState === 'dying') {
+        // update death animation
       } else {
         // sit idle
       }

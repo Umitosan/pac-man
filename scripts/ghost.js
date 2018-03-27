@@ -19,8 +19,12 @@ function Ghost(x,y,name,frame0) {
   this.spriteRow = 0;
   this.frame0 = frame0;
   this.curFrame = frame0;
+  this.frameTotal = 2;
   this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
+
+  this.blinkDur = 30; // milliseconds
+  this.blink = false;
 
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
@@ -247,6 +251,10 @@ function Ghost(x,y,name,frame0) {
     // update velocity
   };
 
+  this.startBlinking = function() {
+    this.frameTotal = 4;
+  };
+
   this.moveGhost = function() {
     let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
@@ -283,12 +291,10 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.nextFrame = function() { // updates animation frame
-    if (this.curFrame === this.frame0) {
-      this.curFrame = this.frame0 + 1;
-    } else if (this.curFrame !== this.frame0) {
-      this.curFrame = this.frame0;
+    if (this.curFrame < (this.frame0 + this.frameTotal-1)) {
+      this.curFrame += 1;
     } else {
-      console.log('ghost nextFrame problmes');
+      this.curFrame = this.frame0;
     }
   }; // nextFrame
 
@@ -296,15 +302,15 @@ function Ghost(x,y,name,frame0) {
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     ctx.drawImage( /*image*/   this.spriteSheet,
-                   /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
-                   /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
-                   /*sWidth*/  this.spriteFrameWidth,
-                   /*sHeight*/ this.spriteFrameWidth,
-                   /* dx */    this.x-State.gridSpacing+2,
-                   /* dy */    this.y-State.gridSpacing+2,
-                   /*dWidth*/  State.gridSpacing*2-6,
-                   /*dHidth*/  State.gridSpacing*2-6
-                );
+      /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+      /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
+      /*sWidth*/  this.spriteFrameWidth,
+      /*sHeight*/ this.spriteFrameWidth,
+      /* dx */    this.x-State.gridSpacing+2,
+      /* dy */    this.y-State.gridSpacing+2,
+      /*dWidth*/  State.gridSpacing*2-6,
+      /*dHidth*/  State.gridSpacing*2-6
+    );
   };
 
   this.update = function() {

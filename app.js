@@ -155,6 +155,18 @@ function Game(updateDur) {
 
   };
 
+  this.startGhostsBlinking = function() {
+    for (let i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].startBlinking();
+    }
+  };
+
+  this.stopAllGhosts = function() {
+    for (var i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].moveState = 'stop';
+    }
+  };
+
   this.drawGrid = function() {
     for (let i = 0; i < State.gridWidth+2; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
@@ -205,6 +217,9 @@ function Game(updateDur) {
     if (this.bigPillEffect === true) {
       if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
         this.stopGhostFleeState();
+      }
+      if ((performance.now() - this.bigPillEffectStart) > 5000) { // blink ghosts for last 3 seconds of flee
+        this.startGhostsBlinking();
       }
     }
 
