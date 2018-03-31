@@ -19,19 +19,27 @@ var Colors = {
   aqua: 'rgba(127,255,212,1)'
 };
 
-function TxtBox(x,y,txt) {
+function TxtBox(x,y,msg,color,dur) {
   this.x = x;
   this.y = y;
   this.font = "32px Georgia";
-  this.color = myColors.blue;
-  this.txt = txt;
+  this.color = color;
+  this.txt = msg;
+  this.startTime = performance.now();
+  this.duration = dur;
 
   this.draw = function() {
     var ctx = canvas.getContext('2d');
     ctx.font = this.font;
     ctx.fillStyle = this.color;
     ctx.textAlign = 'center';
-    ctx.fillText(this.txt,this.x,this.y);
+    ctx.fillText(this.msg,this.x,this.y);
+  };
+
+  this.update = function() {
+    if ( (performance.now() - this.startTime) > this.duration ) {
+      this.msg = '';
+    }
   };
 }
 

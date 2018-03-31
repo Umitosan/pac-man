@@ -8,7 +8,7 @@ function Ghost(x,y,name,frame0) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = 'right';
-  this.moveState = 'chase'; // chase, flee, base, stop, intersection
+  this.moveState = 'exitbase'; // chase, flee, base, exitbase, stop, intersection
   this.lastMoveState = 'paused';
 
   this.spriteSheet = new Image();
@@ -26,8 +26,12 @@ function Ghost(x,y,name,frame0) {
   this.blinkDur = 30; // milliseconds
   this.blink = false;
 
+  this.eatenTxt = undefined;
+
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
+    this.targetX = State.gridSpacing*14;
+    this.targetY = State.gridSpacing*12;
   };
 
   this.updateTarget = function() {
@@ -38,24 +42,31 @@ function Ghost(x,y,name,frame0) {
       this.targetX = State.gridSpacing*1;
       this.targetY = State.gridSpacing*1;
     } else if (this.moveState === 'base') {
-      this.targetX = State.gridSpacing*13;
-      this.targetY = State.gridSpacing*14;
+      this.targetX = State.gridSpacing*14;
+      this.targetY = State.gridSpacing*15;
+    } else if (this.moveState === 'exitbase') {
+      this.targetX = State.gridSpacing*14;
+      this.targetY = State.gridSpacing*12;
     } else {
-
+      // nothin
     }
   };
 
-  // BLINKY
+  // BLINKY ONLY
   this.getNewDirection = function() { // returns new direction based on pac's coords
-    // console.log('ghost: get new dir');
     // only allow ghost to turn right or left, no turning back the way he came
     let xDif, yDif;
     let newDir = null;
     this.updateTarget();
     xDif = this.x - this.targetX;
     yDif = this.y - this.targetY;
+    //  ghost should prefer going straight when straight ahead is the furthest distance from target, instead of turning
+
+
     if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
-        if (yDif < 0) { // ghost below pac: try DOWN>STRAIGHT>UP
+        if ( (Math.abs(xDif) > Math.abs(yDif)) && (this.inBounds(this.direction) === true)  ) { // if greatest gap is forward just go forward
+          newDir = this.direction;
+        } else if (yDif < 0) { // ghost below target: try DOWN>STRAIGHT>UP
           if (this.inBounds('down') === true) { // try down
             newDir = 'down';
           } else if (this.inBounds(this.direction) === true) { // try straight
@@ -65,60 +76,58 @@ function Ghost(x,y,name,frame0) {
           } else {
             console.log("getNewDirection probs");
           }
-        } else if (yDif > 0) {  // ghost above pac: try UP>STRAIGHT>DOWN
+        } else if (yDif > 0) {  // ghost above target: try UP>STRAIGHT>DOWN
           if (this.inBounds('up') === true) { // try up
             newDir = 'up';
           } else if (this.inBounds(this.direction) === true) { // try straight
             newDir = this.direction;
-          } else if (this.inBounds('down') === true) {
+          } else if (this.inBounds('down') === true) { // try down
             newDir = 'down';
           } else {
             console.log("getNewDirection probs");
           }
-        // pac on same Y as ghost, pick random right turn
-      } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward
+          // target on same Y as ghost, pick random right turn
+        } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward, so turn
           newDir = this.getRandomTurnDir();
-        } else {
+        } else { // can move forward, so do it
           newDir = this.direction;
-          // console.log('ghost: getNewDir straight');
         }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) { // get new right or left or straight
-        if (xDif < 0) { // ghost right of pac: RIGHT>STRAIGHT>LEFT
+        if ( (Math.abs(yDif) > Math.abs(xDif)) && (this.inBounds(this.direction) === true)  ) { // if greatest gap is forward just go forward
+          newDir = this.direction;
+        } else if (xDif < 0) { // ghost right of target: RIGHT>STRAIGHT>LEFT
           if (this.inBounds('right') === true) { // try right
             newDir = 'right';
           } else if (this.inBounds(this.direction) === true) { // try straight
             newDir = this.direction;
-          } else if (this.inBounds('left') === true) {
+          } else if (this.inBounds('left') === true) { // try left
             newDir = 'left';
           } else {
-            // console.log('ghost: getNewDir straight');
+            // nothin
           }
         } else if (xDif > 0) {  // ghost left of pac: LEFT>STRAIGHT>RIGHT
           if (this.inBounds('left') === true) { // try left
             newDir = 'left';
           } else if (this.inBounds(this.direction) === true) { // try straight
             newDir = this.direction;
-          } else if (this.inBounds('right') === true) {
+          } else if (this.inBounds('right') === true) { // try right
             newDir = 'right';
           } else {
-            // console.log('ghost: getNewDir straight');
+            // nothin
           }
-        // pac on same X as ghost, pick random right turn
+        // target on same X as ghost, pick random right turn
         } else if ( (xDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward
           newDir = this.getRandomTurnDir();
-        } else {
+        } else { // can move forward, so do it
           newDir = this.direction;
-          // console.log('ghost: getNewDir straight');
         }
     } else {
       console.log('ghost: getNewDir prob');
     }
-    // console.log("ghost: getNewDirection = ", newDir);
     return newDir;
   };
 
   this.changeDir = function(newDir) {
-    // console.log('chageDir started');
     this.direction = newDir;
     if (newDir === 'left') {
       this.vel = -Math.abs(this.vel);
@@ -199,8 +208,11 @@ function Ghost(x,y,name,frame0) {
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
         // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
         bounds = false;  break;
-      case ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ):
+      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "#") ):
         // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+        bounds = false;  break;
+      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "W") && (this.moveState !== 'base') ):
+        // let the ghost go into the base to reset after being eaten
         bounds = false;  break;
       default:
         bounds = true; break;
@@ -274,14 +286,22 @@ function Ghost(x,y,name,frame0) {
     // update sprite
     // update goal to inside ghost house
     // update velocity
+
+    // TxtBox(x,y,msg,color,dur)
+    this.eatenTxt = new TxtBox( /* x     */  this.x,
+                                /* y     */  this.y,
+                                /* msg   */  '100',
+                                /* color */  Colors.white,
+                                /* dur   */  1000
+    );
+
+    myGame.stopGhostFleeState();
     this.moveState = 'base';
     this.updateTarget();
-    this.tmpPause(200);
     this.spriteRow = 1;
     this.frameTotal = 1;
-    this.updateSpriteFlee();
-
-
+    this.updateSpriteFlee(this.direction);
+    this.vel = 3;
   };
 
   this.updateSprite = function(dir) {
@@ -360,51 +380,104 @@ function Ghost(x,y,name,frame0) {
     );
   };
 
+  this.checkHitPac = function() {
+    // pac diameter
+    // ghost State.gridSpacing * 2
+    let xDif = Math.abs(this.x - myGame.myPac.x);
+    let yDif = Math.abs(this.y - myGame.myPac.y);
+    if ( ((xDif < 20) && (yDif < 20)) ) {
+          console.log('ghost collide pac');
+          if (this.moveState === 'chase') {
+            myGame.myPac.die();
+          } else if (this.moveState === 'flee') {
+            this.initEaten();
+          } else if (this.moveState === 'base') {
+            // nothin
+          } else {
+            // nothin
+          }
+       }
+  };
+
+  this.resumeChase = function() {
+    console.log("Ghost: resumeChase");
+    this.moveState = 'chase';
+    this.vel = 2.5;
+    this.spriteRow = 0;
+    this.hopToIn();
+    let newDir = this.getNewDirection();
+    this.changeDir(newDir);
+    this.updateSprite(newDir);
+  };
+
   this.update = function() {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
-        // if at intersection check which way to go
-        if ( atGridIntersection(this.x,this.y,this.vel) ) {
-            this.updateTarget();
-            let newDir = this.getNewDirection();
-            if (newDir !== this.direction) {
-              this.changeDir(newDir);
-              this.updateSprite(newDir);
-              this.hopToIn();
-              this.tmpPause(100); // ghost pauses at intersections
-            } else {
-              this.moveGhost();
-            }
-        } else {
-          this.moveGhost();
-        }
+          // if at intersection check which way to go
+          if ( atGridIntersection(this.x,this.y,this.vel) ) {
+              this.updateTarget();
+              let newDir = this.getNewDirection();
+              if (newDir !== this.direction) {
+                this.changeDir(newDir);
+                this.updateSprite(newDir);
+                this.hopToIn();
+                this.tmpPause(100); // ghost pauses at intersections
+              } else {
+                this.moveGhost();
+              }
+          } else {
+            this.moveGhost();
+          }
+          this.checkHitPac();
     } else if (this.moveState === 'flee') {  // run to designated corner of screen
-        // if at intersection check which way to go
-        if ( atGridIntersection(this.x,this.y,this.vel) ) {
-            let newDir = this.getNewDirection();
-            if (newDir !== this.direction) {
-              this.changeDir(newDir);
-              this.hopToIn();
-              this.tmpPause(100); // ghost pauses at intersections
-            } else {
-              this.moveGhost();
-            }
-        } else {
-          this.moveGhost();
-        }
-    } else if (this.moveState === 'base') {
-        // ghost was eaten move to base
-        if ( atGridIntersection(this.x,this.y,this.vel) ) {
-            let newDir = this.getNewDirection();
-            if (newDir !== this.direction) {
-              this.changeDir(newDir);
-              this.updateSpriteFlee(newDir);
-              this.hopToIn();
-            } else {
-              this.moveGhost();
-            }
-        } else {
-          this.moveGhost();
-        }
+          // if at intersection check which way to go
+          if ( atGridIntersection(this.x,this.y,this.vel) ) {
+              let newDir = this.getNewDirection();
+              if (newDir !== this.direction) {
+                this.changeDir(newDir);
+                this.hopToIn();
+                this.tmpPause(100); // ghost pauses at intersections
+              } else {
+                this.moveGhost();
+              }
+          } else {
+            this.moveGhost();
+          }
+          this.checkHitPac();
+    } else if (this.moveState === 'base') { // ghost was eaten move to base
+          if ( (Math.abs(this.x - this.targetX) <= 4) && (Math.abs(this.y - this.targetY) <= 4) ) {  // ghost has arrived in base, resume chase
+            this.moveState = 'exitbase';
+            this.updateTarget();
+            this.spriteRow = 0;
+            this.updateSprite();
+          } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
+              let newDir = this.getNewDirection();
+              if (newDir !== this.direction) {
+                this.updateSpriteFlee(newDir);
+                this.changeDir(newDir);
+                this.hopToIn();
+                this.tmpPause(100); // ghost pauses at intersections
+              } else {
+                this.moveGhost();
+              }
+          } else {
+            this.moveGhost();
+          }
+    } else if (this.moveState === 'exitbase') {
+          if ( (Math.abs(this.x - this.targetX) <= 4) && (Math.abs(this.y - this.targetY) <= 4) ) {
+            this.resumeChase();
+          } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
+              let newDir = this.getNewDirection();
+              if (newDir !== this.direction) {
+                this.changeDir(newDir);
+                this.updateSprite(newDir);
+                this.hopToIn();
+                this.tmpPause(100); // ghost pauses at intersections
+              } else {
+                this.moveGhost();
+              }
+          } else {
+            this.moveGhost();
+          }
     } else if (this.moveState === 'paused') {
           // console.log('ghost stopped');
           // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );

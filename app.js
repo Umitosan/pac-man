@@ -78,7 +78,8 @@ function Game(updateDur) {
 
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
-  this.bigPillEffectStart = null;
+  this.bigPillEffectStart = null; // exact time effect started
+  this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
 
   this.init = function() {
     this.bg.src = 'img/reference1.png';
@@ -94,8 +95,8 @@ function Game(updateDur) {
     this.myPac.init();
     this.myLevel = new Level();
     this.myLevel.init();
-    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14+State.gridSpacing/2,
-                                /*   y  */  State.gridSpacing*12,
+    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14,
+                                /*   y  */  State.gridSpacing*15,
                                 /* name */  "blinky",
                                 /*frame0*/ 2
                               ));
@@ -131,9 +132,16 @@ function Game(updateDur) {
     } else if (lvlChar === 'B') {
       this.score += 50;
       $('#score').text(myGame.score);
+    } else if (lvlChar === 'G') { // ghost eaten
+      this.score += 200;
+      $('#score').text(myGame.score);
     } else {
       console.log('updateScore problems, char is = ', lvlChar);
     }
+  };
+
+  this.startGhostNumber = function() {
+
   };
 
   this.startGhostFleeState = function() {
@@ -152,7 +160,7 @@ function Game(updateDur) {
     }
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
-
+    this.bigPillGhostsEatenTxt = [];
   };
 
   this.startGhostsBlinking = function() {

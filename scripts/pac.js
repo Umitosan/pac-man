@@ -113,26 +113,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       pillType = data.char;
       myGame.updateScore(data.char);
       myGame.myLevel.currentLevel[r][c] = '-';
-
     }
     return pillType;
-  };
-
-  this.checkHitGhost = function() {
-    // pac diameter
-    // ghost State.gridSpacing * 2
-    let xDif = Math.abs(myGame.ghosts[0].x - this.x);
-    let yDif = Math.abs(myGame.ghosts[0].y - this.y);
-    if ( ((xDif < 20) && (yDif < 20)) ) {
-         console.log('pac hit ghost');
-         if (myGame.ghosts[0].moveState === 'chase') {
-           this.die();
-         } else if (myGame.ghosts[0].moveState === 'flee') {
-           myGame.ghosts[0].initEaten();
-         } else {
-           console.log('ghost state not chase or flee');
-         }
-       }
   };
 
   this.die = function() {
@@ -259,7 +241,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
         } else {
           console.log("[lastDirKey problems]");
         }
-      this.checkHitGhost();
     } else if (this.moveState === 'stop') {
       if (State.lastDirKey !== 'none') {
         // console.log('else if 3');
@@ -272,11 +253,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           this.movePac();
           this.nextMouth();
         }
-        // else { // change direction failed so reset key, but DO rotate pacman if in
-        //   this.direction = State.lastDirKey;
-        //   this.rotatePacFace();
-        //   State.lastDirKey = 'none';
-        // }
       } else if (this.moveState === 'dying') {
         // update death animation
       } else {
