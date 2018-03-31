@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 
 function Ghost(x,y,name,frame0) {
+  // general
   this.x = x;
   this.y = y;
   this.name = name;
@@ -11,6 +12,7 @@ function Ghost(x,y,name,frame0) {
   this.moveState = 'exitbase'; // chase, flee, base, exitbase, stop, intersection
   this.lastMoveState = 'paused';
 
+  // sprite stuff
   this.spriteSheet = new Image();
   this.spriteRow = 0;
   this.frame0 = frame0;
@@ -19,6 +21,7 @@ function Ghost(x,y,name,frame0) {
   this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
 
+  // ghost pause at intersection
   this.tmpPauseState = false;
   this.tmpPauseBegin = null;
   this.tmpPauseDur = 0;
@@ -26,7 +29,7 @@ function Ghost(x,y,name,frame0) {
   this.blinkDur = 30; // milliseconds
   this.blink = false;
 
-  this.eatenTxt = undefined;
+  this.eatenTxtBox = undefined;
 
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
@@ -61,7 +64,6 @@ function Ghost(x,y,name,frame0) {
     xDif = this.x - this.targetX;
     yDif = this.y - this.targetY;
     //  ghost should prefer going straight when straight ahead is the furthest distance from target, instead of turning
-
 
     if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
         if ( (Math.abs(xDif) > Math.abs(yDif)) && (this.inBounds(this.direction) === true)  ) { // if greatest gap is forward just go forward
@@ -287,21 +289,22 @@ function Ghost(x,y,name,frame0) {
     // update goal to inside ghost house
     // update velocity
 
-    // TxtBox(x,y,msg,color,dur)
-    this.eatenTxt = new TxtBox( /* x     */  this.x,
-                                /* y     */  this.y,
-                                /* msg   */  '100',
-                                /* color */  Colors.white,
-                                /* dur   */  1000
-    );
-
     myGame.stopGhostFleeState();
+    myGame.bigPillGhostsEaten += 1;
     this.moveState = 'base';
     this.updateTarget();
     this.spriteRow = 1;
     this.frameTotal = 1;
     this.updateSpriteFlee(this.direction);
     this.vel = 3;
+    let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
+    this.eatenTxtBox = new TxtBox(/* x     */ this.x,
+                                  /* y     */ this.y+10,
+                                  /* msg   */ msg,
+                                  /* color */ Colors.white,
+                                  /* dur   */ 2000
+    );
+    console.log('this.eatenTxtBox = ', this.eatenTxtBox);
   };
 
   this.updateSprite = function(dir) {
@@ -378,6 +381,9 @@ function Ghost(x,y,name,frame0) {
                     /*dWidth*/  State.gridSpacing*2-6,
                     /*dHidth*/  State.gridSpacing*2-6
     );
+    if (this.eatenTxtBox !== undefined) {
+      this.eatenTxtBox.draw();
+    }
   };
 
   this.checkHitPac = function() {
@@ -496,6 +502,12 @@ function Ghost(x,y,name,frame0) {
     }
     // update the animation frame
     if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
+    // check TxtBox should clear
+    if (this.eatenTxtBox !== undefined) {
+      if ((performance.now() - this.eatenTxtBox.startTime) > this.eatenTxtBox.duration ) {
+        this.eatenTxtBox = undefined;
+      }
+    }
   }; // update
 
 } // GHOST

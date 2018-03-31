@@ -55,6 +55,8 @@ function hardReset() {
   clearCanvas();
 }
 
+
+// more info http://pacmanmuseum.com/history/pacman-scoring.php
 // SCORING
 // Pac-Dot - 10 points.
 // Power Pellet - 50 points.
@@ -140,10 +142,6 @@ function Game(updateDur) {
     }
   };
 
-  this.startGhostNumber = function() {
-
-  };
-
   this.startGhostFleeState = function() {
     console.log('start ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
@@ -160,7 +158,7 @@ function Game(updateDur) {
     }
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
-    this.bigPillGhostsEatenTxt = [];
+    this.bigPillGhostsEaten = 0;
   };
 
   this.startGhostsBlinking = function() {

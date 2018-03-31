@@ -22,7 +22,7 @@ var Colors = {
 function TxtBox(x,y,msg,color,dur) {
   this.x = x;
   this.y = y;
-  this.font = "32px Georgia";
+  this.font = "18px Georgia";
   this.color = color;
   this.txt = msg;
   this.startTime = performance.now();
@@ -33,15 +33,9 @@ function TxtBox(x,y,msg,color,dur) {
     ctx.font = this.font;
     ctx.fillStyle = this.color;
     ctx.textAlign = 'center';
-    ctx.fillText(this.msg,this.x,this.y);
+    ctx.fillText(this.txt,this.x,this.y);
   };
-
-  this.update = function() {
-    if ( (performance.now() - this.startTime) > this.duration ) {
-      this.msg = '';
-    }
-  };
-}
+} // TxtBox
 
 function clearCanvas() {
   ctx.clearRect(-1, -1, canvas.width+1, canvas.height+1);
