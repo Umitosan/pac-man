@@ -294,7 +294,6 @@ function keyDown(event) {
           }
           break;
         case 32: // spacebar
-          myGame.myPac.togglePacGo();
           if (myGame.paused === true) {
             myGame.paused = false;
           } else if (myGame.paused === false) {

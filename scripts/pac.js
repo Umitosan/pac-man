@@ -22,18 +22,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.init = function() {
   }; // init
 
-  this.togglePacGo = function() {
-    if (this.moveState === 'go') {
-      this.moveState = 'stop';
-      myGame.savedLastUpdate = performance.now() - myGame.lastUpdate;
-    } else if (this.moveState === 'stop') {
-      this.moveState = 'go';
-    } else {
-      // nothin
-    }
-    // console.log('pac state = ', this.moveState);
-  };
-
   this.inBounds = function(tDir) {
     var bounds = 'none';
     var sp = State.gridSpacing;
@@ -124,6 +112,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     // start new life animation
     console.log('pac died, hit by ghost');
     this.moveState = 'dying';
+    this.lives -= 1;
+    if (this.lives < 0) {
+      // game over
+    }
     myGame.stopAllGhosts();
   };
 
