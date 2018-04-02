@@ -5,6 +5,7 @@ function Ghost(x,y,name,frame0) {
   this.x = x;
   this.y = y;
   this.name = name;
+  this.chaseVel = 2.5;
   this.vel = 2.5;
   this.targetX = 'none';
   this.targetY = 'none';
@@ -37,7 +38,7 @@ function Ghost(x,y,name,frame0) {
     this.targetY = State.gridSpacing*12;
   };
 
-  this.updateTarget = function() {
+  this.changeTarget = function() {
     if (this.moveState === 'chase') {
       this.targetX = myGame.myPac.x;
       this.targetY = myGame.myPac.y;
@@ -60,7 +61,7 @@ function Ghost(x,y,name,frame0) {
     // only allow ghost to turn right or left, no turning back the way he came
     let xDif, yDif;
     let newDir = null;
-    this.updateTarget();
+    this.changeTarget();
     xDif = this.x - this.targetX;
     yDif = this.y - this.targetY;
     //  ghost should prefer going straight when straight ahead is the furthest distance from target, instead of turning
@@ -213,20 +214,20 @@ function Ghost(x,y,name,frame0) {
   this.inBounds = function(tDir) {
     var bounds = 'none';
     var sp = State.gridSpacing;
-    var off = 10;
+    var off = this.vel;
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
-        console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
+        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
-        console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
+        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
-        console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
+        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
         bounds = false;  break;
       case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "#") ):
-        console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
         bounds = false;  break;
       case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "W") && (this.moveState !== 'base') ):
         // let the ghost go into the base to reset after being eaten
@@ -310,8 +311,8 @@ function Ghost(x,y,name,frame0) {
     this.frameTotal = 1;
     this.updateFleeSprite(this.direction);
     this.moveState = 'base';
-    this.updateTarget();
-    this.changeVel(3);
+    this.changeTarget();
+    this.changeVel(4);
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+10,
@@ -423,7 +424,7 @@ function Ghost(x,y,name,frame0) {
   this.resumeChase = function() {
     console.log("Ghost: resumeChase");
     this.moveState = 'chase';
-    this.vel = 2.5;
+    this.changeVel(this.chaseVel);
     this.spriteRow = 0;
     this.hopToIn();
     let newDir = this.getNewDirection();
@@ -435,7 +436,7 @@ function Ghost(x,y,name,frame0) {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
           // if at intersection check which way to go
           if ( atGridIntersection(this.x,this.y,this.vel) ) {
-              this.updateTarget();
+              this.changeTarget();
               let newDir = this.getNewDirection();
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
@@ -469,17 +470,17 @@ function Ghost(x,y,name,frame0) {
     } else if (this.moveState === 'base') { // ghost was eaten move to base
           if ( (Math.abs(this.x - this.targetX) <= 4) && (Math.abs(this.y - this.targetY) <= 4) ) {  // ghost has arrived in base, resume chase
             this.moveState = 'exitbase';
-            this.updateTarget();
+            this.changeTarget();
             this.spriteRow = 0;
             this.updateSprite();
           } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
+            // console.log('ghost at INTER');
               let newDir = this.getNewDirection();
-              console.log('ghost dir update base = ', this.direction);
+              // console.log('ghost attempting dir = ', this.direction);
               if (newDir !== this.direction) {
                 this.updateFleeSprite(newDir);
                 this.changeDir(newDir);
                 this.hopToIn();
-                // this.tmpPause(100); // ghost pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();

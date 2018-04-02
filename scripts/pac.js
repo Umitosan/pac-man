@@ -25,7 +25,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.inBounds = function(tDir) {
     var bounds = 'none';
     var sp = State.gridSpacing;
-    var off = 10;
+    var off = this.vel;
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
@@ -49,20 +49,17 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   }; // inBounds
 
   this.changeDir = function(newDir) {
+    this.direction = newDir;
     if (newDir === 'left') {
-      this.direction = 'left';
       this.vel = -Math.abs(this.vel);
       this.rotatePacFace();
     } else if (newDir === 'right') {
-      this.direction = 'right';
       this.vel = Math.abs(this.vel);
       this.rotatePacFace();
     } else if (newDir === 'up') {
-      this.direction = 'up';
       this.vel = -Math.abs(this.vel);
       this.rotatePacFace();
     } else if (newDir === 'down') {
-      this.direction = 'down';
       this.vel = Math.abs(this.vel);
       this.rotatePacFace();
     } else {
@@ -202,7 +199,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     if (this.moveState === 'go') {
         if (State.lastDirKey === 'none') {
             // console.log('else if 1');
-            if (this.inBounds(this.direction) === false) {
+            if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
               // console.log('collision!');
               this.moveState = 'stop';
               State.lastDirKey = 'none';
