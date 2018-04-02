@@ -68,7 +68,7 @@ function Ghost(x,y,name,frame0) {
     if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
         if ( (Math.abs(xDif) > Math.abs(yDif)) && (this.inBounds(this.direction) === true)  ) { // if greatest gap is forward just go forward
           newDir = this.direction;
-        } else if (yDif < 0) { // ghost below target: try DOWN>STRAIGHT>UP
+        } else if (yDif < 0) { // ghost above target: try DOWN>STRAIGHT>UP
           if (this.inBounds('down') === true) { // try down
             newDir = 'down';
           } else if (this.inBounds(this.direction) === true) { // try straight
@@ -78,7 +78,7 @@ function Ghost(x,y,name,frame0) {
           } else {
             console.log("getNewDirection probs");
           }
-        } else if (yDif > 0) {  // ghost above target: try UP>STRAIGHT>DOWN
+        } else if (yDif > 0) {  // ghost below target: try UP>STRAIGHT>DOWN
           if (this.inBounds('up') === true) { // try up
             newDir = 'up';
           } else if (this.inBounds(this.direction) === true) { // try straight
@@ -97,7 +97,7 @@ function Ghost(x,y,name,frame0) {
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) { // get new right or left or straight
         if ( (Math.abs(yDif) > Math.abs(xDif)) && (this.inBounds(this.direction) === true)  ) { // if greatest gap is forward just go forward
           newDir = this.direction;
-        } else if (xDif < 0) { // ghost right of target: RIGHT>STRAIGHT>LEFT
+        } else if (xDif < 0) { // ghost left of target: RIGHT>STRAIGHT>LEFT
           if (this.inBounds('right') === true) { // try right
             newDir = 'right';
           } else if (this.inBounds(this.direction) === true) { // try straight
@@ -107,7 +107,7 @@ function Ghost(x,y,name,frame0) {
           } else {
             // nothin
           }
-        } else if (xDif > 0) {  // ghost left of pac: LEFT>STRAIGHT>RIGHT
+        } else if (xDif > 0) {  // ghost right of pac: LEFT>STRAIGHT>RIGHT
           if (this.inBounds('left') === true) { // try left
             newDir = 'left';
           } else if (this.inBounds(this.direction) === true) { // try straight
@@ -143,6 +143,21 @@ function Ghost(x,y,name,frame0) {
       console.log(' changeDir problems ');
     }
     console.log('changeDir to ', this.direction);
+  };
+
+  this.changeVel = function(newVel) {
+    let dir = this.direction;
+    if (dir === 'left') {
+      this.vel = -Math.abs(newVel);
+    } else if (dir === 'right') {
+      this.vel = Math.abs(newVel);
+    } else if (dir === 'up') {
+      this.vel = -Math.abs(newVel);
+    } else if (dir === 'down') {
+      this.vel = Math.abs(newVel);
+    } else {
+      console.log(' changeVel problems ');
+    }
   };
 
   this.getRandomTurnDir = function() {
@@ -260,6 +275,10 @@ function Ghost(x,y,name,frame0) {
     this.lastMoveState = 'paused';
   };
 
+  this.startBlinking = function() {
+    this.frameTotal = 4;
+  };
+
   this.startFlee = function() {
     console.log('ghost flee started');
     this.moveState = 'flee';
@@ -277,26 +296,22 @@ function Ghost(x,y,name,frame0) {
     this.updateSprite(this.direction);
   };
 
-  this.startBlinking = function() {
-    this.frameTotal = 4;
-  };
-
   this.initEaten = function() {
+    // stop fleeing
     // ghost eaten by pac
     // small pause
-    // show score txt on game
     // update sprite
-    // update goal to inside ghost house
+    // update ghost goal to inside ghost house
     // update velocity
-
-    myGame.stopGhostFleeState();
+    // show score txt on game
+    myGame.stopGhostFleeState(); // tmp
     myGame.bigPillGhostsEaten += 1;
-    this.moveState = 'base';
-    this.updateTarget();
     this.spriteRow = 1;
     this.frameTotal = 1;
     this.updateFleeSprite(this.direction);
-    this.vel = 3;
+    this.moveState = 'base';
+    this.updateTarget();
+    this.changeVel(3);
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+10,
@@ -398,7 +413,7 @@ function Ghost(x,y,name,frame0) {
           } else if (this.moveState === 'flee') {
             this.initEaten();
           } else if (this.moveState === 'base') {
-            // nothin
+            // ghost gets hit again but he's already hit so ignore
           } else {
             // nothin
           }
@@ -426,7 +441,8 @@ function Ghost(x,y,name,frame0) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                this.tmpPause(100); // ghost pauses at intersections
+                this.tmpPause(80); // ghost pauses at intersections
+                this.moveGhost();
               } else {
                 this.moveGhost();
               }
@@ -441,7 +457,8 @@ function Ghost(x,y,name,frame0) {
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.hopToIn();
-                this.tmpPause(100); // ghost pauses at intersections
+                this.tmpPause(80); // ghost pauses at intersections
+                this.moveGhost();
               } else {
                 this.moveGhost();
               }
@@ -457,11 +474,13 @@ function Ghost(x,y,name,frame0) {
             this.updateSprite();
           } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
               let newDir = this.getNewDirection();
+              console.log('ghost dir update base = ', this.direction);
               if (newDir !== this.direction) {
                 this.updateFleeSprite(newDir);
                 this.changeDir(newDir);
                 this.hopToIn();
-                this.tmpPause(100); // ghost pauses at intersections
+                // this.tmpPause(100); // ghost pauses at intersections
+                this.moveGhost();
               } else {
                 this.moveGhost();
               }

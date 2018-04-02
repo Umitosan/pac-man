@@ -153,9 +153,6 @@ function Game(updateDur) {
 
   this.stopGhostFleeState = function() {
     console.log('stop ghost flee state');
-    for (let i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].stopFlee();
-    }
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
     this.bigPillGhostsEaten = 0;
