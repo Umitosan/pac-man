@@ -83,7 +83,7 @@ function Ghost(x,y,name,frame0) {
     xDif = this.x - this.targetX;
     yDif = this.y - this.targetY;
 
-    console.log('this.direction before new dir = ', this.direction);
+    // console.log('this.direction before new dir = ', this.direction);
 
     if (this.direction === 'right') {
       // go straight if ideal, else go ideal Y dir, else turn random, else straight
@@ -195,7 +195,7 @@ function Ghost(x,y,name,frame0) {
       console.log('ghost: getNewDirection prob' );
     }
 
-    console.log('ghost: newDir obtained = ', newDir);
+    // console.log('ghost: newDir obtained = ', newDir);
     return newDir;
   };
 
@@ -212,7 +212,7 @@ function Ghost(x,y,name,frame0) {
     } else {
       console.log(' changeDir problems ');
     }
-    console.log('changeDir to ', this.direction);
+    // console.log('changeDir to ', this.direction);
   };
 
   this.changeVel = function(newVel) {
