@@ -28,9 +28,6 @@ function Ghost(x,y,name,frame0) {
   this.tmpPauseBegin = null;
   this.tmpPauseDur = 0;
 
-  this.blinkDur = 30; // milliseconds
-  this.blink = false;
-
   this.eatenTxtBox = undefined;
 
   this.init = function(imgSrc) {
@@ -349,13 +346,26 @@ function Ghost(x,y,name,frame0) {
     this.frameTotal = 4;
   };
 
-  this.startFlee = function() {
-    console.log('ghost flee started');
-    this.moveState = 'flee';
-    this.reverseDir();
+  this.stopBlinking = function() {
+    console.log('STOP BLINKING');
+    this.frameTotal = 2;
     this.spriteRow = 1;
     this.frame0 = 0;
     this.curFrame = 0;
+  };
+
+  this.startFlee = function() {
+    if (this.moveState === 'flee') {
+      console.log('ghost already fleeing, stop blining');
+      this.stopBlinking();
+    } else {
+      console.log('ghost flee started');
+      this.moveState = 'flee';
+      this.reverseDir();
+      this.spriteRow = 1;
+      this.frame0 = 0;
+      this.curFrame = 0;
+    }
   };
 
   this.stopFlee = function() {
@@ -378,7 +388,7 @@ function Ghost(x,y,name,frame0) {
     myGame.bigPillGhostsEaten += 1;
     this.spriteRow = 1;
     this.frameTotal = 1;
-    this.updateFleeSprite(this.direction);
+    this.updateEyesSprite(this.direction);
     this.moveState = 'base';
     this.changeTarget();
     this.changeVel(4);
@@ -410,7 +420,7 @@ function Ghost(x,y,name,frame0) {
     }
   };
 
-  this.updateFleeSprite = function(dir) {
+  this.updateEyesSprite = function(dir) {
     if (dir === 'right') {
       this.frame0 = 5;
       this.curFrame = 5;
@@ -424,7 +434,7 @@ function Ghost(x,y,name,frame0) {
       this.frame0 = 7;
       this.curFrame = 7;
     } else {
-      console.log('ghost updateFleeSprite probs');
+      console.log('ghost updateEyesSprite probs');
     }
   };
 
@@ -547,7 +557,7 @@ function Ghost(x,y,name,frame0) {
               console.log('ghost flee attempting dir = ', newDir);
               console.log('cur dur = ', this.direction);
               if (newDir !== this.direction) {
-                this.updateFleeSprite(newDir);
+                this.updateEyesSprite(newDir);
                 this.changeDir(newDir);
                 this.hopToIn();
                 this.moveGhost();
