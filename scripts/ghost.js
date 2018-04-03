@@ -369,11 +369,27 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.stopFlee = function() {
-    console.log('ghost flee stopped');
+    if (this.moveState === 'flee') {
+      console.log('ghost flee stopped');
+      this.moveState = 'chase';
+      this.spriteRow = 0;
+      this.frameTotal = 2;
+      this.changeVel(this.changeVel);
+      this.updateSprite(this.direction);
+    } else {
+      // nothin
+    }
+  };
+
+  this.stopBase = function() {
+    this.moveState = 'exitbase';
+    this.changeTarget();
     this.spriteRow = 0;
     this.frameTotal = 2;
-    this.moveState = 'chase';
+    this.hopToIn();
+    this.changeVel(this.chaseVel);
     this.updateSprite(this.direction);
+    this.changeDir('up');
   };
 
   this.initEaten = function() {
@@ -391,7 +407,7 @@ function Ghost(x,y,name,frame0) {
     this.updateEyesSprite(this.direction);
     this.moveState = 'base';
     this.changeTarget();
-    this.changeVel(4);
+    this.changeVel(5);
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+10,
@@ -548,10 +564,7 @@ function Ghost(x,y,name,frame0) {
           this.checkHitPac();
     } else if (this.moveState === 'base') { // ghost was eaten move to base
           if ( (Math.abs(this.x - this.targetX) <= this.vel) && (Math.abs(this.y - this.targetY) <= this.vel) ) {  // ghost has arrived in base, resume chase
-            this.moveState = 'exitbase';
-            this.changeTarget();
-            this.spriteRow = 0;
-            this.updateSprite();
+            this.stopBase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
               let newDir = this.getNewDirection();
               console.log('ghost flee attempting dir = ', newDir);

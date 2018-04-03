@@ -3,7 +3,7 @@
 function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.x = x;
   this.y = y;
-  this.vel = velocity;
+  this.vel = 3;
   this.diameter = diameter;
   this.radius = diameter/2;
   this.mouthSize = getRadianAngle(70);
