@@ -119,6 +119,20 @@ function atGridIntersection(x,y,vel) {
   return atInter;
 }
 
+// function atGridIntersection(x,y,vel) {
+//   var atInter = false;
+//   let sp = State.gridSpacing;
+//
+//   let inter = getNearestIntersection(x,y);
+//   if ( (Math.abs(x-((inter.foundCol+1)*sp)) <= vel) && (Math.abs(y-((inter.foundRow+1)*sp)) <= vel) ) {
+//     atInter = true;
+//   } else {
+//     atInter = false;
+//   }
+//
+//   return atInter;
+// }
+
 function getNearestIntersection(someX, someY) {
   let sp = State.gridSpacing;
 
