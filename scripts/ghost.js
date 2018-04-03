@@ -59,81 +59,22 @@ function Ghost(x,y,name,frame0) {
     }
   };
 
-  // BLINKY ONLY
-  // this.getNewDirection = function() { // returns new direction based on target's coords
-  //   let xDif, yDif;
-  //   let newDir = null;
-  //   this.changeTarget();
-  //   xDif = this.x - this.targetX;
-  //   yDif = this.y - this.targetY;
-  //   if ( (this.direction === 'right') || (this.direction === 'left') ) { // get new up or down or straight
-  //       // if greatest gap is forward and ghost moving towards target, just keep going forward
-  //       if ( (((this.direction === 'right') && (xDif > -25) && (xDif < 0) ) || ((this.direction === 'left') && (xDif < 25) && (xDif > 0) )) && (this.inBounds(this.direction) === true) ) {
-  //         console.log('ghost new dir SAME DIR');
-  //         newDir = this.direction;
-  //       } else if (yDif < 0) { // ghost above target: try DOWN>STRAIGHT>UP
-  //         if (this.inBounds('down') === true) { // try down
-  //           newDir = 'down';
-  //         } else if (this.inBounds(this.direction) === true) { // try straight
-  //           newDir = this.direction;
-  //         } else if (this.inBounds('up') === true) { // try up
-  //           newDir = 'up';
-  //         } else {
-  //           console.log("getNewDirection probs");
-  //         }
-  //       } else if (yDif > 0) {  // ghost below target: try UP>STRAIGHT>DOWN
-  //         if (this.inBounds('up') === true) { // try up
-  //           newDir = 'up';
-  //         } else if (this.inBounds(this.direction) === true) { // try straight
-  //           newDir = this.direction;
-  //         } else if (this.inBounds('down') === true) { // try down
-  //           newDir = 'down';
-  //         } else {
-  //           console.log("getNewDirection probs");
-  //         }
-  //         // target on same Y as ghost, pick random right turn
-  //       } else if ( (yDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward, so turn
-  //         newDir = this.getRandomTurnDir();
-  //       } else { // can move forward, so do it
-  //         newDir = this.direction;
-  //       }
-  //   } else if ( (this.direction === 'up') || (this.direction === 'down') ) { // get new right or left or straight
-  //       // if greatest gap is forward and ghost moving towards target, just keep going forward
-  //       if ( (((this.direction === 'up') && (yDif < 25) && (yDif > 0)) || ((this.direction === 'down') && (yDif > -25) && (yDif < 0))) && (this.inBounds(this.direction) === true) ) {
-  //         console.log('ghost new dir SAME DIR');
-  //         newDir = this.direction;
-  //       } else if (xDif < 0) { // ghost left of target: RIGHT>STRAIGHT>LEFT
-  //         if (this.inBounds('right') === true) { // try right
-  //           newDir = 'right';
-  //         } else if (this.inBounds(this.direction) === true) { // try straight
-  //           newDir = this.direction;
-  //         } else if (this.inBounds('left') === true) { // try left
-  //           newDir = 'left';
-  //         } else {
-  //           // nothin
-  //         }
-  //       } else if (xDif > 0) {  // ghost right of pac: LEFT>STRAIGHT>RIGHT
-  //         if (this.inBounds('left') === true) { // try left
-  //           newDir = 'left';
-  //         } else if (this.inBounds(this.direction) === true) { // try straight
-  //           newDir = this.direction;
-  //         } else if (this.inBounds('right') === true) { // try right
-  //           newDir = 'right';
-  //         } else {
-  //           // nothin
-  //         }
-  //       // target on same X as ghost, pick random right turn
-  //       } else if ( (xDif === 0) && (this.inBounds(this.direction) === false) ) { // can't move forward
-  //         newDir = this.getRandomTurnDir();
-  //       } else { // can move forward, so do it
-  //         newDir = this.direction;
-  //       }
-  //   } else {
-  //     console.log('ghost: getNewDir prob');
-  //   }
-  //   return newDir;
-  // };
+  this.tryDirs = function(dir1,dir2,dir3) { // tests 3 directions inBounds and returns first good one
+    let someDir;
+    if (this.inBounds(dir1) === true) {
+      someDir = dir1;
+    } else if (this.inBounds(dir2) === true) {
+      someDir = dir2;
+    } else if (this.inBounds(dir3) === true) {
+      someDir = dir3;
+    } else {
+      someDir = undefined;
+      console.log('ghost: tryDir prob');
+    }
+    return someDir;
+  };
 
+  // BLINKY ONLY
   this.getNewDirection = function() { // returns new direction based on target's coords
     let xDif, yDif;
     let newDir = null;
@@ -151,43 +92,25 @@ function Ghost(x,y,name,frame0) {
                 newDir = this.direction;
               } else { // get best up or down or straight
                   if (yDif < 0) { // try down, stright, up
-                      if (this.inBounds('down') === true) {
-                        newDir = 'down';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('up') === true) {
-                        newDir = 'up';
-                      } else {
-                        console.log('ghost: getNewDir right x down prob');
-                      }
+                      newDir = this.tryDirs('down',this.direction,'up');
                   } else if (yDif > 0) { // try up, stright, down
-                      if (this.inBounds('up') === true) {
-                        newDir = 'up';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('down') === true) {
-                        newDir = 'down';
-                      } else {
-                        console.log('ghost: getNewDir right x up prob');
-                      }
-                  } else if (this.inBounds(this.direction) === true) {
-                    newDir = this.direction;
-                  } else {
-                    console.log('ghost: getNewDir, right x dir prob');
+                      newDir = this.tryDirs('up',this.direction,'down');
+                  } else if (yDif === 0) { // try straight, up, down (this maybe should be random up or down)
+                      newDir = this.tryDirs(this.direction,'up','down');
+                  } else { // try straight, up, down (this maybe should be random up or down)
+                      newDir = this.tryDirs(this.direction,'up','down');
                   }
               }
       } else if (Math.abs(yDif) > Math.abs(xDif)) {
-              if ( (yDif < 0) && (this.inBounds('down') === true) ) {
-                newDir = 'down';
-              } else if ( (yDif > 0) && (this.inBounds('up') === true) ) {
-                newDir = 'up';
-              } else if (this.inBounds(this.direction) === true) {
-                newDir = this.direction;
-              } else {
-                console.log('ghost: getNewDir, right y dir prob');
+              if (yDif < 0) { // try down straight up
+                  newDir = newDir = this.tryDirs('down',this.direction,'up');
+              } else if (yDif > 0) { // try up straight down
+                newDir = newDir = this.tryDirs('up',this.direction,'down');
+              } else { // try straight up down (this maybe should be random up down)
+                newDir = newDir = this.tryDirs(this.direction,'up','down');
               }
       } else {
-             console.log('ghost: getNewDir right prob');
+        console.log('ghost: getNewDir right prob');
       }
     } else if (this.direction === 'left') {
             if (Math.abs(xDif) >= Math.abs(yDif)) {
@@ -195,43 +118,25 @@ function Ghost(x,y,name,frame0) {
                 newDir = this.direction;
               } else { // get best up or down or straight
                   if (yDif < 0) {  // try down, stright, up
-                      if (this.inBounds('down') === true) {
-                        newDir = 'down';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('up') === true) {
-                        newDir = 'up';
-                      } else {
-                        console.log('ghost: getNewDir right x down prob');
-                      }
+                      newDir = this.tryDirs('down',this.direction,'up');
                   } else if (yDif > 0) { // try up, stright, down
-                      if (this.inBounds('up') === true) {
-                        newDir = 'up';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('down') === true) {
-                        newDir = 'down';
-                      } else {
-                        console.log('ghost: getNewDir right x up prob');
-                      }
-                  } else if (this.inBounds(this.direction) === true) {
-                    newDir = this.direction;
-                  } else {
-                    console.log('ghost: getNewDir, left x dir prob');
+                      newDir = this.tryDirs('up',this.direction,'down');
+                  } else if (yDif === 0) { // try straight, up, down (this maybe should be random up or down)
+                     newDir = this.tryDirs(this.direction,'up','down');
+                  } else { // try straight, up, down (this maybe should be random up or down)
+                      newDir = this.tryDirs(this.direction,'up','down');
                   }
               }
       } else if (Math.abs(yDif) > Math.abs(xDif)) {
-              if ( (yDif < 0) && (this.inBounds('down') === true) ) {
-                newDir = 'down';
-              } else if ( (yDif > 0) && (this.inBounds('up') === true) ) {
-                newDir = 'up';
-              } else if (this.inBounds(this.direction) === true) {
-                newDir = this.direction;
-              } else {
-                console.log('ghost: getNewDir, left y dir prob');
+              if (yDif < 0) { // try down straight up
+                  newDir = newDir = this.tryDirs('down',this.direction,'up');
+              } else if (yDif > 0) { // try up straight down
+                newDir = newDir = this.tryDirs('up',this.direction,'down');
+              } else { // try straight up down (this maybe should be random up down)
+                newDir = newDir = this.tryDirs(this.direction,'up','down');
               }
       } else {
-             console.log('ghost: getNewDir left prob');
+        console.log('ghost: getNewDir left prob');
       }
     } else if (this.direction === 'up') {
       if (Math.abs(yDif) >= Math.abs(xDif)) { // ghost wants to move in Y dir
@@ -239,43 +144,25 @@ function Ghost(x,y,name,frame0) {
                 newDir = this.direction;
               } else { // get best right or left or straight
                   if (xDif < 0) { // try right, straight, left
-                      if (this.inBounds('right') === true) {
-                        newDir = 'right';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('left') === true) {
-                        newDir = 'left';
-                      } else {
-                        console.log('ghost: getNewDir up x right prob');
-                      }
+                      newDir = this.tryDirs('right',this.direction,'left');
                   } else if (xDif > 0) {  // try left, striaght, right
-                      if (this.inBounds('left') === true) {
-                        newDir = 'left';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('right') === true) {
-                        newDir = 'right';
-                      } else {
-                        console.log('ghost: getNewDir up x left prob');
-                      }
-                  } else if (this.inBounds(this.direction) === true) {
-                    newDir = this.direction;
-                  } else {
-                    console.log('ghost: getNewDir, up x dir prob');
+                      newDir = this.tryDirs('left',this.direction,'right');
+                  } else if (xDif === 0) { // try straight, left, right (this maybe should be random left right)
+                      newDir = this.tryDirs(this.direction,'left','right');
+                  } else { // try straight, left,right (this maybe should be random left right)
+                      newDir = this.tryDirs(this.direction,'left','right');
                   }
               }
       } else if (Math.abs(xDif) > Math.abs(yDif)) { // ghost wants to move in X dir
-              if ( (xDif < 0) && (this.inBounds('right') === true) ) {
-                newDir = 'right';
-              } else if ( (xDif > 0) && (this.inBounds('left') === true) ) {
-                newDir = 'left';
-              } else if (this.inBounds(this.direction) === true) {
-                newDir = this.direction;
-              } else {
-                console.log('ghost: getNewDir, up x dir prob');
+              if (xDif < 0) { // try right straight left
+                newDir = newDir = this.tryDirs('right',this.direction,'left');
+              } else if (xDif > 0) { // try left straight right
+                newDir = newDir = this.tryDirs('left',this.direction,'right');
+              } else { // try straight left right (this maybe should be random left right)
+                newDir = this.tryDirs(this.direction,'left','right');
               }
       } else {
-             console.log('ghost: getNewDir left prob');
+        console.log('ghost: getNewDir left prob');
       }
     } else if (this.direction === 'down') {
       if (Math.abs(yDif) >= Math.abs(xDif)) {
@@ -284,43 +171,25 @@ function Ghost(x,y,name,frame0) {
                 console.log('ghost SAME DIR');
               } else { // get best right or left or straight
                   if (xDif < 0) { // try right, straight, left
-                      if (this.inBounds('right') === true) {
-                        newDir = 'right';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('left') === true) {
-                        newDir = 'left';
-                      } else {
-                        console.log('ghost: getNewDir down x right prob');
-                      }
+                      newDir = this.tryDirs('right',this.direction,'left');
                   } else if (xDif > 0) {  // try left, striaght, right
-                      if (this.inBounds('left') === true) {
-                        newDir = 'left';
-                      } else if (this.inBounds(this.direction) === true) {
-                        newDir = this.direction;
-                      } else if (this.inBounds('right') === true) {
-                        newDir = 'right';
-                      } else {
-                        console.log('ghost: getNewDir up x left prob');
-                      }
-                  } else if (this.inBounds(this.direction) === true) {
-                    newDir = this.direction;
-                  } else {
-                    console.log('ghost: getNewDir, down x dir prob');
+                      newDir = this.tryDirs('left',this.direction,'right');
+                  } else if (xDif === 0) { // try straight, left,right (this maybe should be random left right)
+                      newDir = this.tryDirs(this.direction,'left','right');
+                  } else { // try straight, left,right (this maybe should be random left right)
+                      newDir = this.tryDirs(this.direction,'left','right');
                   }
               }
       } else if (Math.abs(xDif) > Math.abs(yDif)) {
-              if ( (xDif < 0) && (this.inBounds('right') === true) ) {
-                newDir = 'right';
-              } else if ( (xDif > 0) && (this.inBounds('left') === true) ) {
-                newDir = 'left';
-              } else if (this.inBounds(this.direction) === true) {
-                newDir = this.direction;
-              } else {
-                console.log('ghost: getNewDir, down x dir prob');
+              if (xDif < 0) { // try right straight left
+                newDir = newDir = this.tryDirs('right',this.direction,'left');
+              } else if (xDif > 0) { // try left straight right
+                newDir = newDir = this.tryDirs('left',this.direction,'right');
+              } else { // try straight left right (this maybe should be random left right)
+                newDir = this.tryDirs(this.direction,'left','right');
               }
       } else {
-             console.log('ghost: getNewDir left prob');
+        console.log('ghost: getNewDir left prob');
       }
     } else {
       console.log('ghost: getNewDirection prob' );
