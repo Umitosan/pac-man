@@ -12,7 +12,6 @@ function Ghost(x,y,name,frame0) {
   this.direction = 'up';
   this.moveState = 'exitbase'; // chase, flee, base, exitbase, stop, intersection
   this.lastMoveState = 'paused';
-  this.lastIntersection = [];
 
   // sprite stuff
   this.spriteSheet = new Image();
@@ -23,7 +22,7 @@ function Ghost(x,y,name,frame0) {
   this.spriteFrameDur = 150;
   this.spriteFrameWidth = 64;  // in pixels
 
-  // ghost pause at intersection
+  // ghost pause
   this.tmpPauseState = false;
   this.tmpPauseBegin = null;
   this.tmpPauseDur = 0;
@@ -369,12 +368,13 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.stopFlee = function() {
+    console.log('ghost stop flee run');
     if (this.moveState === 'flee') {
       console.log('ghost flee stopped');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
-      this.changeVel(this.changeVel);
+      this.changeVel(this.chaseVel);
       this.updateSprite(this.direction);
     } else {
       // nothin
@@ -416,6 +416,7 @@ function Ghost(x,y,name,frame0) {
                                   /* dur   */ 2000
     );
     console.log('this.eatenTxtBox = ', this.eatenTxtBox);
+    myGame.pauseAllChars(600);
   };
 
   this.updateSprite = function(dir) {
@@ -603,8 +604,6 @@ function Ghost(x,y,name,frame0) {
           if (this.tmpPauseState === true) {
             if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
               this.tmpUnpause();
-              this.moveGhost();
-              this.moveGhost();
             }
           }
     } else if (this.moveState === 'stop') {

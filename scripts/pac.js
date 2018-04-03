@@ -4,20 +4,28 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.x = x;
   this.y = y;
   this.vel = 3;
+  this.lives = 2;
   this.diameter = diameter;
   this.radius = diameter/2;
+  this.color = Colors.pacYellow;
+  this.lineW = 2;
+  this.pixX = 0;
+  this.pixY = 0;
+  this.moveState = moveState; // go , stop, dying, paused
+  this.lastMoveState = 'paused';
+
+  // mouth
   this.mouthSize = getRadianAngle(70);
   this.maxMouthSize = getRadianAngle(70);
   this.minMouthSize = getRadianAngle(2);
   this.mouthVel = getRadianAngle(8);
   this.direction = direction;
   this.rotateFace = 0;
-  this.moveState = moveState; // go , stop, dying
-  this.lives = 2;
-  this.color = Colors.pacYellow;
-  this.lineW = 2;
-  this.pixX = 0;
-  this.pixY = 0;
+
+  // pac pause
+  this.tmpPauseState = false;
+  this.tmpPauseBegin = null;
+  this.tmpPauseDur = 0;
 
   this.init = function() {
   }; // init
@@ -114,6 +122,22 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       // game over
     }
     myGame.stopAllGhosts();
+  };
+
+  this.tmpPause = function(dur) {
+    this.tmpPauseState = true;
+    this.tmpPauseDur = dur;
+    this.tmpPauseBegin = performance.now();
+    this.lastMoveState = this.moveState;
+    this.moveState = 'paused';
+  };
+
+  this.tmpUnpause = function() {
+    this.tmpPauseState = false;
+    this.tmpPauseDur = 0;
+    this.tmpPauseBegin = null;
+    this.moveState = this.lastMoveState;
+    this.lastMoveState = 'paused';
   };
 
   this.nextMouth = function() {
@@ -230,6 +254,14 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
         } else {
           console.log("[lastDirKey problems]");
         }
+    } else if (this.moveState === 'paused') {
+      console.log('pac paused');
+      // check to see if it's time to resume movement after an intersection
+      if (this.tmpPauseState === true) {
+        if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
+          this.tmpUnpause();
+        }
+      }
     } else if (this.moveState === 'stop') {
       if (State.lastDirKey !== 'none') {
         // console.log('else if 3');

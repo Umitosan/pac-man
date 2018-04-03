@@ -167,6 +167,13 @@ function Game(updateDur) {
     }
   };
 
+  this.pauseAllChars = function(pauseDur) {
+    for (var i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].tmpPause(pauseDur);
+      this.myPac.tmpPause(pauseDur);
+    }
+  };
+
   this.stopAllGhosts = function() {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].moveState = 'stop';
