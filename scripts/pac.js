@@ -255,7 +255,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           console.log("[lastDirKey problems]");
         }
     } else if (this.moveState === 'paused') {
-      console.log('pac paused');
+      // console.log('pac paused');
       // check to see if it's time to resume movement after an intersection
       if (this.tmpPauseState === true) {
         if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {

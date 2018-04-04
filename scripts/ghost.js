@@ -425,7 +425,7 @@ function Ghost(x,y,name,frame0) {
     // update ghost goal to inside ghost house
     // update velocity
     // show score txt on game
-    myGame.stopGhostFleeState(); // tmp
+    this.stopFlee();
     myGame.bigPillGhostsEaten += 1;
     this.spriteRow = 1;
     this.frameTotal = 1;

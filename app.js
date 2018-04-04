@@ -102,6 +102,11 @@ function Game(updateDur) {
                                 /* name */  "blinky",
                                 /*frame0*/ 2
                               ));
+    // this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*15,
+    //                             /*   y  */  State.gridSpacing*15,
+    //                             /* name */  "pinky",
+    //                             /*frame0*/ 2
+    //                           ));
     for (let g=0;g < this.ghosts.length; g++ ) {
       this.ghosts[g].init('img/blinky.png');
       let src = this.ghosts[g].spriteSheet.src;
@@ -145,7 +150,9 @@ function Game(updateDur) {
   this.startGhostFleeState = function() {
     console.log('start ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].startFlee();
+      if (this.ghosts[i].moveState === 'chase') {
+        this.ghosts[i].startFlee();
+      }
     }
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
@@ -154,7 +161,9 @@ function Game(updateDur) {
   this.stopGhostFleeState = function() {
     console.log('stop ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].stopFlee();
+      if (this.ghosts[i].moveState === 'flee') {
+        this.ghosts[i].stopFlee();
+      }
     }
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
@@ -170,8 +179,8 @@ function Game(updateDur) {
   this.pauseAllChars = function(pauseDur) {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].tmpPause(pauseDur);
-      this.myPac.tmpPause(pauseDur);
     }
+    this.myPac.tmpPause(pauseDur);
   };
 
   this.stopAllGhosts = function() {
