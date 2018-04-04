@@ -147,12 +147,10 @@ function Game(updateDur) {
     }
   };
 
-  this.startGhostFleeState = function() {
+  this.startGhostFleeState = function() {  // pac initiates this when he eats a big pill, @(pac.update)
     console.log('start ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
-      if (this.ghosts[i].moveState === 'chase') {
-        this.ghosts[i].startFlee();
-      }
+      this.ghosts[i].startFlee();
     }
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
@@ -172,7 +170,9 @@ function Game(updateDur) {
 
   this.startGhostsBlinking = function() {
     for (let i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].startBlinking();
+      if (this.ghosts[i].moveState === 'flee') {
+        this.ghosts[i].startBlinking();
+      }
     }
   };
 

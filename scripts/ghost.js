@@ -369,7 +369,7 @@ function Ghost(x,y,name,frame0) {
     if (this.moveState === 'flee') {
       console.log('ghost already fleeing, stop blining');
       this.stopBlinking();
-    } else {
+    } else if (this.moveState === 'chase') {
       console.log('ghost flee started');
       this.moveState = 'flee';
       this.tryReverseDir();
@@ -377,6 +377,8 @@ function Ghost(x,y,name,frame0) {
       this.spriteRow = 1;
       this.frame0 = 0;
       this.curFrame = 0;
+    } else {
+      // wrong state so nothin
     }
   };
 
