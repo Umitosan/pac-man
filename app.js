@@ -95,6 +95,7 @@ function Game(updateDur) {
                         );
     // init ghosts
     this.myPac.init();
+    this.updateLives();
     this.myLevel = new Level();
     this.myLevel.init();
     this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14,
@@ -110,6 +111,13 @@ function Game(updateDur) {
     for (let g=0;g < this.ghosts.length; g++ ) {
       this.ghosts[g].init('img/blinky.png');
       let src = this.ghosts[g].spriteSheet.src;
+    }
+  };
+
+  this.updateLives = function() { // update the number of pac life images below game
+    $( "div.bonus-row").children().css('background-image','none');
+    for (var i = 1; i < myGame.myPac.lives+1; i++) {
+      $( "div.bonus-row").children('#life'+i).css('background-image','url(img/pac.png)');
     }
   };
 
@@ -159,9 +167,7 @@ function Game(updateDur) {
   this.stopGhostFleeState = function() {
     console.log('stop ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
-      if (this.ghosts[i].moveState === 'flee') {
-        this.ghosts[i].stopFlee();
-      }
+      this.ghosts[i].stopFlee();
     }
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
@@ -170,9 +176,7 @@ function Game(updateDur) {
 
   this.startGhostsBlinking = function() {
     for (let i = 0; i < this.ghosts.length; i++) {
-      if (this.ghosts[i].moveState === 'flee') {
-        this.ghosts[i].startBlinking();
-      }
+      this.ghosts[i].startBlinking();
     }
   };
 
@@ -330,6 +334,9 @@ function keyDown(event) {
         case 88: // X key
           console.log('toggle px test box');
           myGame.pxBoxOn = (myGame.pxBoxOn) ? false : true;
+          break;
+        case 67: // C key
+          console.log('c button');
           break;
         default: // Everything else
           console.log("key = ", code);

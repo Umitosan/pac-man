@@ -354,15 +354,19 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.startBlinking = function() {
-    this.frameTotal = 4;
+    if (this.moveState === 'flee') {
+      this.frameTotal = 4;
+    }
   };
 
   this.stopBlinking = function() {
-    console.log('STOP BLINKING');
-    this.frameTotal = 2;
-    this.spriteRow = 1;
-    this.frame0 = 0;
-    this.curFrame = 0;
+    if (this.moveState === 'flee') {
+      console.log('STOP BLINKING');
+      this.frameTotal = 2;
+      this.spriteRow = 1;
+      this.frame0 = 0;
+      this.curFrame = 0;
+    }
   };
 
   this.startFlee = function() {

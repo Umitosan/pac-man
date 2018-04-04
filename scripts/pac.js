@@ -118,6 +118,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     console.log('pac died, hit by ghost');
     this.moveState = 'dying';
     this.lives -= 1;
+    myGame.updateLives();
     if (this.lives < 0) {
       // game over
     }
