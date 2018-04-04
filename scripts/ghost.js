@@ -12,6 +12,8 @@ function Ghost(x,y,name,frame0) {
   this.direction = 'up';
   this.moveState = 'exitbase'; // chase, flee, base, exitbase, stop, intersection
   this.lastMoveState = 'paused';
+  this.eatenTxtBox = undefined;
+  this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
 
   // sprite stuff
   this.spriteSheet = new Image();
@@ -26,8 +28,6 @@ function Ghost(x,y,name,frame0) {
   this.tmpPauseState = false;
   this.tmpPauseBegin = null;
   this.tmpPauseDur = 0;
-
-  this.eatenTxtBox = undefined;
 
   this.init = function(imgSrc) {
     this.spriteSheet.src = imgSrc;
@@ -78,8 +78,6 @@ function Ghost(x,y,name,frame0) {
     this.changeTarget();
     xDif = this.x - this.targetX;
     yDif = this.y - this.targetY;
-
-    // console.log('this.direction before new dir = ', this.direction);
 
     if (this.direction === 'right') {
       // go straight if ideal, else go ideal Y dir, else turn random, else straight
@@ -164,7 +162,7 @@ function Ghost(x,y,name,frame0) {
       if (Math.abs(yDif) >= Math.abs(xDif)) {
               if ( (yDif < 0) && (this.inBounds(this.direction) === true) ) { // try go down if ideal
                 newDir = this.direction;
-                console.log('ghost SAME DIR');
+                // console.log('ghost SAME DIR');
               } else { // get best right or left or straight
                   if (xDif < 0) { // try right, straight, left
                       newDir = this.tryDirs('right',this.direction,'left');
@@ -190,8 +188,6 @@ function Ghost(x,y,name,frame0) {
     } else {
       console.log('ghost: getNewDirection prob' );
     }
-
-    // console.log('ghost: newDir obtained = ', newDir);
     return newDir;
   };
 
@@ -310,16 +306,32 @@ function Ghost(x,y,name,frame0) {
     this.y = (data.row+1)*State.gridSpacing;
   };
 
-  this.reverseDir = function() {
+  this.tryReverseDir = function() {
     let dir = this.direction;
     if (dir === 'right') {
-      this.changeDir('left');
+      if (this.inBounds('left') === true) {
+        this.changeDir('left');
+      } else {
+        console.log('tryReverse but cant go... '+'left');
+      }
     } else if (dir === 'left') {
-      this.changeDir('right');
+      if (this.inBounds('right') === true) {
+        this.changeDir('right');
+      } else {
+        console.log('tryReverse but cant go... '+'right');
+      }
     } else if (dir === 'up') {
-      this.changeDir('down');
+      if (this.inBounds('down') === true) {
+        this.changeDir('down');
+      } else {
+        console.log('tryReverse but cant go... '+'down');
+      }
     } else if (dir === 'down') {
-      this.changeDir('up');
+      if (this.inBounds('up') === true) {
+        this.changeDir('up');
+      } else {
+        console.log('tryReverse but cant go... '+'up');
+      }
     } else {
       console.log('ghost: reverseDir prob');
     }
@@ -360,7 +372,8 @@ function Ghost(x,y,name,frame0) {
     } else {
       console.log('ghost flee started');
       this.moveState = 'flee';
-      this.reverseDir();
+      this.tryReverseDir();
+      this.prevInter = getNearestIntersection(this.x,this.y);
       this.spriteRow = 1;
       this.frame0 = 0;
       this.curFrame = 0;
@@ -381,15 +394,27 @@ function Ghost(x,y,name,frame0) {
     }
   };
 
-  this.stopBase = function() {
+  this.stopBase = function() { // after returning to base, reset state to exitbase etc
     this.moveState = 'exitbase';
     this.changeTarget();
     this.spriteRow = 0;
     this.frameTotal = 2;
     this.hopToIn();
+    this.changeDir('up');
     this.changeVel(this.chaseVel);
     this.updateSprite(this.direction);
-    this.changeDir('up');
+  };
+
+  this.startChase = function() {
+    console.log("Ghost: startChase");
+    this.prevInter = getNearestIntersection(this.x,this.y); // set initial prevInter at start of chase
+    this.moveState = 'chase';
+    this.changeVel(this.chaseVel);
+    this.spriteRow = 0;
+    this.hopToIn();
+    let newDir = this.getNewDirection();
+    this.changeDir(newDir);
+    this.updateSprite(newDir);
   };
 
   this.initEaten = function() {
@@ -416,7 +441,7 @@ function Ghost(x,y,name,frame0) {
                                   /* dur   */ 2000
     );
     console.log('this.eatenTxtBox = ', this.eatenTxtBox);
-    myGame.pauseAllChars(600);
+    myGame.pauseAllChars(500);
   };
 
   this.updateSprite = function(dir) {
@@ -499,8 +524,6 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.checkHitPac = function() {
-    // pac diameter
-    // ghost State.gridSpacing * 2
     let xDif = Math.abs(this.x - myGame.myPac.x);
     let yDif = Math.abs(this.y - myGame.myPac.y);
     if ( ((xDif < 20) && (yDif < 20)) ) {
@@ -517,28 +540,28 @@ function Ghost(x,y,name,frame0) {
        }
   };
 
-  this.resumeChase = function() {
-    console.log("Ghost: resumeChase");
-    this.moveState = 'chase';
-    this.changeVel(this.chaseVel);
-    this.spriteRow = 0;
-    this.hopToIn();
-    let newDir = this.getNewDirection();
-    this.changeDir(newDir);
-    this.updateSprite(newDir);
+  this.isNewInter = function() { // returns true if currnt intersection is dif then prevInter
+    let isNew = false;
+    let curInter = getNearestIntersection(this.x,this.y);
+    // either row or col changed since last intersection then it's ok to get a new direction
+    if ( (this.prevInter.row !== curInter.row) || (this.prevInter.col !== curInter.col) ) {
+      isNew = true;
+    }
+    // console.log('isNewInter = ', isNew);
+    return isNew;
   };
 
   this.update = function() {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
-          // if at intersection check which way to go
-          if ( atGridIntersection(this.x,this.y,this.vel) ) {
+          if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) { // check which way to go
+              this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
               this.changeTarget();
               let newDir = this.getNewDirection();
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                this.tmpPause(80); // ghost pauses at intersections
+                this.tmpPause(50); // ghost pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -548,13 +571,13 @@ function Ghost(x,y,name,frame0) {
           }
           this.checkHitPac();
     } else if (this.moveState === 'flee') {  // run to designated corner of screen
-          // if at intersection check which way to go
-          if ( atGridIntersection(this.x,this.y,this.vel) ) {
+          if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) { // check which way to go
+              this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
               let newDir = this.getNewDirection();
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.hopToIn();
-                this.tmpPause(80); // ghost pauses at intersections
+                this.tmpPause(50); // ghost pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -566,10 +589,11 @@ function Ghost(x,y,name,frame0) {
     } else if (this.moveState === 'base') { // ghost was eaten move to base
           if ( (Math.abs(this.x - this.targetX) <= this.vel) && (Math.abs(this.y - this.targetY) <= this.vel) ) {  // ghost has arrived in base, resume chase
             this.stopBase();
-          } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
+          } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) {
+              this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
               let newDir = this.getNewDirection();
-              console.log('ghost flee attempting dir = ', newDir);
-              console.log('cur dur = ', this.direction);
+              // console.log('ghost flee attempting dir = ', newDir);
+              // console.log('cur dur = ', this.direction);
               if (newDir !== this.direction) {
                 this.updateEyesSprite(newDir);
                 this.changeDir(newDir);
@@ -583,14 +607,14 @@ function Ghost(x,y,name,frame0) {
           }
     } else if (this.moveState === 'exitbase') {
           if ( (Math.abs(this.x - this.targetX) <= 4) && (Math.abs(this.y - this.targetY) <= 4) ) {
-            this.resumeChase();
+            this.startChase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
               let newDir = this.getNewDirection();
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                this.tmpPause(100); // ghost pauses at intersections
+                // this.tmpPause(100); // ghost pauses at intersections
               } else {
                 this.moveGhost();
               }

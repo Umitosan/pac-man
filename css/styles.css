@@ -134,23 +134,46 @@ th.key p {
 /* BONUS ROW */
 /* BONUS ROW */
 .bonus-row {
-  display: inline-flex;
-  width: 1185px;
-  height: 100px;
+  display: inline-block;
+  width: 1250px;
+  height: 50px;
   display: block;
+  /* outline-color: red;
+  outline-style: solid;
+  outline-width: 2px; */
 }
 .bonus-row img {
+  margin-top: 10px;
   height: 42px;
 }
-#life1 {
-  padding-left: 320px;
-  padding-top: 10px;
+.bonus-item {
+  height: 45px;
+  width: 45px;
+  /* background-size: cover; */
+  background-size: contain;
+  background-repeat: no-repeat;
 }
-#life2 {
-  padding-left: 14px;
+.pac-life {
+  /* outline-color: #1532BC;
+  outline-style: solid;
+  outline-width: 2px; */
+}
+#life1 {
+  margin-left: 320px;
+  background-image: url("../img/pac.png");
+}
+#life2, #life3, #life4, #life5 {
+  margin-left: 55px;
+  background-image: url("../img/pac.png");
+}
+.fruit {
+  /* outline-color: red;
+  outline-style: solid;
+  outline-width: 2px; */
 }
 #cherry {
-  padding-left: 450px;
+  margin-left: 370px;
+  background-image: url("../img/cherry.png");
 }
 
 /*reuseable classes*//*reuseable classes*//*reuseable classes*/
