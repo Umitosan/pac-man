@@ -659,10 +659,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*15;
         this.targetY = State.gridSpacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*15;
         this.targetY = State.gridSpacing*12;
       } else {
         // nothin
@@ -688,7 +688,7 @@ function getGhostChangeTarget(ghostName) {
             console.log('pinky changeTarget pac positioning prob');
           }
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*1;
+        this.targetX = State.gridSpacing*24;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
         this.targetX = State.gridSpacing*14;
