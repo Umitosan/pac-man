@@ -1,10 +1,11 @@
 /*jshint esversion: 6 */
 
-function Ghost(x,y,name,frame0) {
+function Ghost(x,y,name,src,frame0) {
   // general
   this.x = x;
   this.y = y;
   this.name = name;
+  this.spriteImgSrc = src;
   this.chaseVel = 2.5;
   this.vel = 2.5;
   this.targetX = 'none';
@@ -29,8 +30,9 @@ function Ghost(x,y,name,frame0) {
   this.tmpPauseBegin = null;
   this.tmpPauseDur = 0;
 
-  this.init = function(imgSrc) {
-    this.spriteSheet.src = imgSrc;
+  this.init = function() {
+    getGhostChangeTarget(this.name);
+    this.spriteSheet.src = this.spriteImgSrc;
     this.targetX = State.gridSpacing*14;
     this.targetY = State.gridSpacing*12;
     this.changeDir(this.direction);
@@ -38,21 +40,8 @@ function Ghost(x,y,name,frame0) {
   };
 
   this.changeTarget = function() {
-    if (this.moveState === 'chase') {
-      this.targetX = myGame.myPac.x;
-      this.targetY = myGame.myPac.y;
-    } else if (this.moveState === 'flee') {
-      this.targetX = State.gridSpacing*1;
-      this.targetY = State.gridSpacing*1;
-    } else if (this.moveState === 'base') {
-      this.targetX = State.gridSpacing*14;
-      this.targetY = State.gridSpacing*15;
-    } else if (this.moveState === 'exitbase') {
-      this.targetX = State.gridSpacing*14;
-      this.targetY = State.gridSpacing*12;
-    } else {
-      // nothin
-    }
+    // to be filled at this.init()
+    // defined specifically for each ghost at getGhostChangeTarget()
   };
 
   this.tryDirs = function(dir1,dir2,dir3) { // tests 3 directions inBounds and returns first good one
@@ -374,7 +363,7 @@ function Ghost(x,y,name,frame0) {
       console.log('ghost already fleeing, stop blining');
       this.stopBlinking();
     } else if (this.moveState === 'chase') {
-      console.log('ghost flee started');
+      console.log('ghost: flee started - '+this.name);
       this.moveState = 'flee';
       this.tryReverseDir();
       this.prevInter = getNearestIntersection(this.x,this.y);
@@ -567,7 +556,7 @@ function Ghost(x,y,name,frame0) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                this.tmpPause(50); // ghost pauses at intersections
+                this.tmpPause(30); // 30ms pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -583,7 +572,7 @@ function Ghost(x,y,name,frame0) {
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.hopToIn();
-                this.tmpPause(50); // ghost pauses at intersections
+                this.tmpPause(30); // 30ms pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -652,6 +641,106 @@ function Ghost(x,y,name,frame0) {
   }; // update
 
 } // GHOST
+
+
+
+function getGhostChangeTarget(ghostName) {
+  if (ghostName === 'blinky') {
+    console.log('blinky gets a prototype');
+    myGame.ghosts[0].changeTarget = function() {
+      if (this.moveState === 'chase') {
+        this.targetX = myGame.myPac.x;
+        this.targetY = myGame.myPac.y;
+      } else if (this.moveState === 'flee') {
+        this.targetX = State.gridSpacing*1;
+        this.targetY = State.gridSpacing*1;
+      } else if (this.moveState === 'base') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*15;
+      } else if (this.moveState === 'exitbase') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*12;
+      } else {
+        // nothin
+      }
+    };
+  } else if (ghostName === 'pinky') {
+    console.log('pinky gets a prototype');
+    myGame.ghosts[1].changeTarget = function() {
+      if (this.moveState === 'chase') {
+          if (myGame.myPac.direction === 'left') {
+            this.targetX = myGame.myPac.x - (State.gridSpacing*2);
+            this.targetY = myGame.myPac.y;
+          } else if (myGame.myPac.direction === 'right') {
+            this.targetX = myGame.myPac.x + (State.gridSpacing*2);
+            this.targetY = myGame.myPac.y;
+          } else if (myGame.myPac.direction === 'up') {
+            this.targetX = myGame.myPac.x;
+            this.targetY = myGame.myPac.y - (State.gridSpacing*2);
+          } else if (myGame.myPac.direction === 'down') {
+            this.targetX = myGame.myPac.x;
+            this.targetY = myGame.myPac.y + (State.gridSpacing*2);
+          } else {
+            console.log('pinky changeTarget pac positioning prob');
+          }
+      } else if (this.moveState === 'flee') {
+        this.targetX = State.gridSpacing*1;
+        this.targetY = State.gridSpacing*1;
+      } else if (this.moveState === 'base') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*15;
+      } else if (this.moveState === 'exitbase') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*12;
+      } else {
+        // nothin
+      }
+    };
+  } else if (ghostName === 'inky') {
+    console.log('inky gets a prototype');
+    myGame.ghosts[0].changeTarget = function() {
+      if (this.moveState === 'chase') {
+        this.targetX = myGame.myPac.x;
+        this.targetY = myGame.myPac.y;
+      } else if (this.moveState === 'flee') {
+        this.targetX = State.gridSpacing*1;
+        this.targetY = State.gridSpacing*1;
+      } else if (this.moveState === 'base') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*15;
+      } else if (this.moveState === 'exitbase') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*12;
+      } else {
+        // nothin
+      }
+    };
+  } else if (ghostName === 'clyde') {
+    console.log('clyde gets a prototype');
+    myGame.ghosts[0].changeTarget = function() {
+      if (this.moveState === 'chase') {
+        this.targetX = myGame.myPac.x;
+        this.targetY = myGame.myPac.y;
+      } else if (this.moveState === 'flee') {
+        this.targetX = State.gridSpacing*1;
+        this.targetY = State.gridSpacing*1;
+      } else if (this.moveState === 'base') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*15;
+      } else if (this.moveState === 'exitbase') {
+        this.targetX = State.gridSpacing*14;
+        this.targetY = State.gridSpacing*12;
+      } else {
+        // nothin
+      }
+    };
+  } else {
+    console.log('getGhostChangeTarget probs');
+  }
+}
+
+
+
 
 // Ghost personality overview
 //

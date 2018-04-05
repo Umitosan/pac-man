@@ -55,6 +55,10 @@ function hardReset() {
   clearCanvas();
 }
 
+function softReset() {
+
+}
+
 
 // more info http://pacmanmuseum.com/history/pacman-scoring.php
 // SCORING
@@ -84,7 +88,7 @@ function Game(updateDur) {
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
 
   this.init = function() {
-    this.bg.src = 'img/reference1.png';
+    this.bg.src = 'img/reference2.png';
     // Pac(x,y,velocity,width,direction,moveState)
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
@@ -98,19 +102,32 @@ function Game(updateDur) {
     this.updateLives();
     this.myLevel = new Level();
     this.myLevel.init();
-    this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*14,
-                                /*   y  */  State.gridSpacing*15,
-                                /* name */  "blinky",
-                                /*frame0*/ 2
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
+                                /*   y   */  State.gridSpacing*15,
+                                /* name  */  "blinky",
+                                /* src   */  'img/blinky.png',
+                                /*frame0 */  2
                               ));
-    // this.ghosts.push(new Ghost( /*   x  */  State.gridSpacing*15,
-    //                             /*   y  */  State.gridSpacing*15,
-    //                             /* name */  "pinky",
-    //                             /*frame0*/ 2
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*15,
+                                /*   y   */  State.gridSpacing*15,
+                                /* name  */  "pinky",
+                                /* src   */  'img/pinky.png',
+                                /*frame0 */  2
+                              ));
+    // this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
+    //                             /*   y   */  State.gridSpacing*15,
+    //                             /* name  */  "inky",
+    //                             /* src   */ 'img/inky.png',
+    //                             /*frame0 */ 2
     //                           ));
-    for (let g=0;g < this.ghosts.length; g++ ) {
-      this.ghosts[g].init('img/blinky.png');
-      let src = this.ghosts[g].spriteSheet.src;
+    // this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
+    //                             /*   y   */  State.gridSpacing*15,
+    //                             /* name  */  "clyde",
+    //                             /* src   */ 'img/clyde.png',
+    //                             /*frame0 */ 2
+    //                           ));
+    for (var i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].init();
     }
   };
 
