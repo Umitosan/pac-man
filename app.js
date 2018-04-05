@@ -103,16 +103,20 @@ function Game(updateDur) {
     this.myLevel = new Level();
     this.myLevel.init();
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
-                                /*   y   */  State.gridSpacing*15,
+                                /*   y   */  State.gridSpacing*12,
                                 /* name  */  "blinky",
                                 /* src   */  'img/blinky.png',
-                                /*frame0 */  2
+                                /*frame0 */  2,
+                                /*mvState*/  'chase',
+                                /* dir    */ 'right'
                               ));
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*15,
                                 /*   y   */  State.gridSpacing*15,
                                 /* name  */  "pinky",
                                 /* src   */  'img/pinky.png',
-                                /*frame0 */  2
+                                /*frame0 */  2,
+                                /*mvState*/  'exitbase',
+                                /* dir    */ 'up'
                               ));
     // this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
     //                             /*   y   */  State.gridSpacing*15,

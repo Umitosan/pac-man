@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-function Ghost(x,y,name,src,frame0) {
+function Ghost(x,y,name,src,frame0,mvState,dir) {
   // general
   this.x = x;
   this.y = y;
@@ -10,8 +10,8 @@ function Ghost(x,y,name,src,frame0) {
   this.vel = 2.5;
   this.targetX = 'none';
   this.targetY = 'none';
-  this.direction = 'up';
-  this.moveState = 'exitbase'; // chase, flee, base, exitbase, stop, intersection
+  this.direction = dir;
+  this.moveState = mvState; // chase, flee, base, exitbase, stop, intersection
   this.lastMoveState = 'paused';
   this.eatenTxtBox = undefined;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
@@ -33,10 +33,15 @@ function Ghost(x,y,name,src,frame0) {
   this.init = function() {
     getGhostChangeTarget(this.name);
     this.spriteSheet.src = this.spriteImgSrc;
-    this.targetX = State.gridSpacing*14;
-    this.targetY = State.gridSpacing*12;
-    this.changeDir(this.direction);
-    this.updateSprite(this.direction);
+    if (this.name === 'blinky') {
+      this.startChase();
+    } else {
+      this.targetX = State.gridSpacing*14;
+      this.targetY = State.gridSpacing*12;
+      this.changeDir(this.direction);
+      this.updateSprite(this.direction);
+    }
+    this.tmpPause(700);
   };
 
   this.changeTarget = function() {
@@ -609,7 +614,6 @@ function Ghost(x,y,name,src,frame0) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                // this.tmpPause(100); // ghost pauses at intersections
               } else {
                 this.moveGhost();
               }
@@ -645,7 +649,7 @@ function Ghost(x,y,name,src,frame0) {
 
 
 function getGhostChangeTarget(ghostName) {
-  if (ghostName === 'blinky') {
+  if (ghostName === 'blinky') { // BLINKY ONLY
     console.log('blinky gets a prototype');
     myGame.ghosts[0].changeTarget = function() {
       if (this.moveState === 'chase') {
@@ -664,7 +668,7 @@ function getGhostChangeTarget(ghostName) {
         // nothin
       }
     };
-  } else if (ghostName === 'pinky') {
+  } else if (ghostName === 'pinky') { // PINKY ONLY
     console.log('pinky gets a prototype');
     myGame.ghosts[1].changeTarget = function() {
       if (this.moveState === 'chase') {
