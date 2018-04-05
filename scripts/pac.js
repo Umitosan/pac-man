@@ -11,16 +11,17 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.lineW = 2;
   this.pixX = 0;
   this.pixY = 0;
-  this.moveState = moveState; // go , stop, dying, paused
+  this.moveState = moveState; // go, stop, paused, dying,
   this.lastMoveState = 'paused';
+  this.direction = direction; // also relates to mouth direction and rotation
 
   // mouth
   this.mouthSize = getRadianAngle(70);
   this.maxMouthSize = getRadianAngle(70);
   this.minMouthSize = getRadianAngle(2);
   this.mouthVel = getRadianAngle(8);
-  this.direction = direction;
   this.rotateFace = 0;
+  this.deathMouthDur = 50;
 
   // pac pause
   this.tmpPauseState = false;
@@ -111,12 +112,22 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.die = function() {
+
     // stop everything
     // start death animation
     // subtract -1 from pac lives
     // start new life animation
+
     console.log('pac died, hit by ghost');
     this.moveState = 'dying';
+    this.tmpPause(200);
+    for (let i = 0; i < myGame.ghosts.length; i++) {
+      myGame.ghosts[i].moveState = 'stop';
+    }
+    this.direction = 'up';
+    this.rotatePacFace();
+    this.mouthVel = getRadianAngle(3);
+    this.mouthSize = getRadianAngle(20);
     this.lives -= 1;
     myGame.updateLives();
     if (this.lives < 0) {
@@ -150,6 +161,14 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       // nothing
     }
     this.mouthSize += this.mouthVel;
+  };
+
+  this.nextDeathMouth = function() {
+    if (this.mouthSize > getRadianAngle(177)) {
+      console.log('mouth death done');
+    } else { // keep animation mouth
+      this.mouthSize += this.mouthVel;
+    }
   };
 
   this.pixTest = function(sDir) {
@@ -223,9 +242,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.update = function() {
     if (this.moveState === 'go') {
         if (State.lastDirKey === 'none') {
-            // console.log('else if 1');
             if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
-              // console.log('collision!');
               this.moveState = 'stop';
               State.lastDirKey = 'none';
               this.hopToIn();
@@ -236,13 +253,11 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
               this.nextMouth();
             }
         } else if (State.lastDirKey !== 'none') {
-          // console.log('else if 2');
           if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(State.lastDirKey) === true) ) {
             this.hopToIn();
             this.changeDir(State.lastDirKey);
             State.lastDirKey = 'none';
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
-            // console.log('collision!');
             this.moveState = 'stop';
             State.lastDirKey = 'none';
             this.hopToIn();
@@ -256,7 +271,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           console.log("[lastDirKey problems]");
         }
     } else if (this.moveState === 'paused') {
-      // console.log('pac paused');
       // check to see if it's time to resume movement after an intersection
       if (this.tmpPauseState === true) {
         if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
@@ -275,11 +289,12 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
           this.movePac();
           this.nextMouth();
         }
-      } else if (this.moveState === 'dying') {
-        // update death animation
       } else {
         // sit idle
       }
+    } else if (this.moveState === 'dying') {
+      console.log('pac dying');
+      this.nextDeathMouth();
     } else {
       console.log("[move state problems]");
     }

@@ -785,6 +785,7 @@ function getGhostChangeTarget(ghostName) {
 //  there are some SAFE ZONES in some levels where pac and go and never be attacked
 //
 //  PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
+//
 //  Ghosts MOVE SLOWER in tunnel
 //
 //  level start - INKY-PINKY-CLYDE are in the ghost house at the beginning - two side facing up and PINKY facing down

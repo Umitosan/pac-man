@@ -108,7 +108,7 @@ function Game(updateDur) {
                                 /* src   */  'img/blinky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'chase',
-                                /* dir    */ 'right'
+                                /* dir    */ 'left'
                               ));
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*15,
                                 /*   y   */  State.gridSpacing*15,
