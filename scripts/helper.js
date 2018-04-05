@@ -16,7 +16,8 @@ var Colors = {
   green: 'rgba(0, 230, 0, 1)',
   blue: 'rgba(0, 0, 230, 0.7)',
   pacYellow: 'rgba(255,255,1,1)',
-  aqua: 'rgba(127,255,212,1)'
+  aqua: 'rgba(127,255,212,1)',
+  dotPink: 'rgba(247, 200, 183,1)'
 };
 
 function TxtBox(x,y,msg,color,dur) {
