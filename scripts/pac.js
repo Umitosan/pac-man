@@ -31,6 +31,22 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.init = function() {
   }; // init
 
+  this.tmpPause = function(dur) {
+    this.tmpPauseState = true;
+    this.tmpPauseDur = dur;
+    this.tmpPauseBegin = performance.now();
+    this.lastMoveState = this.moveState;
+    this.moveState = 'paused';
+  };
+
+  this.tmpUnpause = function() {
+    this.tmpPauseState = false;
+    this.tmpPauseDur = 0;
+    this.tmpPauseBegin = null;
+    this.moveState = this.lastMoveState;
+    this.lastMoveState = 'paused';
+  };
+
   this.inBounds = function(tDir) {
     var bounds = 'none';
     var sp = State.gridSpacing;
@@ -134,22 +150,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       // game over
     }
     myGame.stopAllGhosts();
-  };
-
-  this.tmpPause = function(dur) {
-    this.tmpPauseState = true;
-    this.tmpPauseDur = dur;
-    this.tmpPauseBegin = performance.now();
-    this.lastMoveState = this.moveState;
-    this.moveState = 'paused';
-  };
-
-  this.tmpUnpause = function() {
-    this.tmpPauseState = false;
-    this.tmpPauseDur = 0;
-    this.tmpPauseBegin = null;
-    this.moveState = this.lastMoveState;
-    this.lastMoveState = 'paused';
   };
 
   this.nextMouth = function() {

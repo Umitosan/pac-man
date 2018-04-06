@@ -426,16 +426,16 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     // update velocity
     // show score txt on game
     this.stopFlee();
-    myGame.bigPillGhostsEaten += 1;
     this.spriteRow = 1;
     this.frameTotal = 1;
     this.updateEyesSprite(this.direction);
     this.moveState = 'base';
     this.changeTarget();
     this.changeVel(5);
+    myGame.bigPillGhostsEaten += 1;
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
-                                  /* y     */ this.y+10,
+                                  /* y     */ this.y+4,
                                   /* msg   */ msg,
                                   /* color */ Colors.white,
                                   /* dur   */ 2000

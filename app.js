@@ -181,6 +181,7 @@ function Game(updateDur) {
     for (let i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].startFlee();
     }
+    this.bigPillGhostsEaten = 0;
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
   };
@@ -190,9 +191,9 @@ function Game(updateDur) {
     for (let i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].stopFlee();
     }
+    this.bigPillGhostsEaten = 0;
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
-    this.bigPillGhostsEaten = 0;
   };
 
   this.startGhostsBlinking = function() {
