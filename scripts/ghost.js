@@ -6,8 +6,9 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.y = y;
   this.name = name;
   this.spriteImgSrc = src;
-  this.chaseVel = 2.5;
   this.vel = 2.5;
+  this.chaseVel = 2.5;
+  this.baseVel = 5;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
@@ -262,7 +263,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     } else {
       console.log('ghost: getRandomTurnDir prob');
     }
-    // console.log('rand new turn dir: ', newDir);
     return newDir;
   };
 
@@ -306,28 +306,28 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       if (this.inBounds('left') === true) {
         this.changeDir('left');
       } else {
-        console.log('tryReverse but cant go... '+'left');
+        console.log(this.name+' tryReverse but cant go... left');
       }
     } else if (dir === 'left') {
       if (this.inBounds('right') === true) {
         this.changeDir('right');
       } else {
-        console.log('tryReverse but cant go... '+'right');
+        console.log(this.name+' tryReverse but cant go... right');
       }
     } else if (dir === 'up') {
       if (this.inBounds('down') === true) {
         this.changeDir('down');
       } else {
-        console.log('tryReverse but cant go... '+'down');
+        console.log(this.name+' tryReverse but cant go... down');
       }
     } else if (dir === 'down') {
       if (this.inBounds('up') === true) {
         this.changeDir('up');
       } else {
-        console.log('tryReverse but cant go... '+'up');
+        console.log('tryReverse but cant go... up');
       }
     } else {
-      console.log('ghost: reverseDir prob');
+      console.log(this.name+' reverseDir prob');
     }
   };
 
@@ -349,13 +349,14 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
 
   this.startBlinking = function() {
     if (this.moveState === 'flee') {
+      console.log(this.name+' started blinking');
       this.frameTotal = 4;
     }
   };
 
   this.stopBlinking = function() {
     if (this.moveState === 'flee') {
-      console.log('STOP BLINKING');
+      console.log(this.name+' STOP BLINKING');
       this.frameTotal = 2;
       this.spriteRow = 1;
       this.frame0 = 0;
@@ -365,10 +366,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
 
   this.startFlee = function() {
     if (this.moveState === 'flee') {
-      console.log('ghost already fleeing, stop blining');
+      console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
     } else if (this.moveState === 'chase') {
-      console.log('ghost: flee started - '+this.name);
+      console.log(this.name+' flee started');
       this.moveState = 'flee';
       this.tryReverseDir();
       this.prevInter = getNearestIntersection(this.x,this.y);
@@ -381,7 +382,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   };
 
   this.stopFlee = function() {
-    console.log('ghost stop flee run');
+    console.log(this.name+' stop flee run');
     if (this.moveState === 'flee') {
       console.log('ghost flee stopped');
       this.moveState = 'chase';
@@ -431,7 +432,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     this.updateEyesSprite(this.direction);
     this.moveState = 'base';
     this.changeTarget();
-    this.changeVel(5);
+    this.changeVel(this.baseVel);
     myGame.bigPillGhostsEaten += 1;
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
