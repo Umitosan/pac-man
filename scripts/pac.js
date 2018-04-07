@@ -24,7 +24,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.deathMouthDur = 50;
   this.deathMouthAnimFinished = false;
   this.deathSparkles = [];
-  this.deathSparklesOffset = 0;
 
   // pac pause
   this.tmpPauseState = false;
@@ -114,7 +113,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     let data = getNearestIntersection(this.x,this.y);
     this.x = (data.col+1)*State.gridSpacing;
     this.y = (data.row+1)*State.gridSpacing;
-    // console.log('pac x,y = '+ this.x +","+this.y );
   };
 
   this.tryEatPill = function() {
@@ -131,18 +129,18 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   };
 
   this.die = function() {
-
-    // stop everything
-    // start death animation
+    // stop ghosts
+    // stop pac
     // subtract -1 from pac lives
+    // start death animations
+    // finish death animations
+    // soft game reset
     // start new life animation
-
+    // resume game
     console.log('pac died, hit by ghost');
     this.moveState = 'dying1';
     this.tmpPause(200);
-    for (let i = 0; i < myGame.ghosts.length; i++) {
-      myGame.ghosts[i].moveState = 'stop';
-    }
+    myGame.stopAllGhosts();
     this.direction = 'up';
     this.rotatePacFace();
     this.mouthVel = getRadianAngle(3);
@@ -151,6 +149,7 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     myGame.updateLives();
     if (this.lives < 0) {
       // game over
+      // game over screen
     }
     myGame.stopAllGhosts();
   };
@@ -169,22 +168,42 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
   this.nextDeathMouth = function() {
     if (this.mouthSize > getRadianAngle(177)) { // mouth animation finished, proceed to death phase 2: sparkles
       console.log('mouth death done');
-      console.log('init deathSparkles');
-      this.moveState = 'dying2';
-      this.deathMouthAnimFinished = true;
-      for (var i = 0; i < 50; i++) {
-        let randX =  this.x + getRandomIntInclusive(-15,15);
-        let randY =  this.y + getRandomIntInclusive(-15,15);
-        this.deathSparkles.push({x: randX, y: randY});
-      }
+      this.initDeathSparkles();
     } else { // animate the pac mouth death
       // console.log('mouch death animating');
       this.mouthSize += this.mouthVel;
     }
   };
 
+  this.initDeathSparkles = function() {
+    console.log('initDeathSparkles');
+    this.moveState = 'dying2';
+    this.deathMouthAnimFinished = true;
+    for (var i = 0; i < 600; i++) {
+      let randX =  this.x + getRandomIntInclusive(-15,15);
+      let randY =  this.y + getRandomIntInclusive(-15,15);
+      let randLen =  getRandomIntInclusive(10,30);
+      let randAngle = getRandomIntInclusive(1,360);
+      let randVel = getRandomIntInclusive(1,6) / 30;
+      let color = randColor('rgba');
+      this.deathSparkles.push({ x:     randX,
+                                y:     randY,
+                                angle: randAngle,
+                                len:   randLen,
+                                vel:   randVel,
+                                color: color
+                              });
+    } // for
+  }; // initDeathSparkles
+
   this.nextDeathSparkle = function() {
-    this.deathSparklesOffset += 1;
+    for (let i = 0; i < this.deathSparkles.length; i++) {
+      let angle = this.deathSparkles[i].angle;
+      let len = this.deathSparkles[i].len;
+      let vel = this.deathSparkles[i].vel;
+      this.deathSparkles[i].x += (vel*(len*Math.cos(angle)));
+      this.deathSparkles[i].y += (vel*(len*Math.sin(angle)));
+    }
   };
 
   this.pixTest = function(sDir) {
@@ -241,39 +260,19 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
 
     if (this.moveState === 'dying2') { // make the beautiful sparkles happen!
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = 1;
-      let lrgOff = 6+this.deathSparklesOffset;
-      let smOff = 2+this.deathSparklesOffset;
       for (let i = 0; i < this.deathSparkles.length; i++) {
+        ctx.lineWidth = getRandomIntInclusive(1,10);
+        ctx.strokeStyle = this.deathSparkles[i].color;
         let x = this.deathSparkles[i].x;
         let y = this.deathSparkles[i].y;
+        let angle = this.deathSparkles[i].angle;
+        let len = this.deathSparkles[i].len;
+        // single ray
         ctx.beginPath();
-        // top
-        ctx.moveTo(x,y-smOff);
-        ctx.lineTo(x,y-lrgOff);
-        // top right
-        ctx.moveTo(x+smOff,y-smOff);
-        ctx.lineTo(x+lrgOff,y-lrgOff);
-        // right
-        ctx.moveTo(x+smOff,y);
-        ctx.lineTo(x+lrgOff,y);
-        // bottom right
-        ctx.moveTo(x+smOff,y+smOff);
-        ctx.lineTo(x+lrgOff,y+lrgOff);
-        // bottom
-        ctx.moveTo(x,y+smOff);
-        ctx.lineTo(x,y+lrgOff);
-        // bottom left
-        ctx.moveTo(x-smOff,y+smOff);
-        ctx.lineTo(x-lrgOff,y+lrgOff);
-        // left
-        ctx.moveTo(x-smOff,y);
-        ctx.lineTo(x-lrgOff,y);
-        // top Left
-        ctx.moveTo(x-smOff,y-smOff);
-        ctx.lineTo(x-lrgOff,y-lrgOff);
+        ctx.moveTo( x , y );
+        ctx.lineTo( x+(len*Math.cos(angle)) , y+(len*Math.sin(angle)) );
         ctx.stroke();
+
       }
     } else {
       ctx.fillStyle = this.color;
