@@ -12,8 +12,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
-  this.moveState = mvState; // chase, flee, base, exitbase, paused, stop
-  this.lastMoveState = 'paused';
+  this.moveState = mvState; // chase, flee, base, exitbase, tpaused, stop
+  this.lastMoveState = 'tpaused';
   this.eatenTxtBox = undefined;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
 
@@ -332,11 +332,12 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   };
 
   this.tmpPause = function(dur) {
+    console.log('tmp pause - '+this.name+' for '+dur+' ms');
     this.tmpPauseState = true;
     this.tmpPauseDur = dur;
     this.tmpPauseBegin = performance.now();
     this.lastMoveState = this.moveState;
-    this.moveState = 'paused';
+    this.moveState = 'tpaused';
   };
 
   this.tmpUnpause = function() {
@@ -344,18 +345,18 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     this.tmpPauseDur = 0;
     this.tmpPauseBegin = null;
     this.moveState = this.lastMoveState;
-    this.lastMoveState = 'paused';
+    this.lastMoveState = 'tpaused';
   };
 
   this.startBlinking = function() {
-    if (this.moveState === 'flee') {
+    if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
       console.log(this.name+' started blinking');
       this.frameTotal = 4;
     }
   };
 
   this.stopBlinking = function() {
-    if (this.moveState === 'flee') {
+    if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
       console.log(this.name+' STOP BLINKING');
       this.frameTotal = 2;
       this.spriteRow = 1;
@@ -365,11 +366,12 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   };
 
   this.startFlee = function() {
-    if (this.moveState === 'flee') {
+    if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
       console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
-    } else if ((this.moveState === 'chase') || (this.moveState === 'paused')){
+    } else if ( (this.moveState === 'chase') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
       console.log(this.name+' flee started');
+      this.lastMoveState = this.moveState;
       this.moveState = 'flee';
       this.tryReverseDir();
       this.prevInter = getNearestIntersection(this.x,this.y);
@@ -383,7 +385,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
 
   this.stopFlee = function() {
     console.log(this.name+' stop flee run');
-    if (this.moveState === 'flee') {
+    if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
       console.log('ghost flee stopped');
       this.moveState = 'chase';
       this.spriteRow = 0;
@@ -434,6 +436,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     this.changeTarget();
     this.changeVel(this.baseVel);
     myGame.bigPillGhostsEaten += 1;
+    myGame.updateScore('G');
     let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+4,
@@ -621,7 +624,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
           } else {
             this.moveGhost();
           }
-    } else if (this.moveState === 'paused') {
+    } else if (this.moveState === 'tpaused') {
           // console.log('ghost stopped');
           // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );
           // check to see if it's time to resume movement after an intersection

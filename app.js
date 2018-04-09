@@ -170,7 +170,7 @@ function Game(updateDur) {
       this.score += 50;
       $('#score').text(myGame.score);
     } else if (lvlChar === 'G') { // ghost eaten
-      this.score += 200;
+      this.score += Math.pow(2,myGame.bigPillGhostsEaten)*100;
       $('#score').text(myGame.score);
     } else {
       console.log('updateScore problems, char is = ', lvlChar);
@@ -263,7 +263,7 @@ function Game(updateDur) {
       this.lastUpdate = performance.now();
     }
 
-    if (this.bigPillEffect === true) {
+    if ( (this.bigPillEffect === true) && (this.paused === false) ) {
       if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
         this.stopGhostFleeState();
         this.startGhostsBlinkingStarted = false; // reset to use later
