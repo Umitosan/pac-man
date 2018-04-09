@@ -84,6 +84,7 @@ function Game(updateDur) {
 
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
+  this.bigPillEffectDurElapsed = 0; // milliseconds elapsed for effect, used mainly when pausing the game
   this.bigPillEffectStart = null; // exact time effect started
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
@@ -242,40 +243,62 @@ function Game(updateDur) {
     if (this.myPac) this.myPac.draw();
   };
 
-  this.update = function() {
-    // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
-    this.timeGap = performance.now() - this.lastUpdate;
+  this.pauseIt = function() {
+    console.log('GAME paused');
+    myGame.paused = true;
+    this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
+  };
+  this.unpauseIt = function() {
+    console.log('GAME un-paused');
+    myGame.paused = false;
+    this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
     // this prevents pac from updating many times after UNpausing
-    if ( (this.paused === true) || (State.playTime < 1) ) {
-      this.lastUpdate = performance.now();
-      this.timeGap = 0;
-    }
+    this.lastUpdate = performance.now();
+    this.timeGap = 0;
+  };
 
-    if ( this.timeGap >= this.updateDuration ) {
-      let timesToUpdate = this.timeGap / this.updateDuration;
-      // if (timesToUpdate > 2) { console.log('timesToUpdate = ', timesToUpdate); }
-      for (let i=1; i < timesToUpdate; i++) {
-          this.myPac.update();
-          for (let g=0;g < this.ghosts.length; g++ ) {
-            this.ghosts[g].update();
+  this.update = function() {
+
+    if (this.paused === false) { // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
+
+          if (State.playTime < 1) { // make sure on first update() only run once
+            this.lastUpdate = performance.now();
+            this.timeGap = 0;
+          } else {
+            this.timeGap = performance.now() - this.lastUpdate;
           }
-      }
-      this.lastUpdate = performance.now();
+
+          if ( this.timeGap >= this.updateDuration ) {
+            let timesToUpdate = this.timeGap / this.updateDuration;
+            for (let i=1; i < timesToUpdate; i++) {
+              this.myPac.update();
+              for (let g=0;g < this.ghosts.length; g++ ) {
+                this.ghosts[g].update();
+              }
+            }
+            this.lastUpdate = performance.now();
+          }
+
+          if (this.bigPillEffect === true) {
+            if ((performance.now() - this.bigPillEffectStart + this.bigPillEffectDurElapsed) > this.bigPillEffectDur) {
+              this.stopGhostFleeState();
+              this.startGhostsBlinkingStarted = false; // reset to use later
+              this.bigPillEffectDurElapsed = 0;
+            } else if ( ((performance.now() - this.bigPillEffectStart + this.bigPillEffectDurElapsed) > 5000) && (this.startGhostsBlinkingStarted === false) ) {
+              // blink ghosts for last 3 seconds of flee
+              // only run this once the first time
+              this.startGhostsBlinking();
+              this.startGhostsBlinkingStarted = true;
+            }
+          }
+
+          this.updatePlayTime();
+    } else if (this.paused === true) {
+
+    } else {
+      console.log('game pause issue');
     }
 
-    if ( (this.bigPillEffect === true) && (this.paused === false) ) {
-      if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
-        this.stopGhostFleeState();
-        this.startGhostsBlinkingStarted = false; // reset to use later
-      } else if ( ((performance.now() - this.bigPillEffectStart) > 5000) && (this.startGhostsBlinkingStarted === false) ) {
-        // blink ghosts for last 3 seconds of flee
-        // only run this once the first time
-        this.startGhostsBlinking();
-        this.startGhostsBlinkingStarted = true;
-      }
-    }
-
-    this.updatePlayTime();
   }; // game update
 }
 
@@ -342,9 +365,9 @@ function keyDown(event) {
           break;
         case 32: // spacebar
           if (myGame.paused === true) {
-            myGame.paused = false;
+            myGame.unpauseIt();
           } else if (myGame.paused === false) {
-            myGame.paused = true;
+            myGame.pauseIt();
           } else {
             //nothin
           }
