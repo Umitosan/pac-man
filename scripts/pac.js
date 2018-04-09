@@ -254,6 +254,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     }
   }; //move
 
+  this.softReset = function() { // reset pac to original valuse
+
+  };
+
   this.draw = function() {
     // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
     // sAngle	The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)

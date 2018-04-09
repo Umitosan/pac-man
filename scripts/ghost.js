@@ -556,6 +556,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     return isNew;
   };
 
+  this.softReset = function() { // reset ghosts to original values
+
+  };
+
   this.update = function() {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
           if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) { // check which way to go
@@ -755,20 +759,26 @@ function getGhostChangeTarget(ghostName) {
 //
 // info from https://www.youtube.com/watch?v=l7-SHTktjJc
 //
+// more here http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
+//
 // CHARACTER  /  NICKNAME
 // SHADOW aka "BLINKY" - RED - goes straight for PacMan always
 //                           - he gets slightly faster over time (per level?) known as "Cruise Elroy"
 //                           - this is based directly on number of dots eaten (depends on lvl playing)
 //                           - stops being cruise elroy when pac dies
 //
-// SPEEDY aka "PINKY" - PINK - japanese word for him translates to 'chaser'
+// SPEEDY aka "PINKY" - PINK - starts in ghost house but exits right away
+//                           - japanese word for him translates to 'chaser'
 //                           - he tries to land on the tile 2 tiles from pacman like and ambush
 //                           - old glitch: if pac facing up... tries to land on tile 4 in front and 4 to the left of pac
 //
-// BASHFUL aka "INKY" - AUQA - determined my 2 things: relative position of pacman and blinky
+// BASHFUL aka "INKY" - AUQA  - stays in ghost house until pac man eats 30 small dots
+//                            - determined by 2 things: Pac facing direction AND blinky's vector
 //                            - targets tile 2 ahead of pacman and doubling the distance Blinky is away from it
+//                            - draw a vector from Blinky to 2 tiles ahead of pac... then double that distance is same direction
 //                            - also glitched... if pac facing up target tile is 2 ahead of pac and 2 to the left
 //                            - Japanese name is "kimagure" - 'fickle'
+//
 // POKEY aka "CLYDE" -  YELLOW - movments based on distance to PacMan
 //                             - when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
 //                             - when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen

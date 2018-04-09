@@ -56,7 +56,14 @@ function hardReset() {
 }
 
 function softReset() {
-
+  // reset pac position
+  // reset pac mouth
+  // reset pac state
+  // reset ghosts position
+  // reset ghosts mouth
+  // reset ghosts state
+  // reset ghosts last state
+  clearCanvas();
 }
 
 
@@ -81,6 +88,7 @@ function Game(updateDur) {
   this.gridOn = false;
   this.lvlOnType = 1;
   this.pxBoxOn = false;
+  this.pausedTxt = undefined;
 
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
@@ -135,6 +143,13 @@ function Game(updateDur) {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].init();
     }
+    this.pausedTxt = new TxtBox(/* x     */ State.gridSpacing*15-10,
+                                /* y     */ State.gridSpacing*19-10,
+                                /* msg   */ 'PAUSED',
+                                /* color */ Colors.pacYellow,
+                                /* dur   */ 2000,
+                                /* font  */ '50px joystix'
+                              );
   };
 
   this.updateLives = function() { // update the number of pac life images below game
@@ -232,6 +247,21 @@ function Game(updateDur) {
     ctx.drawImage(this.bg,4,4,CANVAS.width-9,CANVAS.height-9);
   };
 
+  this.pauseIt = function() {
+    console.log('GAME paused');
+    myGame.paused = true;
+    this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
+  };
+
+  this.unpauseIt = function() {
+    console.log('GAME un-paused');
+    myGame.paused = false;
+    this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
+    // this prevents pac from updating many times after UNpausing
+    this.lastUpdate = performance.now();
+    this.timeGap = 0;
+  };
+
   this.draw = function() {
     if (myGame.gridOn) myGame.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
@@ -241,20 +271,7 @@ function Game(updateDur) {
       }
     }
     if (this.myPac) this.myPac.draw();
-  };
-
-  this.pauseIt = function() {
-    console.log('GAME paused');
-    myGame.paused = true;
-    this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
-  };
-  this.unpauseIt = function() {
-    console.log('GAME un-paused');
-    myGame.paused = false;
-    this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
-    // this prevents pac from updating many times after UNpausing
-    this.lastUpdate = performance.now();
-    this.timeGap = 0;
+    if (this.paused === true) this.pausedTxt.draw();
   };
 
   this.update = function() {
