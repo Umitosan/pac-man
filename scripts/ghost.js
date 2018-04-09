@@ -442,7 +442,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
                                   /* y     */ this.y+4,
                                   /* msg   */ msg,
                                   /* color */ Colors.white,
-                                  /* dur   */ 2000
+                                  /* dur   */ 2000,
+                                  /* font  */ '18px joystix'
     );
     console.log('this.eatenTxtBox = ', this.eatenTxtBox);
     myGame.pauseAllChars(500);

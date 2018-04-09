@@ -20,10 +20,10 @@ var Colors = {
   dotPink: 'rgba(247, 200, 183,1)'
 };
 
-function TxtBox(x,y,msg,color,dur) {
+function TxtBox(x,y,msg,color,dur,font) {
   this.x = x;
   this.y = y;
-  this.font = "18px Veranda";
+  this.font = font;
   this.color = color;
   this.txt = msg;
   this.startTime = performance.now();
