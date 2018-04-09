@@ -56,6 +56,7 @@ function hardReset() {
 }
 
 function softReset() {
+  console.log('state soft reset');
   // reset pac position
   // reset pac mouth
   // reset pac state
@@ -63,6 +64,10 @@ function softReset() {
   // reset ghosts mouth
   // reset ghosts state
   // reset ghosts last state
+  myGame.myPac.softReset();
+  for (var i = 0; i < myGame.ghosts.length; i++) {
+    myGame.ghosts[i].softReset();
+  }
   clearCanvas();
 }
 
@@ -103,7 +108,6 @@ function Game(updateDur) {
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
                           /* velocity */      3,
-                          /* width */         (State.gridSpacing*2)-10,
                           /* direction */     'right',
                           /* moveState */     'stop'
                         );
@@ -148,7 +152,7 @@ function Game(updateDur) {
                                 /* msg   */ 'PAUSED',
                                 /* color */ Colors.pacYellow,
                                 /* dur   */ 2000,
-                                /* font  */ '50px joystix'
+                                /* font  */ '42px joystix'
                               );
   };
 
@@ -219,7 +223,7 @@ function Game(updateDur) {
     }
   };
 
-  this.pauseAllChars = function(pauseDur) {
+  this.pauseAllChars = function(pauseDur) {  // runs a tmp pause on pac and ghosts
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].tmpPause(pauseDur);
     }
@@ -250,13 +254,17 @@ function Game(updateDur) {
   this.pauseIt = function() {
     console.log('GAME paused');
     myGame.paused = true;
-    this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
+    if (this.bigPillEffect === true) {
+      this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
+    }
   };
 
   this.unpauseIt = function() {
     console.log('GAME un-paused');
     myGame.paused = false;
-    this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
+    if (this.bigPillEffect === true) {
+      this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
+    }
     // this prevents pac from updating many times after UNpausing
     this.lastUpdate = performance.now();
     this.timeGap = 0;
@@ -266,7 +274,7 @@ function Game(updateDur) {
     if (myGame.gridOn) myGame.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
     if (this.ghosts.length > 0) {
-      for (let g=0;g < this.ghosts.length; g++ ) {
+      for (let g = 0; g < this.ghosts.length; g++ ) {
         this.ghosts[g].draw();
       }
     }

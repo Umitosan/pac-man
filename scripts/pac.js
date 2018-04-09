@@ -1,16 +1,16 @@
 /*jshint esversion: 6 */
 
-function Pac(x,y,velocity,diameter,direction,moveState)  {
+function Pac(x,y,velocity,direction,moveState)  {
   this.x = x;
   this.y = y;
   this.vel = 3;
   this.lives = 2;
-  this.diameter = diameter;
-  this.radius = diameter/2;
+  this.diameter = (State.gridSpacing*2)-10;
+  this.radius = ((State.gridSpacing*2)-10)/2;
   this.color = Colors.pacYellow;
   this.lineW = 2;
-  this.pixX = 0;
-  this.pixY = 0;
+  this.pixX = 0; // pixel test
+  this.pixY = 0; // pixel test
   this.moveState = moveState; // go, stop, paused, dying1, dying2
   this.lastMoveState = 'paused';
   this.direction = direction; // also relates to mouth direction and rotation
@@ -32,6 +32,23 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
   this.init = function() {
   }; // init
+
+  this.softReset = function() { // reset pac to original valuse
+    console.log('pac softReset');
+    // reset pac position
+    this.x = (14*State.gridSpacing)+(State.gridSpacing/2);
+    this.y = 24*State.gridSpacing;
+    // reset pac mouth
+    this.mouthSize = getRadianAngle(70);
+    this.mouthVel = getRadianAngle(8);
+    this.rotateFace = 0;
+    this.direction = 'right';
+    // reset other vars
+    this.vel = 3;
+    // reset pac state
+    this.lastMoveState = 'paused';
+    this.moveState = 'stop';
+  };
 
   this.tmpPause = function(dur) {
     this.tmpPauseState = true;
@@ -95,6 +112,23 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     this.moveState = 'go';
   };
 
+  this.movePac = function() {
+    let edgeGap = 10;
+    if ( (this.direction === 'left') || (this.direction === 'right') ) {
+      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+        this.x = edgeGap*2;
+      } else if ((this.x+this.vel) < edgeGap) {
+        this.x = CANVAS.width-(edgeGap*2);
+      } else {
+        this.x += this.vel;
+      }
+    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
+      this.y += this.vel;
+    } else {
+      console.log(' move pac problems ');
+    }
+  }; //move
+
   this.rotatePacFace = function() {
     // console.log("rotatePacFace");
     switch ( this.direction )  {
@@ -147,11 +181,15 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     this.mouthSize = getRadianAngle(20);
     this.lives -= 1;
     myGame.updateLives();
+    myGame.stopAllGhosts();
     if (this.lives < 0) {
       // game over
       // game over screen
+    } else {
+      setTimeout(function() {  // wait 4 seconds and reset the game for another life
+        softReset();
+      }, 4000);
     }
-    myGame.stopAllGhosts();
   };
 
   this.nextMouth = function() {
@@ -235,27 +273,6 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
     ctx.rect(this.pixX-5,this.pixY-5,10,10);
     ctx.stroke();
     $('.pixel-window').css( 'background-color', this.pixTest(this.direction).rgbastr );
-  };
-
-  this.movePac = function() {
-    let edgeGap = 10;
-    if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
-        this.x = edgeGap*2;
-      } else if ((this.x+this.vel) < edgeGap) {
-        this.x = CANVAS.width-(edgeGap*2);
-      } else {
-        this.x += this.vel;
-      }
-    } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
-      this.y += this.vel;
-    } else {
-      console.log(' move pac problems ');
-    }
-  }; //move
-
-  this.softReset = function() { // reset pac to original valuse
-
   };
 
   this.draw = function() {
