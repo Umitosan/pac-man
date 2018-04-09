@@ -86,6 +86,7 @@ function Game(updateDur) {
   this.bigPillEffectDur = 8000; // milliseconds
   this.bigPillEffectStart = null; // exact time effect started
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
+  this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
 
   this.init = function() {
     this.bg.src = 'img/reference2.png';
@@ -265,8 +266,12 @@ function Game(updateDur) {
     if (this.bigPillEffect === true) {
       if ((performance.now() - this.bigPillEffectStart) > this.bigPillEffectDur) {
         this.stopGhostFleeState();
-      } else if ((performance.now() - this.bigPillEffectStart) > 5000) { // blink ghosts for last 3 seconds of flee
+        this.startGhostsBlinkingStarted = false; // reset to use later
+      } else if ( ((performance.now() - this.bigPillEffectStart) > 5000) && (this.startGhostsBlinkingStarted === false) ) {
+        // blink ghosts for last 3 seconds of flee
+        // only run this once the first time
         this.startGhostsBlinking();
+        this.startGhostsBlinkingStarted = true;
       }
     }
 

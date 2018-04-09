@@ -23,7 +23,7 @@ var Colors = {
 function TxtBox(x,y,msg,color,dur) {
   this.x = x;
   this.y = y;
-  this.font = "18px Georgia";
+  this.font = "18px Veranda";
   this.color = color;
   this.txt = msg;
   this.startTime = performance.now();

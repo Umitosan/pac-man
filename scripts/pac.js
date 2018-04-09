@@ -184,7 +184,8 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
       let randY =  this.y + getRandomIntInclusive(-15,15);
       let randLen =  getRandomIntInclusive(10,30);
       let randAngle = getRandomIntInclusive(1,360);
-      let randVel = getRandomIntInclusive(1,6) / 30;
+      let randVel = getRandomIntInclusive(2,5) / 30;
+      // let randVel = 3/30;
       let color = randColor('rgba');
       this.deathSparkles.push({ x:     randX,
                                 y:     randY,
@@ -261,8 +262,10 @@ function Pac(x,y,velocity,diameter,direction,moveState)  {
 
     if (this.moveState === 'dying2') { // make the beautiful sparkles happen!
       for (let i = 0; i < this.deathSparkles.length; i++) {
-        ctx.lineWidth = getRandomIntInclusive(1,10);
+        ctx.lineWidth = getRandomIntInclusive(1,12);
         ctx.strokeStyle = this.deathSparkles[i].color;
+        // ctx.strokeStyle = Colors.pacYellow;
+        // ctx.strokeStyle = randColor('rgba'); // full random color madness
         let x = this.deathSparkles[i].x;
         let y = this.deathSparkles[i].y;
         let angle = this.deathSparkles[i].angle;

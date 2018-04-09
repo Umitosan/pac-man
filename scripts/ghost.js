@@ -12,7 +12,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
-  this.moveState = mvState; // chase, flee, base, exitbase, stop, intersection
+  this.moveState = mvState; // chase, flee, base, exitbase, paused, stop
   this.lastMoveState = 'paused';
   this.eatenTxtBox = undefined;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
@@ -368,7 +368,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     if (this.moveState === 'flee') {
       console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
-    } else if (this.moveState === 'chase') {
+    } else if ((this.moveState === 'chase') || (this.moveState === 'paused')){
       console.log(this.name+' flee started');
       this.moveState = 'flee';
       this.tryReverseDir();
