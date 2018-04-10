@@ -2,6 +2,8 @@
 
 function Ghost(x,y,name,src,frame0,mvState,dir) {
   // general
+  this.startPosX = x;
+  this.startPosY = y;
   this.x = x;
   this.y = y;
   this.name = name;
@@ -42,7 +44,33 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       this.changeDir(this.direction);
       this.updateSprite(this.direction);
     }
-    this.tmpPause(700);
+    this.tmpPause(2000);
+  };
+
+  this.softReset = function() { // reset ghosts to original values
+    // reset positions
+    this.x = this.startPosX;
+    this.y = this.startPosY;
+    // reset sprites
+    this.spriteRow = 0;
+    this.frame0 = 2;
+    this.curFrame = 2;
+    this.frameTotal = 2;
+
+    this.lastMoveState = 'tpaused';
+
+    if (this.name === 'blinky') {
+      this.moveState = 'chase';
+      this.direction = 'left';
+      this.changeDir('left');
+      this.updateSprite('left');
+    } else {
+      this.moveState = 'exitbase';
+      this.direction = 'up';
+      this.changeDir('up');
+      this.updateSprite('up');
+    }
+    this.tmpPause(2000);
   };
 
   this.changeTarget = function() {
@@ -65,7 +93,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     return someDir;
   };
 
-  // BLINKY ONLY
   this.getNewDirection = function() { // returns new direction based on target's coords
     let xDif, yDif;
     let newDir = null;
@@ -332,7 +359,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   };
 
   this.tmpPause = function(dur) {
-    console.log('tmp pause - '+this.name+' for '+dur+' ms');
+    // console.log('tmp pause - '+this.name+' for '+dur+' ms');
     this.tmpPauseState = true;
     this.tmpPauseDur = dur;
     this.tmpPauseBegin = performance.now();
@@ -554,10 +581,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     }
     // console.log('isNewInter = ', isNew);
     return isNew;
-  };
-
-  this.softReset = function() { // reset ghosts to original values
-
   };
 
   this.update = function() {

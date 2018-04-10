@@ -28,6 +28,7 @@ function TxtBox(x,y,msg,color,dur,font) {
   this.txt = msg;
   this.startTime = performance.now();
   this.duration = dur;
+  this.show = false;
 
   this.draw = function() {
     var ctx = canvas.getContext('2d');

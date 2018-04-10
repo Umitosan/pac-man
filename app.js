@@ -10,10 +10,16 @@
 
 // more info here http://pacman.wikia.com/wiki/Pac-Man_(game)
 
-///////////////////
-// GAME
-///////////////////
+// more info http://pacmanmuseum.com/history/pacman-scoring.php
+// SCORING
+// Pac-Dot - 10 points.
+// Power Pellet - 50 points.
+// Vulnerable Ghosts: #1 in succession - 200 points. #2 in succession - 400 points. #3 in succession - 800 points. #4 in succession - 1600 points.
+// Fruit: Cherry: 100 points. Strawberry: 300 points. Orange: 500 points. Apple: 700 points. Melon: 1000 points
 
+///////////////////
+// STATE
+///////////////////
 
 var CANVAS = undefined;
 var ctx = undefined;
@@ -57,27 +63,18 @@ function hardReset() {
 
 function softReset() {
   console.log('state soft reset');
-  // reset pac position
-  // reset pac mouth
-  // reset pac state
-  // reset ghosts position
-  // reset ghosts mouth
-  // reset ghosts state
-  // reset ghosts last state
   myGame.myPac.softReset();
   for (var i = 0; i < myGame.ghosts.length; i++) {
     myGame.ghosts[i].softReset();
   }
+  myGame.readyTxt.show = true;
+  setTimeout( () => { myGame.readyTxt.show = false; },2000);
   clearCanvas();
 }
 
-
-// more info http://pacmanmuseum.com/history/pacman-scoring.php
-// SCORING
-// Pac-Dot - 10 points.
-// Power Pellet - 50 points.
-// Vulnerable Ghosts: #1 in succession - 200 points. #2 in succession - 400 points. #3 in succession - 800 points. #4 in succession - 1600 points.
-// Fruit: Cherry: 100 points. Strawberry: 300 points. Orange: 500 points. Apple: 700 points. Melon: 1000 points
+///////////////////
+// GAME
+///////////////////
 
 function Game(updateDur) {
   this.paused = false;
@@ -94,6 +91,7 @@ function Game(updateDur) {
   this.lvlOnType = 1;
   this.pxBoxOn = false;
   this.pausedTxt = undefined;
+  this.readyTxt = undefined;
 
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
@@ -154,6 +152,15 @@ function Game(updateDur) {
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
+    this.readyTxt = new TxtBox(/* x     */ State.gridSpacing*15-10,
+                                /* y     */ State.gridSpacing*19-10,
+                                /* msg   */ 'READY!',
+                                /* color */ Colors.pacYellow,
+                                /* dur   */ 2000,
+                                /* font  */ '42px joystix'
+                              );
+    this.readyTxt.show = true; // turn on the ready txt
+    setTimeout( () => { this.readyTxt.show = false; },2000);
   };
 
   this.updateLives = function() { // update the number of pac life images below game
@@ -254,6 +261,7 @@ function Game(updateDur) {
   this.pauseIt = function() {
     console.log('GAME paused');
     myGame.paused = true;
+    this.pausedTxt.show = true;
     if (this.bigPillEffect === true) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
     }
@@ -262,6 +270,7 @@ function Game(updateDur) {
   this.unpauseIt = function() {
     console.log('GAME un-paused');
     myGame.paused = false;
+    this.pausedTxt.show = false;
     if (this.bigPillEffect === true) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
     }
@@ -279,7 +288,8 @@ function Game(updateDur) {
       }
     }
     if (this.myPac) this.myPac.draw();
-    if (this.paused === true) this.pausedTxt.draw();
+    if (this.pausedTxt.show === true) this.pausedTxt.draw();
+    if (this.readyTxt.show === true) this.readyTxt.draw();
   };
 
   this.update = function() {

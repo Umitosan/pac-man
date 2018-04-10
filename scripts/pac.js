@@ -1,6 +1,8 @@
 /*jshint esversion: 6 */
 
 function Pac(x,y,velocity,direction,moveState)  {
+  this.startPosX = x;
+  this.startPosY = y;
   this.x = x;
   this.y = y;
   this.vel = 3;
@@ -31,13 +33,14 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.tmpPauseDur = 0;
 
   this.init = function() {
+    this.tmpPause(2000);
   }; // init
 
   this.softReset = function() { // reset pac to original valuse
     console.log('pac softReset');
     // reset pac position
-    this.x = (14*State.gridSpacing)+(State.gridSpacing/2);
-    this.y = 24*State.gridSpacing;
+    this.x = this.startPosX;
+    this.y = this.startPosY;
     // reset pac mouth
     this.mouthSize = getRadianAngle(70);
     this.mouthVel = getRadianAngle(8);
@@ -45,9 +48,12 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.direction = 'right';
     // reset other vars
     this.vel = 3;
+    this.deathSparkles = [];
     // reset pac state
     this.lastMoveState = 'paused';
+    State.lastDirKey = 'none';
     this.moveState = 'stop';
+    this.tmpPause(2000);
   };
 
   this.tmpPause = function(dur) {
@@ -180,15 +186,16 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.mouthVel = getRadianAngle(3);
     this.mouthSize = getRadianAngle(20);
     this.lives -= 1;
+    console.log('pac lives left: ', this.lives);
     myGame.updateLives();
     myGame.stopAllGhosts();
-    if (this.lives < 0) {
+    if (this.lives === -1) {
       // game over
       // game over screen
     } else {
       setTimeout(function() {  // wait 4 seconds and reset the game for another life
         softReset();
-      }, 4000);
+      }, 2000);
     }
   };
 
@@ -208,7 +215,6 @@ function Pac(x,y,velocity,direction,moveState)  {
       console.log('mouth death done');
       this.initDeathSparkles();
     } else { // animate the pac mouth death
-      // console.log('mouch death animating');
       this.mouthSize += this.mouthVel;
     }
   };
@@ -369,12 +375,10 @@ function Pac(x,y,velocity,direction,moveState)  {
           // lastDirKey is nothing so just sit at the intersection and wait for user input
         }
     } else if (this.moveState === 'dying1') {
-        // console.log('pac dying1');
         if (this.deathMouthAnimFinished === false) {
           this.nextDeathMouth();
         }
     } else if (this.moveState === 'dying2') {
-        // console.log('pac dying2');
         this.nextDeathSparkle();
     } else {
         console.log("[move state problems]");
