@@ -229,7 +229,6 @@ function Pac(x,y,velocity,direction,moveState)  {
       let randLen =  getRandomIntInclusive(10,30);
       let randAngle = getRandomIntInclusive(1,360);
       let randVel = getRandomIntInclusive(2,5) / 30;
-      // let randVel = 3/30;
       let color = randColor('rgba');
       this.deathSparkles.push({ x:     randX,
                                 y:     randY,
@@ -302,7 +301,6 @@ function Pac(x,y,velocity,direction,moveState)  {
         ctx.moveTo( x , y );
         ctx.lineTo( x+(len*Math.cos(angle)) , y+(len*Math.sin(angle)) );
         ctx.stroke();
-
       }
     } else {
       ctx.fillStyle = this.color;
