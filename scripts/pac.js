@@ -26,6 +26,8 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.deathMouthDur = 50;
   this.deathMouthAnimFinished = false;
   this.deathSparkles = [];
+  this.deathSparklesStart = undefined;
+  this.deathSparklesDur = 3000; // ms
 
   // pac pause
   this.tmpPauseState = false;
@@ -49,6 +51,8 @@ function Pac(x,y,velocity,direction,moveState)  {
     // reset other vars
     this.vel = 3;
     this.deathSparkles = [];
+    this.deathSparklesStart = undefined;
+    this.deathMouthAnimFinished = false;
     // reset pac state
     this.lastMoveState = 'paused';
     State.lastDirKey = 'none';
@@ -179,8 +183,8 @@ function Pac(x,y,velocity,direction,moveState)  {
     // resume game
     console.log('pac died, hit by ghost');
     this.moveState = 'dying1';
-    this.tmpPause(200);
     myGame.stopAllGhosts();
+    this.tmpPause(200);
     this.direction = 'up';
     this.rotatePacFace();
     this.mouthVel = getRadianAngle(3);
@@ -190,13 +194,11 @@ function Pac(x,y,velocity,direction,moveState)  {
     myGame.updateLives();
     myGame.stopAllGhosts();
     if (this.lives === -1) {
+      console.log("GAME OVER SON!");
       // game over
       // game over screen
-    } else {
-      setTimeout(function() {  // wait 4 seconds and reset the game for another life
-        softReset();
-      }, 2000);
     }
+    console.log('pac movestate = ', this.moveState);
   };
 
   this.nextMouth = function() {
@@ -213,8 +215,9 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.nextDeathMouth = function() {
     if (this.mouthSize > getRadianAngle(177)) { // mouth animation finished, proceed to death phase 2: sparkles
       console.log('mouth death done');
-      this.initDeathSparkles();
+      this.deathMouthAnimFinished = true;
     } else { // animate the pac mouth death
+      console.log('death mouth updating, mouthsize = ', this.mouthSize);
       this.mouthSize += this.mouthVel;
     }
   };
@@ -222,7 +225,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.initDeathSparkles = function() {
     console.log('initDeathSparkles');
     this.moveState = 'dying2';
-    this.deathMouthAnimFinished = true;
+    this.deathSparklesStart = performance.now();
     for (var i = 0; i < 600; i++) {
       let randX =  this.x + getRandomIntInclusive(-15,15);
       let randY =  this.y + getRandomIntInclusive(-15,15);
@@ -375,9 +378,17 @@ function Pac(x,y,velocity,direction,moveState)  {
     } else if (this.moveState === 'dying1') {
         if (this.deathMouthAnimFinished === false) {
           this.nextDeathMouth();
+        } else if (this.deathMouthAnimFinished === true) {
+          this.initDeathSparkles();
+        } else {
+          console.log('deathMouthAnimFinished probs');
         }
     } else if (this.moveState === 'dying2') {
-        this.nextDeathSparkle();
+        if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
+          softReset();
+        } else {
+          this.nextDeathSparkle();
+        }
     } else {
         console.log("[move state problems]");
     }
