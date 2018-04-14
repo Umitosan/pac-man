@@ -217,7 +217,6 @@ function Pac(x,y,velocity,direction,moveState)  {
       console.log('mouth death done');
       this.deathMouthAnimFinished = true;
     } else { // animate the pac mouth death
-      console.log('death mouth updating, mouthsize = ', this.mouthSize);
       this.mouthSize += this.mouthVel;
     }
   };

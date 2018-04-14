@@ -18,6 +18,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.lastMoveState = 'tpaused';
   this.eatenTxtBox = undefined;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
+  this.exitDotsAmt = undefined; // number of dots to be eaten by pac before this ghost exits the base from start
 
   // sprite stuff
   this.spriteSheet = new Image();
