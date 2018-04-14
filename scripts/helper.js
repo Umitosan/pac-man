@@ -121,20 +121,6 @@ function atGridIntersection(x,y,vel) {
   return atInter;
 }
 
-// function atGridIntersection(x,y,vel) {
-//   var atInter = false;
-//   let sp = State.gridSpacing;
-//
-//   let inter = getNearestIntersection(x,y);
-//   if ( (Math.abs(x-((inter.foundCol+1)*sp)) <= vel) && (Math.abs(y-((inter.foundRow+1)*sp)) <= vel) ) {
-//     atInter = true;
-//   } else {
-//     atInter = false;
-//   }
-//
-//   return atInter;
-// }
-
 function getNearestIntersection(someX, someY) {
   let sp = State.gridSpacing;
 
@@ -151,21 +137,3 @@ function getNearestIntersection(someX, someY) {
             row: foundRow,
             col: foundCol };
 }
-
-
-// Older game loops
-//
-// simpler fps-based update based on overall fps limiter
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   if (State.frameCounter >= myGame.updateDuration) {
-//     State.frameCounter = 0;
-//     myGame.update();
-//   } else {
-//     State.frameCounter += 1;
-//   }
-// }
-
-// simplest update() every frame aprox 60/sec
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   myGame.update();
-// }

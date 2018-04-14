@@ -43,7 +43,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       this.x = State.gridSpacing*14+(State.gridSpacing/2);
     } else {
       if (this.name === 'inky') this.exitDotsAmt = 30;
-      if (this.name === 'clyde') this.exitDotsAmt = 40;
+      if (this.name === 'clyde') this.exitDotsAmt = 40;  // should be aprox 1/3 of total dots
       if (this.name !== 'pinky') this.vel = 1; // vel 1 for chillbase state
       this.targetX = State.gridSpacing*14;
       this.targetY = State.gridSpacing*12;
@@ -810,9 +810,9 @@ function getGhostChangeTarget(ghostName) {
 
 // Ghost personality overview
 //
-// info from https://www.youtube.com/watch?v=l7-SHTktjJc
+// some info here https://www.youtube.com/watch?v=l7-SHTktjJc
 //
-// more here http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
+// best info here http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
 //
 // CHARACTER  /  NICKNAME
 // SHADOW aka "BLINKY" - RED - goes straight for PacMan always

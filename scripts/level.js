@@ -53,6 +53,12 @@ function Level() {
     return blinkIt;
   };
 
+  this.countDots = function() {
+    let count = 0;
+
+    return count;
+  };
+
   this.drawDots = function() {
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
@@ -269,23 +275,23 @@ function Level() {
 
       // GHOST HOUSE
       ctx.beginPath();
-      ctx.moveTo(s*13,s*13);
+      ctx.moveTo(s*13+12.5,s*13);  // draw left of exit, counterclockwise around the house
       ctx.lineTo(s*11,s*13);
       ctx.lineTo(s*11,s*17);
       ctx.lineTo(s*18,s*17);
       ctx.lineTo(s*18,s*13);
-      ctx.lineTo(s*16,s*13);
-      ctx.moveTo(s*13,s*13+half);
+      ctx.lineTo(s*15+12.5,s*13);
+      ctx.moveTo(s*13+12.5,s*13+half);
       ctx.lineTo(s*12-half,s*13+half);
       ctx.lineTo(s*12-half,s*17-half);
       ctx.lineTo(s*18-half,s*17-half);
       ctx.lineTo(s*18-half,s*13+half);
-      ctx.lineTo(s*16,s*13+half);
+      ctx.lineTo(s*15+12.5,s*13+half);
       ctx.stroke();
-
+      //  ghost house exit
       ctx.beginPath();
       ctx.fillStyle = Colors.white;
-      ctx.rect(s*13,s*13+2,s*3,8); // white exit
+      ctx.rect(s*13+12.5,s*13+2,s*2,8); // rect(x y width height)
       ctx.fill();
 
       ctx.strokeStyle = Colors.blue;
