@@ -14,11 +14,12 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
-  this.moveState = mvState; // chase, flee, base, exitbase, tpaused, stop
+  this.moveState = mvState; // chillbase, exitbase, chase, flee, base, tpaused, stop
   this.lastMoveState = 'tpaused';
   this.eatenTxtBox = undefined;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
   this.exitDotsAmt = undefined; // number of dots to be eaten by pac before this ghost exits the base from start
+  this.chillCoef = 1;
 
   // sprite stuff
   this.spriteSheet = new Image();
@@ -39,7 +40,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     this.spriteSheet.src = this.spriteImgSrc;
     if (this.name === 'blinky') {
       this.startChase();
+      this.x = State.gridSpacing*14+(State.gridSpacing/2);
     } else {
+      if (this.name === 'inky') this.exitDotsAmt = 30;
+      if (this.name === 'clyde') this.exitDotsAmt = 40;
+      if (this.name !== 'pinky') this.vel = 1; // vel 1 for chillbase state
       this.targetX = State.gridSpacing*14;
       this.targetY = State.gridSpacing*12;
       this.changeDir(this.direction);
@@ -65,6 +70,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       this.direction = 'left';
       this.changeDir('left');
       this.updateSprite('left');
+    } else if ( (this.name === 'inky') || (this.name === 'clyde') ) {
+      this.moveState = 'chillbase';
+      this.direction = 'down';
+      this.changeDir('down');
+      this.updateSprite('down');
     } else {
       this.moveState = 'exitbase';
       this.direction = 'up';
@@ -72,6 +82,22 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       this.updateSprite('up');
     }
     this.tmpPause(2000);
+  };
+
+  this.nextChillAnim = function() {
+    if (this.y <= ((State.gridSpacing*15)-12)) {
+      this.chillCoef = 1;
+      this.y += (this.vel*this.chillCoef);
+      this.direction = 'down';
+      this.updateSprite(this.direction);
+    } else if (this.y >= ((State.gridSpacing*15)+12)) {
+      this.chillCoef = -1;
+      this.y += (this.vel*this.chillCoef);
+      this.direction = 'up';
+      this.updateSprite(this.direction);
+    } else { // move in same dir
+      this.y += (this.vel*this.chillCoef);
+    }
   };
 
   this.changeTarget = function() {
@@ -638,8 +664,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
           } else {
             this.moveGhost();
           }
+    } else if (this.moveState === 'chillbase') {
+        this.nextChillAnim();
     } else if (this.moveState === 'exitbase') {
-          if ( (Math.abs(this.x - this.targetX) <= 4) && (Math.abs(this.y - this.targetY) <= 4) ) {
+          if (Math.abs(this.y - this.targetY) <= 4) { // only need to check the Y dir because it's going up
+            console.log('EXIT REACHED');
             this.startChase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
               let newDir = this.getNewDirection();
@@ -692,10 +721,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*15;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*15;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*12;
       } else {
         // nothin
@@ -724,10 +753,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*24;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*12;
       } else {
         // nothin
@@ -743,10 +772,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*13-(State.gridSpacing/2);
         this.targetY = State.gridSpacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*12;
       } else {
         // nothin
@@ -762,10 +791,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*16+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14;
+        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*12;
       } else {
         // nothin

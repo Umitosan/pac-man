@@ -384,7 +384,7 @@ function Pac(x,y,velocity,direction,moveState)  {
         }
     } else if (this.moveState === 'dying2') {
         if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
-          softReset();
+          myGame.softReset();
         } else {
           this.nextDeathSparkle();
         }

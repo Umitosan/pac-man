@@ -39,34 +39,38 @@ function Game(updateDur) {
     this.updateLives();
     this.myLevel = new Level();
     this.myLevel.init();
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*12,
                                 /* name  */  "blinky",
                                 /* src   */  'img/blinky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'chase',
-                                /* dir    */ 'left'
+                                /* dir   */  'left'
                               ));
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*15,
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*15,
                                 /* name  */  "pinky",
                                 /* src   */  'img/pinky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'exitbase',
-                                /* dir    */ 'up'
+                                /* dir   */  'up'
                               ));
-    // this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
-    //                             /*   y   */  State.gridSpacing*15,
-    //                             /* name  */  "inky",
-    //                             /* src   */ 'img/inky.png',
-    //                             /*frame0 */ 2
-    //                           ));
-    // this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14,
-    //                             /*   y   */  State.gridSpacing*15,
-    //                             /* name  */  "clyde",
-    //                             /* src   */ 'img/clyde.png',
-    //                             /*frame0 */ 2
-    //                           ));
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*13-(State.gridSpacing/2),
+                                /*   y   */  State.gridSpacing*15,
+                                /* name  */  "inky",
+                                /* src   */  'img/inky.png',
+                                /*frame0 */  2,
+                                /*mvState*/  'chillbase',
+                                /* dir   */  'down'
+                              ));
+    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*16+(State.gridSpacing/2),
+                                /*   y   */  State.gridSpacing*15,
+                                /* name  */  "clyde",
+                                /* src   */ 'img/clyde.png',
+                                /*frame0 */  2,
+                                /*mvState*/  'chillbase',
+                                /* dir   */  'down'
+                              ));
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].init();
     }
