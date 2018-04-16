@@ -11,6 +11,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.vel = 1.5;
   this.chaseVel = 2.5;
   this.baseVel = 5;
+  this.exitBaseVel = 1.5;
   this.tunnelVel = 1.5;
   this.targetX = 'none';
   this.targetY = 'none';
@@ -46,7 +47,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       if (this.name === 'inky') this.exitDotsAmt = 30;
       if (this.name === 'clyde') this.exitDotsAmt = 40;  // should be aprox 1/3 of total dots
       if (this.name !== 'pinky') this.vel = 1; // vel 1 for chillbase state
-      this.targetX = State.gridSpacing*14;
+      this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
       this.targetY = State.gridSpacing*12;
       this.changeDir(this.direction);
       this.updateSprite(this.direction);
@@ -268,7 +269,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     } else {
       console.log(' changeDir problems ');
     }
-    // console.log('changeDir to ', this.direction);
   };
 
   this.changeVel = function(newVel) {
@@ -466,14 +466,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     }
   };
 
-  this.stopBase = function() { // after returning to base, reset state to exitbase etc
+  this.startExitBase = function() { // after returning to base, reset state to exitbase etc
     this.moveState = 'exitbase';
     this.changeTarget();
     this.spriteRow = 0;
     this.frameTotal = 2;
-    this.hopToIn();
+    this.vel = this.exitBaseVel;
     this.changeDir('up');
-    this.changeVel(this.chaseVel);
     this.updateSprite(this.direction);
   };
 
@@ -660,6 +659,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
                 this.moveGhost();
               } else {
                 this.moveGhost();
+                if (this.inTunnel() === true) {
+                  this.changeVel(this.tunnelVel);
+                } else {
+                  this.changeVel(this.chaseVel);
+                }
               }
           } else {
             this.moveGhost();
@@ -667,7 +671,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
           this.checkHitPac();
     } else if (this.moveState === 'base') { // ghost was eaten move to base
           if ( (Math.abs(this.x - this.targetX) <= this.vel) && (Math.abs(this.y - this.targetY) <= this.vel) ) {  // ghost has arrived in base, resume chase
-            this.stopBase();
+            this.startExitBase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) {
               this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
               let newDir = this.getNewDirection();
@@ -686,17 +690,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
         this.nextChillAnim();
     } else if (this.moveState === 'exitbase') {
           if (Math.abs(this.y - this.targetY) <= 4) { // only need to check the Y dir because it's going up
-            console.log('EXIT REACHED');
-            this.startChase();
-          } else if ( atGridIntersection(this.x,this.y,this.vel) ) {
-              let newDir = this.getNewDirection();
-              if (newDir !== this.direction) {
-                this.changeDir(newDir);
-                this.updateSprite(newDir);
-                this.hopToIn();
-              } else {
-                this.moveGhost();
-              }
+              console.log('EXIT REACHED');
+              this.startChase();
+          } else if ( (Math.abs(((this.x + this.vel) - this.targetX)) <= (Math.abs(this.vel)-1) ) && (this.x !== this.targetX) ) { // if close to targetX, snap to targetX
+            this.x = this.targetX;
+            this.vel = this.exitBaseVel;
+            this.changeDir('up');
+            this.updateSprite('up');
           } else {
             this.moveGhost();
           }
