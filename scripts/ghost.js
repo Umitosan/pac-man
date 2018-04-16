@@ -8,9 +8,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.y = y;
   this.name = name;
   this.spriteImgSrc = src;
-  this.vel = 2.5;
+  this.vel = 1.5;
   this.chaseVel = 2.5;
   this.baseVel = 5;
+  this.tunnelVel = 1.5;
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
@@ -98,6 +99,20 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     } else { // move in same dir
       this.y += (this.vel*this.chillCoef);
     }
+  };
+
+  this.inTunnel = function() {
+    let tBool;
+    if (this.y === (State.gridSpacing*15)) {
+      if ((this.x < (State.gridSpacing*5)) || (this.x > (State.gridSpacing*24)))  {
+        tBool = true;
+      } else {
+        tBool = false;
+      }
+    } else {
+      tBool = false;
+    }
+    return tBool;
   };
 
   this.changeTarget = function() {
@@ -465,8 +480,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.startChase = function() {
     console.log("Ghost: startChase");
     this.prevInter = getNearestIntersection(this.x,this.y); // set initial prevInter at start of chase
-    // this.hopToIn();
-    this.y = State.gridSpacing*12;
+    this.y = State.gridSpacing*12;  // this is an alternative to hopToIn in order to snap to the
     this.moveState = 'chase';
     this.changeVel(this.chaseVel);
     this.spriteRow = 0;
@@ -625,6 +639,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
                 this.moveGhost();
               } else {
                 this.moveGhost();
+                if (this.inTunnel() === true) {
+                  this.changeVel(this.tunnelVel);
+                } else {
+                  this.changeVel(this.chaseVel);
+                }
               }
           } else {
             this.moveGhost();
