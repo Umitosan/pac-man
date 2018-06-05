@@ -168,6 +168,8 @@ function Pac(x,y,velocity,direction,moveState)  {
       pillType = data.char;
       myGame.updateScore(data.char);
       myGame.myLevel.currentLevel[r][c] = '-';
+      let curDots = myGame.myLevel.countDots();
+      if (curDots === (244 - 30)) myGame.ghosts[2].startExitBase();
     }
     return pillType;
   };

@@ -55,7 +55,14 @@ function Level() {
 
   this.countDots = function() {
     let count = 0;
-
+    for (let r = 0; r < this.currentLevel.length; r++) {
+      let row = this.currentLevel[r];
+      for (let c = 0; c < row.length; c++) {
+        if ( (this.currentLevel[r][c] === 0) || (this.currentLevel[r][c] === 'B') ) {
+          count++;
+        }
+      }
+    }
     return count;
   };
 
