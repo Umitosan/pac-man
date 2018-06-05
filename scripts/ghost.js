@@ -10,7 +10,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.spriteImgSrc = src;
   this.vel = 1.5;
   this.chaseVel = 2.5;
-  this.baseVel = 5;
+  this.baseVel = 2.5;
   this.exitBaseVel = 1.5;
   this.tunnelVel = 1.5;
   this.targetX = 'none';
