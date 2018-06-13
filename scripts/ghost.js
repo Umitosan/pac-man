@@ -10,7 +10,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.spriteImgSrc = src;
   this.vel = 1.5;
   this.chaseVel = 2.5;
-  this.baseVel = 2.5;
+  this.baseVel = 3.5;
   this.exitBaseVel = 1.5;
   this.tunnelVel = 1.5;
   this.targetX = 'none';
@@ -76,12 +76,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
       this.vel = 1; // chillbase speed
       this.changeDir('down');
       this.updateSprite('down');
-      console.log(this.name+" direction =  "+ this.direction);
-      console.log(this.name+" vel =  "+ this.vel);
     } else {
-      this.moveState = 'exitbase';
-      this.changeDir('up');
-      this.updateSprite('up');
+      this.startExitBase();
     }
     this.tmpPause(2000);
   };
@@ -256,7 +252,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     return newDir;
   };
 
-  this.changeDir = function(newDir) {
+  this.changeDir = function(newDir) { // updates dir and updates vel
     this.direction = newDir;
     if (newDir === 'left') {
       this.vel = -Math.abs(this.vel);
@@ -271,7 +267,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
     }
   };
 
-  this.changeVel = function(newVel) {
+  this.changeVel = function(newVel) { // updates to new vel
     let dir = this.direction;
     if (dir === 'left') {
       this.vel = -Math.abs(newVel);
@@ -467,13 +463,24 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   };
 
   this.startExitBase = function() { // after returning to base, reset state to exitbase etc
+    console.log(this.name+" started to exit base");
     this.moveState = 'exitbase';
     this.changeTarget();
+    this.vel = this.exitBaseVel;
     this.spriteRow = 0;
     this.frameTotal = 2;
-    this.vel = this.exitBaseVel;
-    this.changeDir('up');
-    this.updateSprite(this.direction);
+    if ( (this.name === 'blinky') || (this.name === 'pinky') ) {
+      this.changeDir('up');
+      this.updateSprite('up');
+    } else if (this.name === 'inky') {
+      this.changeDir('right');
+      this.updateSprite('right');
+    } else if (this.name === 'clyde') {
+      this.changeDir('left');
+      this.updateSprite('left');
+    } else {
+      // nothin
+    }
   };
 
   this.startChase = function() {
@@ -670,7 +677,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
           }
           this.checkHitPac();
     } else if (this.moveState === 'base') { // ghost was eaten move to base
-          if ( (Math.abs(this.x - this.targetX) <= this.vel) && (Math.abs(this.y - this.targetY) <= this.vel) ) {  // ghost has arrived in base, resume chase
+          if ( (Math.abs(this.x - this.targetX) <= this.vel+1) && (Math.abs(this.y - this.targetY) <= this.vel+1) ) {  // ghost has arrived in base, resume chase
             this.startExitBase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) {
               this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
@@ -774,6 +781,7 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = this.startPosX;
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
+        console.log(this.name +" exitbase movestate updated" );
         this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
         this.targetY = State.gridSpacing*12;
       } else {
