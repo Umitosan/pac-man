@@ -69,17 +69,17 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
 
     if (this.name === 'blinky') {
       this.moveState = 'chase';
-      this.direction = 'left';
       this.changeDir('left');
       this.updateSprite('left');
     } else if ( (this.name === 'inky') || (this.name === 'clyde') ) {
       this.moveState = 'chillbase';
-      this.direction = 'down';
+      this.vel = 1; // chillbase speed
       this.changeDir('down');
       this.updateSprite('down');
+      console.log(this.name+" direction =  "+ this.direction);
+      console.log(this.name+" vel =  "+ this.vel);
     } else {
       this.moveState = 'exitbase';
-      this.direction = 'up';
       this.changeDir('up');
       this.updateSprite('up');
     }
