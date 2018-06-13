@@ -22,8 +22,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
   this.exitDotsAmt = undefined; // number of dots to be eaten by pac before this ghost exits the base from start
   this.chillCoef = 1;
-  this.dotsEatenBeforeExitBase = dots;
-  this.dotsEatenSwitch = allow;
+  this.dotsEatenBeforeExitBase = dots; // SEE pac.tryEatPill for mechanics
+  this.dotsEatenSwitch = allow;  // SEE pac.tryEatPill for mechanics
 
   // sprite stuff
   this.spriteSheet = new Image();
@@ -797,8 +797,8 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = myGame.myPac.x;
         this.targetY = myGame.myPac.y;
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*1;
-        this.targetY = State.gridSpacing*1;
+        this.targetX = State.gridSpacing*27;
+        this.targetY = State.gridSpacing*30;
       } else if (this.moveState === 'base') {
         this.targetX = this.startPosX+(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
@@ -817,7 +817,7 @@ function getGhostChangeTarget(ghostName) {
         this.targetY = myGame.myPac.y;
       } else if (this.moveState === 'flee') {
         this.targetX = State.gridSpacing*1;
-        this.targetY = State.gridSpacing*1;
+        this.targetY = State.gridSpacing*30;
       } else if (this.moveState === 'base') {
         this.targetX = this.startPosX-(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
@@ -861,6 +861,7 @@ function getGhostChangeTarget(ghostName) {
 //                            - Japanese name is "kimagure" - 'fickle'
 //
 // POKEY aka "CLYDE" -  YELLOW - movments based on distance to PacMan
+//                             - leaves base after 1/3 of dots eaten (244/3 ~= 83)
 //                             - when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
 //                             - when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen
 //                             - Japanese name "otoboke" - 'feining ignorance'
@@ -887,3 +888,7 @@ function getGhostChangeTarget(ghostName) {
 //  level start - INKY-PINKY-CLYDE are in the ghost house at the beginning - two side facing up and PINKY facing down
 //              - only BLINKY is outside and facing left
 //              - READY! in the middle of the screen
+//
+// FRUIT
+//      - The first fruit spawns when 70 of the dots have been eaten
+//      - the second fruit spanws when 170 dots have been eaten

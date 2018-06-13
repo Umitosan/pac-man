@@ -76,7 +76,7 @@ function Game(updateDur) {
                                 /*frame0 */  2,
                                 /*mvState*/  'chillbase',
                                 /* dir   */  'down',
-                                /* dots  */  50,
+                                /* dots  */  81, // (244/3)
                                 /* allow */ false
                               ));
     for (var i = 0; i < this.ghosts.length; i++) {
