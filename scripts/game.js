@@ -45,7 +45,9 @@ function Game(updateDur) {
                                 /* src   */  'img/blinky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'chase',
-                                /* dir   */  'left'
+                                /* dir   */  'left',
+                                /* dots  */  0,
+                                /* allow */ true
                               ));
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*15,
@@ -53,7 +55,9 @@ function Game(updateDur) {
                                 /* src   */  'img/pinky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'exitbase',
-                                /* dir   */  'up'
+                                /* dir   */  'up',
+                                /* dots  */  0,
+                                /* allow */ true
                               ));
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*13-(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*15,
@@ -61,7 +65,9 @@ function Game(updateDur) {
                                 /* src   */  'img/inky.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'chillbase',
-                                /* dir   */  'down'
+                                /* dir   */  'down',
+                                /* dots  */  30,
+                                /* allow */ false
                               ));
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*16+(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*15,
@@ -69,7 +75,9 @@ function Game(updateDur) {
                                 /* src   */ 'img/clyde.png',
                                 /*frame0 */  2,
                                 /*mvState*/  'chillbase',
-                                /* dir   */  'down'
+                                /* dir   */  'down',
+                                /* dots  */  50,
+                                /* allow */ false
                               ));
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].init();
@@ -269,7 +277,7 @@ function Game(updateDur) {
 
           this.updatePlayTime();
     } else if (this.paused === true) {
-
+      // do nothin
     } else {
       console.log('game pause issue');
     }

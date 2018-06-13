@@ -169,7 +169,17 @@ function Pac(x,y,velocity,direction,moveState)  {
       myGame.updateScore(data.char);
       myGame.myLevel.currentLevel[r][c] = '-';
       let curDots = myGame.myLevel.countDots();
-      if (curDots === (244 - 30)) myGame.ghosts[2].startExitBase();
+      // check if inky and clyde are allowed to leave the base yet
+      if ( (myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[2].dotsEatenBeforeExitBase)) ) {
+        console.log(myGame.ghosts[2].name+" is now allowed to leave base");
+        myGame.ghosts[2].dotsEatenSwitch = true;
+        myGame.ghosts[2].startExitBase();
+      }
+      if ( (myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[3].dotsEatenBeforeExitBase)) ) {
+        console.log(myGame.ghosts[3].name+" is now allowed to leave base");
+        myGame.ghosts[3].dotsEatenSwitch = true;
+        myGame.ghosts[3].startExitBase();
+      }
     }
     return pillType;
   };

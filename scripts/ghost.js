@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-function Ghost(x,y,name,src,frame0,mvState,dir) {
+function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   // general
   this.startPosX = x;
   this.startPosY = y;
@@ -22,6 +22,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
   this.exitDotsAmt = undefined; // number of dots to be eaten by pac before this ghost exits the base from start
   this.chillCoef = 1;
+  this.dotsEatenBeforeExitBase = dots;
+  this.dotsEatenSwitch = allow;
 
   // sprite stuff
   this.spriteSheet = new Image();
@@ -677,7 +679,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir) {
           }
           this.checkHitPac();
     } else if (this.moveState === 'base') { // ghost was eaten move to base
-          if ( (Math.abs(this.x - this.targetX) <= this.vel+1) && (Math.abs(this.y - this.targetY) <= this.vel+1) ) {  // ghost has arrived in base, resume chase
+          if ( (Math.abs(this.x - this.targetX) <= this.vel+2) && (Math.abs(this.y - this.targetY) <= this.vel+2) ) {  // ghost has arrived in base, resume chase
             this.startExitBase();
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) {
               this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
@@ -798,7 +800,7 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = this.startPosX;
+        this.targetX = this.startPosX+(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
         this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
@@ -817,7 +819,7 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.gridSpacing*1;
         this.targetY = State.gridSpacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = this.startPosX;
+        this.targetX = this.startPosX-(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
         this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
