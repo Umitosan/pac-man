@@ -170,12 +170,12 @@ function Pac(x,y,velocity,direction,moveState)  {
       myGame.myLevel.currentLevel[r][c] = '-';
       let curDots = myGame.myLevel.countDots();
       // check if inky and clyde are allowed to leave the base yet
-      if ( (myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[2].dotsEatenBeforeExitBase)) ) {
+      if ( (myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[2].dotLimit)) ) {
         console.log(myGame.ghosts[2].name+" is now allowed to leave base");
         myGame.ghosts[2].dotsEatenSwitch = true;
         myGame.ghosts[2].startExitBase();
       }
-      if ( (myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[3].dotsEatenBeforeExitBase)) ) {
+      if ( (myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[3].dotLimit)) ) {
         console.log(myGame.ghosts[3].name+" is now allowed to leave base");
         myGame.ghosts[3].dotsEatenSwitch = true;
         myGame.ghosts[3].startExitBase();

@@ -76,7 +76,7 @@ function Game(updateDur) {
                                 /*frame0 */  2,
                                 /*mvState*/  'chillbase',
                                 /* dir   */  'down',
-                                /* dots  */  81, // (244/3)
+                                /* dots  */  60,
                                 /* allow */ false
                               ));
     for (var i = 0; i < this.ghosts.length; i++) {
@@ -268,7 +268,7 @@ function Game(updateDur) {
               this.startGhostsBlinkingStarted = false; // reset to use later
               this.bigPillEffectDurElapsed = 0;
             } else if ( ((performance.now() - this.bigPillEffectStart + this.bigPillEffectDurElapsed) > 5000) && (this.startGhostsBlinkingStarted === false) ) {
-              // blink ghosts for last 3 seconds of flee
+              // blink ghosts for last 3 seconds of Flee
               // only run this once the first time
               this.startGhostsBlinking();
               this.startGhostsBlinkingStarted = true;

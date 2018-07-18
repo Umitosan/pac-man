@@ -297,7 +297,7 @@ function Level() {
       ctx.stroke();
       //  ghost house exit
       ctx.beginPath();
-      ctx.fillStyle = Colors.white;
+      ctx.fillStyle = Colors.ghostPink;
       ctx.rect(s*13+12.5,s*13+2,s*2,8); // rect(x y width height)
       ctx.fill();
 
@@ -423,7 +423,7 @@ function Level() {
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'W') {
           ctx.beginPath();
-          ctx.fillStyle = Colors.white;
+          ctx.fillStyle = Colors.ghostPink;
           ctx.rect( (State.gridSpacing-10 + c * State.gridSpacing), (State.gridSpacing-2 + r * State.gridSpacing), 22, 5 ); // x y width height
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'T') {

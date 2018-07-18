@@ -16,13 +16,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
-  this.moveState = mvState; // chillbase, exitbase, chase, flee, base, tpaused, stop
+  this.moveState = mvState; // chillbase, exitbase, chase, flee(aka frightened), scatter, base, tpaused, stop
   this.lastMoveState = 'tpaused';
   this.eatenTxtBox = undefined;
-  this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
-  this.exitDotsAmt = undefined; // number of dots to be eaten by pac before this ghost exits the base from start
   this.chillCoef = 1;
-  this.dotsEatenBeforeExitBase = dots; // SEE pac.tryEatPill for mechanics
+  this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
+  this.dotLimit = dots; // number of dots to be eaten by pac before this ghost exits the base from start  // SEE pac.tryEatPill for mechanics
+  this.dotCountInBase = 0;
   this.dotsEatenSwitch = allow;  // SEE pac.tryEatPill for mechanics
 
   // sprite stuff
@@ -46,8 +46,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.startChase();
       this.x = State.gridSpacing*14+(State.gridSpacing/2);
     } else {
-      if (this.name === 'inky') this.exitDotsAmt = 30;
-      if (this.name === 'clyde') this.exitDotsAmt = 40;  // should be aprox 1/3 of total dots
       if (this.name !== 'pinky') this.vel = 1; // vel 1 for chillbase state
       this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
       this.targetY = State.gridSpacing*12;
@@ -840,6 +838,8 @@ function getGhostChangeTarget(ghostName) {
 //
 // some info here https://www.youtube.com/watch?v=l7-SHTktjJc
 //
+// more here https://www.gamasutra.com/view/feature/3938/the_pacman_dossier.php?print=1
+//
 // best info here http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
 //
 // CHARACTER  /  NICKNAME
@@ -867,18 +867,33 @@ function getGhostChangeTarget(ghostName) {
 //                             - Japanese name "otoboke" - 'feining ignorance'
 //
 // EVERY GHOST - has 3 MODES    1. Chase - normal as described above
-//                              2. Scatter - after a few seconds of gameplay depending on current level, they 'flee' to a different corner of the map
+//                              2. Scatter - after a few seconds of gameplay depending on current level, they 'scatter' to a different corner of the map
 //                                         - BLINKY - top right
 //                                         - PINKY - top left
 //                                         - INKY - bottom right
 //                                         - CLYDE - bottom left
 //                                         - they enter the scatter mode a max of 4 TIMES per pac life or lvl
 //                                         - if scatter is done.. they will CHASE forever
-//                                3. Freighten - all turn blue and run away
+//                                3. Freighten - all turn blue and run away (aka 'flee')
 //                                             - all reverse direction
 //                                             - at corner psuedo random direction is chosen
 //                                             -
 //                                             -
+// SCATTER MODE:
+// Ghosts alternate between scatter and chase modes during gameplay at predetermined intervals.
+// These mode changes are easy to spot as the ghosts simultaneously reverse direction when they occur.
+// Scatter modes happen four times per level before the ghosts stay in chase mode indefinitely.
+//
+// FRIGHTENED MODE:  (aka 'flee')
+//  - Ghosts turn blue for length of time depending on lvl.
+//  - ghosts reverse direciton when mode starts
+//  - ghosts move in psudo random direciton after
+//      - every ghost life and level they choose a random direction to use when fightened
+//      - if a wall blocks this random seeded direction then they look for an alternate dir in this order:
+//          up, left, down, right  until one works
+//
+//
+//
 //  there are some SAFE ZONES in some levels where pac and go and never be attacked
 //
 //  PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
@@ -889,6 +904,3 @@ function getGhostChangeTarget(ghostName) {
 //              - only BLINKY is outside and facing left
 //              - READY! in the middle of the screen
 //
-// FRUIT
-//      - The first fruit spawns when 70 of the dots have been eaten
-//      - the second fruit spanws when 170 dots have been eaten
