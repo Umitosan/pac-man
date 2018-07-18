@@ -38,7 +38,8 @@ var State = {
   gridSpacing: 25, // dimentions of grid in pixels
   gridWidth: 28,
   gridHeight: 31,
-  lastDirKey: 'none'
+  lastDirKey: 'none',
+  bg: new Image()
 };
 
 function hardReset() {
@@ -56,8 +57,10 @@ function hardReset() {
     gridSpacing: 25, // dimentions of grid in pixels
     gridWidth: 28,
     gridHeight: 31,
-    lastDirKey: 'none'
+    lastDirKey: 'none',
+    bg: new Image()
   };
+  State.bg.src = 'img/reference2.png';
   clearCanvas();
 }
 
@@ -73,7 +76,9 @@ function gameLoop(timestamp) {
 
   clearCanvas();
   if (State.gameStarted === false) {
-    myGame.drawBG();
+      ctx.imageSmoothingEnabled = false;   // turns off AntiAliasing
+    // myGame.drawBG();
+    ctx.drawImage(State.bg,4,4,CANVAS.width-9,CANVAS.height-9);
     ctx.beginPath();
     ctx.strokeStyle = Colors.blue;
     ctx.lineWidth = 4;
@@ -186,8 +191,9 @@ $(document).ready(function() {
   ctx.translate(0.5, 0.5);
 
   // start things up so that the background image can be drawn
-  myGame = new Game(10);
-  myGame.init();
+  // myGame = new Game(10);
+  // myGame.init();
+  State.bg.src = 'img/reference2.png';
   State.loopRunning = true;
   State.myReq = requestAnimationFrame(gameLoop);
 

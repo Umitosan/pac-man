@@ -435,7 +435,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
     } else if ( (this.moveState === 'chase') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
-      console.log(this.name+' flee started');
+      // console.log(this.name+' flee started');
       this.lastMoveState = this.moveState;
       this.moveState = 'flee';
       this.tryReverseDir();
@@ -744,8 +744,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
             this.moveGhost();
           }
     } else if (this.moveState === 'tpaused') {
-          // console.log('ghost stopped');
-          // console.log('FIRST dif = ',(performance.now() - this.intersectionPauseBegin) );
           // check to see if it's time to resume movement after an intersection
           if (this.tmpPauseState === true) {
             if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {

@@ -3,7 +3,6 @@
 
 function Game(updateDur) {
   this.paused = false;
-  this.bg = new Image();
   this.myPac = undefined;
   this.myLevel = undefined;
   this.ghosts = [];
@@ -26,7 +25,6 @@ function Game(updateDur) {
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
 
   this.init = function() {
-    this.bg.src = 'img/reference2.png';
     // Pac(x,y,velocity,width,direction,moveState)
     this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
                           /* y */             24*State.gridSpacing,
@@ -199,11 +197,6 @@ function Game(updateDur) {
     for (let i = 0; i < State.gridHeight+2; i++) {
       drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
     }
-  };
-
-  this.drawBG = function() {
-    ctx.imageSmoothingEnabled = false;  // turns off AntiAliasing
-    ctx.drawImage(this.bg,4,4,CANVAS.width-9,CANVAS.height-9);
   };
 
   this.pauseIt = function() {
