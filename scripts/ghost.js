@@ -22,7 +22,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.chillCoef = 1;
   this.prevInter = null; // used to prevent changing dir 2 times at same interseciton when chasing
   this.dotLimit = dots; // number of dots to be eaten by pac before this ghost exits the base from start  // SEE pac.tryEatPill for mechanics
-  this.dotCountInBase = 0;
+  this.dotCounter = 0; // when in base and when ghost is next in line to exit, count goes up as pac eats
   this.dotsEatenSwitch = allow;  // SEE pac.tryEatPill for mechanics
 
   // sprite stuff
@@ -462,6 +462,40 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
+  this.updateDotsCounter = function() {  // check if inky and clyde are allowed to leave the base yet
+    if (this.moveState === 'chillbase') {
+      if (this.name === 'inky') {
+        this.dotCounter += 1;
+        if (this.dotCounter === this.dotLimit) {
+          console.log(this.name+" is now allowed to leave base");
+          this.dotsEatenSwitch = true;
+          this.startExitBase();
+        }
+      } else if ( (this.name === 'clyde') && (myGame.ghosts[2].dotsEatenSwitch === true) ) {
+        this.dotCounter += 1;
+        if (this.dotCounter === this.dotLimit) {
+          console.log(this.name+" is now allowed to leave base");
+          this.dotsEatenSwitch = true;
+          this.startExitBase();
+        }
+      } else {
+        // nothin
+      }
+    }
+
+
+    // if ( (myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[2].dotLimit)) ) {
+    //   console.log(myGame.ghosts[2].name+" is now allowed to leave base");
+    //   myGame.ghosts[2].dotsEatenSwitch = true;
+    //   myGame.ghosts[2].startExitBase();
+    // }
+    // if ( (myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[3].dotLimit)) ) {
+    //   console.log(myGame.ghosts[3].name+" is now allowed to leave base");
+    //   myGame.ghosts[3].dotsEatenSwitch = true;
+    //   myGame.ghosts[3].startExitBase();
+    // }
+  };
+
   this.startExitBase = function() { // after returning to base, reset state to exitbase etc
     console.log(this.name+" started to exit base");
     this.moveState = 'exitbase';
@@ -475,9 +509,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else if (this.name === 'inky') {
       this.changeDir('right');
       this.updateSprite('right');
+      this.dotCounter = 0;
     } else if (this.name === 'clyde') {
       this.changeDir('left');
       this.updateSprite('left');
+      this.dotCounter = 0;
     } else {
       // nothin
     }
