@@ -14,8 +14,10 @@ function Game(updateDur) {
   this.gridOn = false;
   this.lvlOnType = 1;
   this.pxBoxOn = false;
+
   this.pausedTxt = undefined;
   this.readyTxt = undefined;
+  this.currentTxt = undefined;
 
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
@@ -87,15 +89,15 @@ function Game(updateDur) {
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
-    this.readyTxt = new TxtBox(/* x     */ State.gridSpacing*15-10,
+    this.readyTxt = new TxtBox( /* x     */ State.gridSpacing*15-10,
                                 /* y     */ State.gridSpacing*19-10,
                                 /* msg   */ 'READY!',
                                 /* color */ Colors.pacYellow,
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
-    this.readyTxt.show = true; // turn on the ready txt
-    setTimeout( () => { this.readyTxt.show = false; },2000);
+    this.currentTxt = this.readyTxt;
+    this.currentTxt.startTimer(); // turn on the ready txt
   };
 
   this.softReset = function() {
@@ -202,7 +204,7 @@ function Game(updateDur) {
   this.pauseIt = function() {
     console.log('GAME paused');
     myGame.paused = true;
-    this.pausedTxt.show = true;
+    this.pausedTxt.on();
     if (this.bigPillEffect === true) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
     }
@@ -211,7 +213,7 @@ function Game(updateDur) {
   this.unpauseIt = function() {
     console.log('GAME un-paused');
     myGame.paused = false;
-    this.pausedTxt.show = false;
+    this.pausedTxt.off();
     if (this.bigPillEffect === true) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
     }
@@ -235,7 +237,7 @@ function Game(updateDur) {
 
   this.update = function() {
 
-    if (this.paused === false) { // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
+    if (!this.paused) { // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
 
           if (State.playTime < 1) { // make sure on first update() only run once
             this.lastUpdate = performance.now();
@@ -248,6 +250,7 @@ function Game(updateDur) {
             let timesToUpdate = this.timeGap / this.updateDuration;
             for (let i=1; i < timesToUpdate; i++) {
               this.myPac.update();
+              if ( this.currentTxt.show && (this.currentTxt.startTime !== null) ) { this.currentTxt.update(); }
               for (let g=0;g < this.ghosts.length; g++ ) {
                 this.ghosts[g].update();
               }

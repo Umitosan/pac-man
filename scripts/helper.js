@@ -21,25 +21,6 @@ var Colors = {
   ghostPink: 'rgba(255,192,203,1)'
 };
 
-function TxtBox(x,y,msg,color,dur,font) {
-  this.x = x;
-  this.y = y;
-  this.font = font;
-  this.color = color;
-  this.txt = msg;
-  this.startTime = performance.now();
-  this.duration = dur;
-  this.show = false;
-
-  this.draw = function() {
-    var ctx = canvas.getContext('2d');
-    ctx.font = this.font;
-    ctx.fillStyle = this.color;
-    ctx.textAlign = 'center';
-    ctx.fillText(this.txt,this.x,this.y);
-  };
-} // TxtBox
-
 function clearCanvas() {
   ctx.clearRect(-1, -1, canvas.width+1, canvas.height+1); // offset by 1 px because the whole canvas is offset initially (for better pixel accuracy)
 }

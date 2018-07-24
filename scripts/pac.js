@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 function Pac(x,y,velocity,direction,moveState)  {
   this.startPosX = x;
