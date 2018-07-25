@@ -13,8 +13,8 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.lineW = 2;
   this.pixX = 0; // pixel test
   this.pixY = 0; // pixel test
-  this.moveState = moveState; // go, stop, paused, dying1, dying2
-  this.lastMoveState = 'paused';
+  this.moveState = moveState; // go, stop, tpaused, dying1, dying2
+  this.lastMoveState = 'tpaused';
   this.direction = direction; // also relates to mouth direction and rotation
 
   // mouth
@@ -30,12 +30,12 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.deathSparklesDur = 3000; // ms
 
   // pac pause
-  this.tmpPauseState = false;
-  this.tmpPauseBegin = null;
-  this.tmpPauseDur = 0;
+  this.timedPauseState = false;
+  this.timedPauseBegin = null;
+  this.timedPauseDur = 0;
 
   this.init = function() {
-    this.tmpPause(2000);
+    this.timedPause(2000);
   }; // init
 
   this.softReset = function() { // reset pac to original valuse
@@ -54,26 +54,26 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.deathSparklesStart = undefined;
     this.deathMouthAnimFinished = false;
     // reset pac state
-    this.lastMoveState = 'paused';
+    this.lastMoveState = 'tpaused';
     State.lastDirKey = 'none';
     this.moveState = 'stop';
-    this.tmpPause(2000);
+    this.timedPause(2000);
   };
 
-  this.tmpPause = function(dur) {
-    this.tmpPauseState = true;
-    this.tmpPauseDur = dur;
-    this.tmpPauseBegin = performance.now();
+  this.timedPause = function(dur) {
+    this.timedPauseState = true;
+    this.timedPauseDur = dur;
+    this.timedPauseBegin = performance.now();
     this.lastMoveState = this.moveState;
-    this.moveState = 'paused';
+    this.moveState = 'tpaused';
   };
 
   this.tmpUnpause = function() {
-    this.tmpPauseState = false;
-    this.tmpPauseDur = 0;
-    this.tmpPauseBegin = null;
+    this.timedPauseState = false;
+    this.timedPauseDur = 0;
+    this.timedPauseBegin = null;
     this.moveState = this.lastMoveState;
-    this.lastMoveState = 'paused';
+    this.lastMoveState = 'tpaused';
   };
 
   this.inBounds = function(tDir) {
@@ -186,7 +186,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     console.log('pac died, hit by ghost');
     this.moveState = 'dying1';
     myGame.stopAllGhosts();
-    this.tmpPause(200);
+    this.timedPause(200);
     this.direction = 'up';
     this.rotatePacFace();
     this.mouthVel = getRadianAngle(3);
@@ -355,10 +355,10 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           console.log("[lastDirKey problems]");
         }
-    } else if (this.moveState === 'paused') {
+    } else if (this.moveState === 'tpaused') {
         // check to see if it's time to resume movement after an intersection
-        if (this.tmpPauseState === true) {
-          if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
+        if (this.timedPauseState === true) {
+          if ((performance.now() - this.timedPauseBegin) > this.timedPauseDur) {
             this.tmpUnpause();
           }
         }

@@ -11,13 +11,11 @@ function TxtBox(x,y,msg,color,dur,font) {
   this.show = false;
 
   this.startTimer = function() {
-    console.log('txt box for ms = '+ this.durTotal);
     this.show = true;
     this.startTime = performance.now();
   };
 
   this.finishTimer = function() {
-    console.log('txt box timer finished');
     this.show = false;
     this.startTime = null;
   };

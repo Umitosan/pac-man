@@ -35,9 +35,9 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.spriteFrameWidth = 64;  // in pixels
 
   // ghost pause
-  this.tmpPauseState = false;
-  this.tmpPauseBegin = null;
-  this.tmpPauseDur = 0;
+  this.timedPauseState = false;
+  this.timedPauseBegin = null;
+  this.timedPauseDur = 0;
 
   this.init = function() {
     getGhostChangeTarget(this.name);
@@ -52,7 +52,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.changeDir(this.direction);
       this.updateSprite(this.direction);
     }
-    this.tmpPause(2000);
+    this.timedPause(2000);
   };
 
   this.softReset = function() { // reset ghosts to original values
@@ -79,7 +79,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else {
       this.startExitBase();
     }
-    this.tmpPause(2000);
+    this.timedPause(2000);
   };
 
   this.nextChillAnim = function() {
@@ -396,19 +396,18 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
-  this.tmpPause = function(dur) {
-    // console.log('tmp pause - '+this.name+' for '+dur+' ms');
-    this.tmpPauseState = true;
-    this.tmpPauseDur = dur;
-    this.tmpPauseBegin = performance.now();
+  this.timedPause = function(dur) {
+    this.timedPauseState = true;
+    this.timedPauseDur = dur;
+    this.timedPauseBegin = performance.now();
     this.lastMoveState = this.moveState;
     this.moveState = 'tpaused';
   };
 
   this.tmpUnpause = function() {
-    this.tmpPauseState = false;
-    this.tmpPauseDur = 0;
-    this.tmpPauseBegin = null;
+    this.timedPauseState = false;
+    this.timedPauseDur = 0;
+    this.timedPauseBegin = null;
     this.moveState = this.lastMoveState;
     this.lastMoveState = 'tpaused';
   };
@@ -556,7 +555,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                                   /* dur   */ 2000,
                                   /* font  */ '18px joystix'
     );
-    console.log('this.eatenTxtBox = ', this.eatenTxtBox);
+    this.eatenTxtBox.startTimer();
     myGame.pauseAllChars(500);
   };
 
@@ -621,24 +620,6 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   }; // move
 
-  this.draw = function() {
-    // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
-    // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    ctx.drawImage(  /*image*/   this.spriteSheet,
-                    /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
-                    /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
-                    /*sWidth*/  this.spriteFrameWidth,
-                    /*sHeight*/ this.spriteFrameWidth,
-                    /* dx */    this.x-State.gridSpacing+2,
-                    /* dy */    this.y-State.gridSpacing+2,
-                    /*dWidth*/  State.gridSpacing*2-6,
-                    /*dHidth*/  State.gridSpacing*2-6
-    );
-    if (this.eatenTxtBox !== undefined) {
-      this.eatenTxtBox.draw();
-    }
-  };
-
   this.checkHitPac = function() {
     let xDif = Math.abs(this.x - myGame.myPac.x);
     let yDif = Math.abs(this.y - myGame.myPac.y);
@@ -667,6 +648,26 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     return isNew;
   };
 
+  this.draw = function() {
+    // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+    // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    ctx.drawImage(  /*image*/   this.spriteSheet,
+                    /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+                    /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
+                    /*sWidth*/  this.spriteFrameWidth,
+                    /*sHeight*/ this.spriteFrameWidth,
+                    /* dx */    this.x-State.gridSpacing+2,
+                    /* dy */    this.y-State.gridSpacing+2,
+                    /*dWidth*/  State.gridSpacing*2-6,
+                    /*dHidth*/  State.gridSpacing*2-6
+    );
+    if (this.eatenTxtBox !== undefined) {
+      if (this.eatenTxtBox.show === true) {
+        this.eatenTxtBox.draw();
+      }
+    }
+  };
+
   this.update = function() {
     if ( (this.moveState === 'chase') && (State.gameStarted = true) ) {
           if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) { // check which way to go
@@ -677,7 +678,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 this.changeDir(newDir);
                 this.updateSprite(newDir);
                 this.hopToIn();
-                this.tmpPause(30); // 30ms pauses at intersections
+                this.timedPause(30); // 30ms pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -698,7 +699,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
               if (newDir !== this.direction) {
                 this.changeDir(newDir);
                 this.hopToIn();
-                this.tmpPause(30); // 30ms pauses at intersections
+                this.timedPause(30); // 30ms pauses at intersections
                 this.moveGhost();
               } else {
                 this.moveGhost();
@@ -745,8 +746,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
           }
     } else if (this.moveState === 'tpaused') {
           // check to see if it's time to resume movement after an intersection
-          if (this.tmpPauseState === true) {
-            if ((performance.now() - this.tmpPauseBegin) > this.tmpPauseDur) {
+          if (this.timedPauseState === true) {
+            if ((performance.now() - this.timedPauseBegin) > this.timedPauseDur) {
               this.tmpUnpause();
             }
           }
@@ -759,9 +760,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
     // check TxtBox should clear
     if (this.eatenTxtBox !== undefined) {
-      if ((performance.now() - this.eatenTxtBox.startTime) > this.eatenTxtBox.duration ) {
-        this.eatenTxtBox = undefined;
-      }
+      this.eatenTxtBox.update();
     }
   }; // update
 

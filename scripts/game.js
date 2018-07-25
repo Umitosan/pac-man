@@ -180,24 +180,14 @@ function Game(updateDur) {
 
   this.pauseAllChars = function(pauseDur) {  // runs a tmp pause on pac and ghosts
     for (var i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].tmpPause(pauseDur);
+      this.ghosts[i].timedPause(pauseDur);
     }
-    this.myPac.tmpPause(pauseDur);
+    this.myPac.timedPause(pauseDur);
   };
 
   this.stopAllGhosts = function() {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].moveState = 'stop';
-    }
-  };
-
-  this.drawGrid = function() {
-    for (let i = 0; i < State.gridWidth+2; i++) {
-      // function drawLine(x1,y1,x2,y2,width,color)
-      drawLine(i*State.gridSpacing,0,i*State.gridSpacing,CANVAS.height,1,'green');
-    }
-    for (let i = 0; i < State.gridHeight+2; i++) {
-      drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
     }
   };
 
@@ -220,6 +210,16 @@ function Game(updateDur) {
     // this prevents pac from updating many times after UNpausing
     this.lastUpdate = performance.now();
     this.timeGap = 0;
+  };
+
+  this.drawGrid = function() {
+    for (let i = 0; i < State.gridWidth+2; i++) {
+      // function drawLine(x1,y1,x2,y2,width,color)
+      drawLine(i*State.gridSpacing,0,i*State.gridSpacing,CANVAS.height,1,'green');
+    }
+    for (let i = 0; i < State.gridHeight+2; i++) {
+      drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
+    }
   };
 
   this.draw = function() {
