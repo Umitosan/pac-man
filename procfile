@@ -1,1 +1,1 @@
-web: npm startHeroku
+web: npm install; npm start
