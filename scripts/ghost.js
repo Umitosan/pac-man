@@ -46,7 +46,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.startChase();
       this.x = State.gridSpacing*14+(State.gridSpacing/2);
     } else {
-      if (this.name !== 'pinky') this.vel = 1; // vel 1 for chillbase state
+      if (this.name !== 'pinky') { this.vel = 1; } // vel 1 for chillbase state
       this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
       this.targetY = State.gridSpacing*12;
       this.changeDir(this.direction);

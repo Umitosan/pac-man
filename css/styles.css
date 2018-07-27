@@ -21,6 +21,13 @@ body {
   background-color: black;
 }
 
+/* only exists to capture keybindings better */
+#game-container {
+  /* outline-color: red;
+  outline-style: solid;
+  outline-width: 10px; */
+}
+
 #canvas-container {
   padding-top: 4px;
   padding-left: 4px;

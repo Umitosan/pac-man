@@ -1,9 +1,11 @@
 /*jshint esversion: 6 */
 
-function Level() {
+function Level(drawMode) {
   this.currentLevel = undefined;
   this.bigDotOffDur = 300;   // milliseconds
   this.bigDotBlinkTimer = 600;  // milliseconds
+  this.walls1img = undefined;
+  this.drawMode = drawMode;
 
   this.allLevels = {
     lvl1: [
@@ -43,6 +45,9 @@ function Level() {
 
   this.init = function() {
     this.currentLevel = this.allLevels.lvl1;
+    this.drawWalls1();
+    // context.getImageData(x,y,width,height);
+    this.walls1img = ctx.getImageData(0,0,CANVAS.width,CANVAS.height);
   };
 
   this.timeToBlink = function() {
@@ -438,15 +443,19 @@ function Level() {
     }
   };
 
+  this.drawWallsBG = function() {
+    ctx.putImageData(this.walls1img,0,0);
+  };
+
   this.draw = function() {
-    this.drawDots();
-    if (myGame.lvlOnType === 1) {
+    if (this.drawMode === 1) {
       this.drawWalls1();
-    } else if (myGame.lvlOnType === 2) {
+    } else if (this.drawMode === 2) {
       this.drawWalls2();
-    } else {
-      // don't draw level
+    } else if (this.drawMode === 3) {
+      this.drawWallsBG();
     }
+    this.drawDots();
   }; // draw
 
 } // level

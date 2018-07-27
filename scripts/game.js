@@ -12,7 +12,6 @@ function Game(updateDur) {
   this.timeGap = 0;
   this.lastKey = 0;
   this.gridOn = false;
-  this.lvlOnType = 1;
   this.pxBoxOn = false;
 
   this.pausedTxt = undefined;
@@ -37,7 +36,7 @@ function Game(updateDur) {
     // init ghosts
     this.myPac.init();
     this.updateLives();
-    this.myLevel = new Level();
+    this.myLevel = new Level(3);
     this.myLevel.init();
     this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
                                 /*   y   */  State.gridSpacing*12,
@@ -121,14 +120,6 @@ function Game(updateDur) {
   this.resetUpdateGap = function() {
     this.timeGap = 0;
     this.lastUpdate = 0;
-  };
-
-  this.toggleLvl = function() {
-    if (this.lvlOnType === 2) {
-      this.lvlOnType = 0;
-    } else {
-      this.lvlOnType += 1;
-    }
   };
 
   this.updatePlayTime = function() {

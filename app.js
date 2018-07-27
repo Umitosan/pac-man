@@ -21,9 +21,11 @@
 // STATE
 ///////////////////
 
+/* jshint ignore:start */
 var CANVAS = undefined;
 var ctx = undefined;
 var myGame = undefined;
+/* jshint ignore:end */
 
 var State = {
   loopRunning: false,
@@ -47,7 +49,7 @@ function hardReset() {
   State = {
     loopRunning: false,
     gameStarted: false,
-    myReq: undefined,
+    myReq: undefined, // holds the ID # of the current requestAnimationFrame
     playTime: 0,
     playStart: undefined,
     lastFrameTimeMs: 0, // The last time the loop was run
@@ -89,23 +91,6 @@ function gameLoop(timestamp) {
   }
 
 }
-
-// Older game loops
-//
-// simpler fps-based update based on overall fps limiter
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   if (State.frameCounter >= myGame.updateDuration) {
-//     State.frameCounter = 0;
-//     myGame.update();
-//   } else {
-//     State.frameCounter += 1;
-//   }
-// }
-
-// simplest update() every frame aprox 60/sec
-// if ( (State.loopRunning) && (State.gameStarted) && (myGame.myPac.moveState === 'go') ) {
-//   myGame.update();
-// }
 
 //////////////////////////////////////////////////////////////////////////////////
 // KEYBINDINGS
@@ -159,7 +144,7 @@ function keyDown(event) {
           break;
         case 68: // D key
           console.log('toggle level');
-          myGame.toggleLvl();
+          // myGame.toggleLvl(); // old option to change level draw type
           break;
         case 88: // X key
           console.log('toggle px test box');
@@ -184,7 +169,8 @@ $(document).ready(function() {
   CANVAS =  $('#canvas')[0];
   ctx =  CANVAS.getContext('2d');
   CANVAS.addEventListener('keydown',keyDown,false);
-  // CANVAS.addEventListener('keyup',keyUp,false);
+  // document.getElementById("game-container").addEventListener('keydown',keyDown,false);
+  // document.addEventListener('keyup',keyUp,false);
 
   // this is to correct for canvas blurryness on single pixel wide lines etc
   // this is extremely important when animating to reduce rendering artifacts and other oddities
@@ -207,7 +193,8 @@ $(document).ready(function() {
     $('#score').text('0000');
     myGame = new Game(10); // param = ms per update()
     myGame.init();
-    CANVAS.focus();  // set focus to canvas on start so keybindings work
+    CANVAS.focus();  // set focus to canvas on start so keybindings work, if needed
+    console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();
     State.loopRunning = true;

@@ -14,60 +14,63 @@
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
   </head>
   <body>
-    <div class="title-div">
-      <p id="title">PAC MAN</p>
-    </div>
-    <div class="main-row">
-      <div class="left-col">
-        <p class="label">high score</p>
-        <p id="score">0000</p>
-        <p class="label">time played</p>
-        <p id='clock'>0</p>
+    <div id="game-container">
+
+      <div class="title-div">
+        <p id="title">PAC MAN</p>
       </div>
-      <div id="canvas-container">
-        <!-- tabindex is used to set focus later, this way key events are bound only to the canvas and not window -->
-        <canvas id="canvas" width="726" height="801" tabindex="0"></canvas>     <!-- add 1 pixel to dimentions for offset -->
-      </div>
-      <div class="right-col">
-        <table class="keycaps">
-          <tr>
-            <p class="label">controls</p>
-          </tr>
-          <tr>
-            <th></th>
-            <th class="key"><p>&#9650;</p></th>
-            <th></th>
-          </tr>
-          <tr>
-            <th class="key"><p>&#x25c0;</p></th>
-            <th class="key"><p>&#9660;</p></th>
-            <th class="key"><p>&#x25B6;</p></th>
-          </tr>
-        </table>
-        <p><span class="lg-text">space</span> - pause</p>
-        <div id="start-group">
-          <p><span id="start-btn-label" class="lg-text">Start</span></p>
-          <img id="start-btn" src="img/player1start.png" alt="start-btn">
+      <div class="main-row">
+        <div class="left-col">
+          <p class="label">high score</p>
+          <p id="score">0000</p>
+          <p class="label">time played</p>
+          <p id='clock'>0</p>
         </div>
-        <div class="debug-container">
-          <p>Debuging keys</p>
-          <p><span class="lg-text">G</span> - grid</p>
-          <p><span class="lg-text">D</span> - level</p>
-          <p><span class="lg-text">X</span> - px test box</p>
-          <p>px win</p>
-          <div class="pixel-window">
+        <div id="canvas-container">
+          <!-- tabindex is used to set focus later, this way key events are bound only to the canvas and not window -->
+          <canvas id="canvas" width="726" height="801" tabindex="0"></canvas>     <!-- add 1 pixel to dimentions for offset -->
+        </div>
+        <div class="right-col">
+          <table class="keycaps">
+            <tr>
+              <p class="label">controls</p>
+            </tr>
+            <tr>
+              <th></th>
+              <th class="key"><p>&#9650;</p></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th class="key"><p>&#x25c0;</p></th>
+              <th class="key"><p>&#9660;</p></th>
+              <th class="key"><p>&#x25B6;</p></th>
+            </tr>
+          </table>
+          <p><span class="lg-text">space</span> - pause</p>
+          <div id="start-group">
+            <p><span id="start-btn-label" class="lg-text">Start</span></p>
+            <img id="start-btn" src="img/player1start.png" alt="start-btn">
+          </div>
+          <div class="debug-container">
+            <p>Debuging keys</p>
+            <p><span class="lg-text">G</span> - grid</p>
+            <p><span class="lg-text">D</span> - level</p>
+            <p><span class="lg-text">X</span> - px test box</p>
+            <p>px win</p>
+            <div class="pixel-window">
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="bonus-row">
-      <div class="bonus-item pac-life" id="life1"></div>
-      <div class="bonus-item pac-life" id="life2"></div>
-      <div class="bonus-item pac-life" id="life3"></div>
-      <div class="bonus-item pac-life" id="life4"></div>
-      <div class="bonus-item pac-life" id="life5"></div>
-      <div class="bonus-item fruit" id="cherry"></div>
-    </div>
+      <div class="bonus-row">
+        <div class="bonus-item pac-life" id="life1"></div>
+        <div class="bonus-item pac-life" id="life2"></div>
+        <div class="bonus-item pac-life" id="life3"></div>
+        <div class="bonus-item pac-life" id="life4"></div>
+        <div class="bonus-item pac-life" id="life5"></div>
+        <div class="bonus-item fruit" id="cherry"></div>
+      </div>
 
+    </div>
   </body>
 </html>
