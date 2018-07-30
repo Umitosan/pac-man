@@ -74,17 +74,18 @@ function Level(drawMode) {
 
   this.drawDots = function() {
     let ctx = State.ctx;
+    let spacing = State.gridSpacing;
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
         if (this.currentLevel[r][c] === 0) { // it's a dot! so print it!
           ctx.beginPath();
           ctx.fillStyle = Colors.dotPink;
-          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 3 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
+          ctx.arc( (spacing + c * spacing) , (spacing + r * spacing) , 3 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
           ctx.fill();
         } else if ( (this.currentLevel[r][c] === 'B') && (this.timeToBlink() === false) ) {  // bonus dots
           ctx.beginPath();
           ctx.fillStyle = Colors.dotPink;
-          ctx.arc( (State.gridSpacing + c * State.gridSpacing) , (State.gridSpacing + r * State.gridSpacing) , 14 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
+          ctx.arc( (spacing + c * spacing) , (spacing + r * spacing) , 14 , 0 , Math.PI*2 ); // ctx.arc(x,y,radius,sAngle,eAngle);
           ctx.fill();
         } else {
           // it's not a dot

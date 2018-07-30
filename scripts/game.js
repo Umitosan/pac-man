@@ -102,12 +102,12 @@ function Game(updateDur) {
 
   this.softReset = function() {
     console.log('game softReset');
-    myGame.myPac.softReset();
-    for (var i = 0; i < myGame.ghosts.length; i++) {
-      myGame.ghosts[i].softReset();
+    this.myPac.softReset();
+    for (var i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].softReset();
     }
-    myGame.readyTxt.show = true;
-    setTimeout( () => { myGame.readyTxt.show = false; },2000);
+    this.readyTxt.show = true;
+    setTimeout( () => { this.readyTxt.show = false; },2000);
     clearCanvas();
   };
 

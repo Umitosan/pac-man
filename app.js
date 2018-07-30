@@ -193,7 +193,7 @@ $(document).ready(function() {
     myGame = new Game(10); // param = ms per update()
     myGame.init();
     State.canvas.focus();  // set focus to canvas on start so keybindings work, if needed
-    console.log("document.activeElement = ", document.activeElement);
+    // console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();
     State.loopRunning = true;

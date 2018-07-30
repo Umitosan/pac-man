@@ -106,14 +106,14 @@ function atGridIntersection(x,y,vel) {
 }
 
 function getNearestIntersection(someX, someY) {
-  let sp = State.gridSpacing;
+  let spacing = State.gridSpacing;
 
   let foundRow = 'none';
   let foundCol = 'none';
   let foundChar = 'none';
 
-  foundRow = Math.round(someY/sp)-1; // -1 to offset the fact that arrays count starting at 0
-  foundCol = Math.round(someX/sp)-1;
+  foundRow = Math.round(someY/spacing)-1; // -1 to offset the fact that arrays count starting at 0
+  foundCol = Math.round(someX/spacing)-1;
 
   foundChar = myGame.myLevel.currentLevel[ foundRow ][ foundCol ];
 

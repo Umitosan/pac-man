@@ -124,6 +124,7 @@ function Pac(x,y,velocity,direction,moveState)  {
 
   this.movePac = function() {
     let canvas = State.canvas;
+    let spacing = State.gridSpacing;
     let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
       if ((this.x+this.vel) > (canvas.width-edgeGap)) {  // handle the TUNNEL
@@ -155,9 +156,10 @@ function Pac(x,y,velocity,direction,moveState)  {
   };
 
   this.hopToIn = function() {
+    let spacing = State.gridSpacing;
     let data = getNearestIntersection(this.x,this.y);
-    this.x = (data.col+1)*State.gridSpacing;
-    this.y = (data.row+1)*State.gridSpacing;
+    this.x = (data.col+1)*spacing;
+    this.y = (data.row+1)*spacing;
   };
 
   this.tryEatPill = function() {

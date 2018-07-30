@@ -40,15 +40,16 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.timedPauseDur = 0;
 
   this.init = function() {
+    let spacing = State.gridSpacing;
     getGhostChangeTarget(this.name);
     this.spriteSheet.src = this.spriteImgSrc;
     if (this.name === 'blinky') {
       this.startChase();
-      this.x = State.gridSpacing*14+(State.gridSpacing/2);
+      this.x = spacing*14+(spacing/2);
     } else {
       if (this.name !== 'pinky') { this.vel = 1; } // vel 1 for chillbase state
-      this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-      this.targetY = State.gridSpacing*12;
+      this.targetX = spacing*14+(spacing/2);
+      this.targetY = spacing*12;
       this.changeDir(this.direction);
       this.updateSprite(this.direction);
     }
@@ -83,12 +84,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.nextChillAnim = function() {
-    if (this.y <= ((State.gridSpacing*15)-12)) {
+    let spacing = State.gridSpacing;
+    if (this.y <= ((spacing*15)-12)) {
       this.chillCoef = 1;
       this.y += (this.vel*this.chillCoef);
       this.direction = 'down';
       this.updateSprite(this.direction);
-    } else if (this.y >= ((State.gridSpacing*15)+12)) {
+    } else if (this.y >= ((spacing*15)+12)) {
       this.chillCoef = -1;
       this.y += (this.vel*this.chillCoef);
       this.direction = 'up';
@@ -99,9 +101,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.inTunnel = function() {
+    let spacing = State.gridSpacing;
     let tBool;
-    if (this.y === (State.gridSpacing*15)) {
-      if ((this.x < (State.gridSpacing*5)) || (this.x > (State.gridSpacing*24)))  {
+    if (this.y === (spacing*15)) {
+      if ((this.x < (spacing*5)) || (this.x > (spacing*24)))  {
         tBool = true;
       } else {
         tBool = false;
@@ -332,24 +335,24 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.inBounds = function(tDir) {
-    var bounds = 'none';
-    var sp = State.gridSpacing;
-    var off = this.vel;
+    let bounds = 'none';
+    let spacing = State.gridSpacing;
+    let off = this.vel;
 
     switch (true) {
-      case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
-        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
+      case ( (tDir === 'left') && ( getNearestIntersection(this.x-spacing+off,this.y).char === "#") ):
+        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-spacing+off,this.y) );
         bounds = false;  break;
-      case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
-        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
+      case ( (tDir === 'right') && ( getNearestIntersection(this.x+spacing-off,this.y).char === "#") ):
+        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+spacing-off,this.y) );
         bounds = false;  break;
-      case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
-        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
+      case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-spacing+off).char === "#") ):
+        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-spacing+off) );
         bounds = false;  break;
-      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "#") ):
-        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+spacing-off).char === "#") ):
+        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+spacing-off) );
         bounds = false;  break;
-      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+sp-off).char === "W") && (this.moveState !== 'base') ):
+      case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+spacing-off).char === "W") && (this.moveState !== 'base') ):
         // let the ghost go into the base to reset after being eaten
         bounds = false;  break;
       default:
@@ -650,6 +653,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.draw = function() {
+    let spacing = State.gridSpacing;
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     State.ctx.drawImage(  /*image*/   this.spriteSheet,
@@ -657,10 +661,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                     /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
                     /*sWidth*/  this.spriteFrameWidth,
                     /*sHeight*/ this.spriteFrameWidth,
-                    /* dx */    this.x-State.gridSpacing+2,
-                    /* dy */    this.y-State.gridSpacing+2,
-                    /*dWidth*/  State.gridSpacing*2-6,
-                    /*dHidth*/  State.gridSpacing*2-6
+                    /* dx */    this.x-spacing+2,
+                    /* dy */    this.y-spacing+2,
+                    /*dWidth*/  spacing*2-6,
+                    /*dHidth*/  spacing*2-6
     );
     if (this.eatenTxtBox !== undefined) {
       if (this.eatenTxtBox.show === true) {
@@ -770,6 +774,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
 
 function getGhostChangeTarget(ghostName) {
+  let spacing = State.gridSpacing;
   if (ghostName === 'blinky') { // BLINKY ONLY
     console.log('blinky gets a prototype');
     myGame.ghosts[0].changeTarget = function() {
@@ -777,14 +782,14 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = myGame.myPac.x;
         this.targetY = myGame.myPac.y;
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*1;
-        this.targetY = State.gridSpacing*1;
+        this.targetX = spacing*1;
+        this.targetY = spacing*1;
       } else if (this.moveState === 'base') {
-        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-        this.targetY = State.gridSpacing*15;
+        this.targetX = spacing*14+(spacing/2);
+        this.targetY = spacing*15;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-        this.targetY = State.gridSpacing*12;
+        this.targetX = spacing*14+(spacing/2);
+        this.targetY = spacing*12;
       } else {
         // nothin
       }
@@ -794,30 +799,30 @@ function getGhostChangeTarget(ghostName) {
     myGame.ghosts[1].changeTarget = function() {
       if (this.moveState === 'chase') {
           if (myGame.myPac.direction === 'left') {
-            this.targetX = myGame.myPac.x - (State.gridSpacing*2);
+            this.targetX = myGame.myPac.x - (spacing*2);
             this.targetY = myGame.myPac.y;
           } else if (myGame.myPac.direction === 'right') {
-            this.targetX = myGame.myPac.x + (State.gridSpacing*2);
+            this.targetX = myGame.myPac.x + (spacing*2);
             this.targetY = myGame.myPac.y;
           } else if (myGame.myPac.direction === 'up') {
             this.targetX = myGame.myPac.x;
-            this.targetY = myGame.myPac.y - (State.gridSpacing*2);
+            this.targetY = myGame.myPac.y - (spacing*2);
           } else if (myGame.myPac.direction === 'down') {
             this.targetX = myGame.myPac.x;
-            this.targetY = myGame.myPac.y + (State.gridSpacing*2);
+            this.targetY = myGame.myPac.y + (spacing*2);
           } else {
             console.log('pinky changeTarget pac positioning prob');
           }
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*24;
-        this.targetY = State.gridSpacing*1;
+        this.targetX = spacing*24;
+        this.targetY = spacing*1;
       } else if (this.moveState === 'base') {
         this.targetX = this.startPosX;
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
         console.log(this.name +" exitbase movestate updated" );
-        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-        this.targetY = State.gridSpacing*12;
+        this.targetX = spacing*14+(spacing/2);
+        this.targetY = spacing*12;
       } else {
         // nothin
       }
@@ -829,14 +834,14 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = myGame.myPac.x;
         this.targetY = myGame.myPac.y;
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*27;
-        this.targetY = State.gridSpacing*30;
+        this.targetX = spacing*27;
+        this.targetY = spacing*30;
       } else if (this.moveState === 'base') {
-        this.targetX = this.startPosX+(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
+        this.targetX = this.startPosX+(spacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-        this.targetY = State.gridSpacing*12;
+        this.targetX = spacing*14+(spacing/2);
+        this.targetY = spacing*12;
       } else {
         // nothin
       }
@@ -848,14 +853,14 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = myGame.myPac.x;
         this.targetY = myGame.myPac.y;
       } else if (this.moveState === 'flee') {
-        this.targetX = State.gridSpacing*1;
-        this.targetY = State.gridSpacing*30;
+        this.targetX = spacing*1;
+        this.targetY = spacing*30;
       } else if (this.moveState === 'base') {
-        this.targetX = this.startPosX-(State.gridSpacing/2);  // this is to offset the fact that ghost can't reach startPosX
+        this.targetX = this.startPosX-(spacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
-        this.targetX = State.gridSpacing*14+(State.gridSpacing/2);
-        this.targetY = State.gridSpacing*12;
+        this.targetX = spacing*14+(spacing/2);
+        this.targetY = spacing*12;
       } else {
         // nothin
       }
