@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "_comment": "-a override ip, -p port, -o open",
-    "start": "http-server -a localhost -p 5000 --cors"
+    "start": "http-server -a localhost -p 5000 --cors -o"
     },
   "repository": {
     "type": "git",

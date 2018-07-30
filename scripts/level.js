@@ -44,10 +44,11 @@ function Level(drawMode) {
   };
 
   this.init = function() {
+    let canvas = State.canvas;
     this.currentLevel = this.allLevels.lvl1;
     this.drawWalls1();
     // context.getImageData(x,y,width,height);
-    this.walls1img = ctx.getImageData(0,0,CANVAS.width,CANVAS.height);
+    this.walls1img = State.ctx.getImageData(0,0,canvas.width,canvas.height);
   };
 
   this.timeToBlink = function() {
@@ -72,6 +73,7 @@ function Level(drawMode) {
   };
 
   this.drawDots = function() {
+    let ctx = State.ctx;
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
         if (this.currentLevel[r][c] === 0) { // it's a dot! so print it!
@@ -92,6 +94,7 @@ function Level(drawMode) {
   };
 
   this.drawWalls1 = function() {
+    let ctx = State.ctx;
     let s = State.gridSpacing;
     let corner = 10;
     let half = s/2;
@@ -418,23 +421,25 @@ function Level(drawMode) {
   };
 
   this.drawWalls2 = function() {
+    let ctx = State.ctx;
+    let spacing = State.gridSpacing;
     for (let r = 0; r < this.currentLevel.length; r++) {
       for (let c = 0; c < this.currentLevel[r].length; c++) {
         if (this.currentLevel[r][c] === '#') {
           ctx.beginPath();
           ctx.fillStyle = Colors.blue;
           ctx.lineWidth = 1;
-          ctx.rect( (State.gridSpacing-5 + c * State.gridSpacing), (State.gridSpacing-5 + r * State.gridSpacing), 10, 10 ); // x y width height
+          ctx.rect( (spacing-5 + c * spacing), (spacing-5 + r * spacing), 10, 10 ); // x y width height
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'W') {
           ctx.beginPath();
           ctx.fillStyle = Colors.ghostPink;
-          ctx.rect( (State.gridSpacing-10 + c * State.gridSpacing), (State.gridSpacing-2 + r * State.gridSpacing), 22, 5 ); // x y width height
+          ctx.rect( (spacing-10 + c * spacing), (spacing-2 + r * spacing), 22, 5 ); // x y width height
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'T') {
           ctx.beginPath();
           ctx.fillStyle = Colors.aqua;
-          ctx.rect( (State.gridSpacing-2 + c * State.gridSpacing), (State.gridSpacing-10 + r * State.gridSpacing), 4, 20 ); // x y width height
+          ctx.rect( (spacing-2 + c * spacing), (spacing-10 + r * spacing), 4, 20 ); // x y width height
           ctx.fill();
         } else {
           // nothin
@@ -444,7 +449,7 @@ function Level(drawMode) {
   };
 
   this.drawWallsBG = function() {
-    ctx.putImageData(this.walls1img,0,0);
+    State.ctx.putImageData(this.walls1img,0,0);
   };
 
   this.draw = function() {

@@ -21,13 +21,10 @@
 // STATE
 ///////////////////
 
-/* jshint ignore:start */
-var CANVAS = undefined;
-var ctx = undefined;
-var myGame = undefined;
-/* jshint ignore:end */
-
 var State = {
+  canvas: undefined,
+  ctx: undefined,
+  myGame: undefined,
   loopRunning: false,
   gameStarted: false,
   myReq: undefined,
@@ -45,8 +42,10 @@ var State = {
 };
 
 function hardReset() {
-  myGame = undefined;
   State = {
+    canvas: undefined,
+    ctx: undefined,
+    myGame: undefined,
     loopRunning: false,
     gameStarted: false,
     myReq: undefined, // holds the ID # of the current requestAnimationFrame
@@ -63,7 +62,6 @@ function hardReset() {
     bg: new Image()
   };
   State.bg.src = 'img/reference2.png';
-  clearCanvas();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -78,14 +76,14 @@ function gameLoop(timestamp) {
 
   clearCanvas();
   if (State.gameStarted === false) {
-      ctx.imageSmoothingEnabled = false;   // turns off AntiAliasing
+      State.ctx.imageSmoothingEnabled = false;   // turns off AntiAliasing
     // myGame.drawBG();
-    ctx.drawImage(State.bg,4,4,CANVAS.width-9,CANVAS.height-9);
-    ctx.beginPath();
-    ctx.strokeStyle = Colors.blue;
-    ctx.lineWidth = 4;
-    ctx.rect(2, 2, CANVAS.width-4, CANVAS.height-4);
-    ctx.stroke();
+    State.ctx.drawImage(State.bg,4,4,State.canvas.width-9,State.canvas.height-9);
+    State.ctx.beginPath();
+    State.ctx.strokeStyle = Colors.blue;
+    State.ctx.lineWidth = 4;
+    State.ctx.rect(2, 2, State.canvas.width-4, State.canvas.height-4);
+    State.ctx.stroke();
   } else {
     myGame.draw();
   }
@@ -166,19 +164,17 @@ $(document).ready(function() {
 
   State.pageLoadTime = performance.now();
 
-  CANVAS =  $('#canvas')[0];
-  ctx =  CANVAS.getContext('2d');
-  CANVAS.addEventListener('keydown',keyDown,false);
+  State.canvas =  $('#canvas')[0];
+  State.ctx =  State.canvas.getContext('2d');
+  State.canvas.addEventListener('keydown',keyDown,false);
   // document.getElementById("game-container").addEventListener('keydown',keyDown,false);
   // document.addEventListener('keyup',keyUp,false);
 
   // this is to correct for canvas blurryness on single pixel wide lines etc
   // this is extremely important when animating to reduce rendering artifacts and other oddities
-  ctx.translate(0.5, 0.5);
+  State.ctx.translate(0.5, 0.5);
 
-  // start things up so that the background image can be drawn
-  // myGame = new Game(10);
-  // myGame.init();
+  // start things up so that the background image can be drawn, but don't init myGame
   State.bg.src = 'img/reference2.png';
   State.loopRunning = true;
   State.myReq = requestAnimationFrame(gameLoop);
@@ -190,10 +186,13 @@ $(document).ready(function() {
       cancelAnimationFrame(State.myReq);
       hardReset();
     }
+    State.canvas =  $('#canvas')[0];
+    State.ctx =  State.canvas.getContext('2d');
+    clearCanvas();
     $('#score').text('0000');
     myGame = new Game(10); // param = ms per update()
     myGame.init();
-    CANVAS.focus();  // set focus to canvas on start so keybindings work, if needed
+    State.canvas.focus();  // set focus to canvas on start so keybindings work, if needed
     console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();

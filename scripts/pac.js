@@ -123,12 +123,13 @@ function Pac(x,y,velocity,direction,moveState)  {
   };
 
   this.movePac = function() {
+    let canvas = State.canvas;
     let edgeGap = 10;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+      if ((this.x+this.vel) > (canvas.width-edgeGap)) {  // handle the TUNNEL
         this.x = edgeGap*2;
       } else if ((this.x+this.vel) < edgeGap) {
-        this.x = CANVAS.width-(edgeGap*2);
+        this.x = canvas.width-(edgeGap*2);
       } else {
         this.x += this.vel;
       }
@@ -270,13 +271,14 @@ function Pac(x,y,velocity,direction,moveState)  {
     }
     this.pixX = (this.x+((this.lineW+this.radius+2)*xCoef));
     this.pixY = (this.y+((this.lineW+this.radius+2)*yCoef));
-    let pxData =  ctx.getImageData(this.pixX, this.pixY, 1, 1).data;
+    let pxData =  State.ctx.getImageData(this.pixX, this.pixY, 1, 1).data;
     let pxRgba = 'rgba('+pxData[0]+','+pxData[1]+','+pxData[2]+','+pxData[3]+')';
     return { data: pxData,
              rgbastr: pxRgba };
   };
 
   this.drawPixTestBox = function() {
+    let ctx = State.ctx;
     ctx.beginPath();
     ctx.strokeStyle = 'green';
     ctx.rect(this.pixX-5,this.pixY-5,10,10);
@@ -285,6 +287,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   };
 
   this.draw = function() {
+    let ctx = State.ctx;
     // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
     // sAngle	The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
     // eAngle	The ending angle, in radians

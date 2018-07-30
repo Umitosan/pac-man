@@ -29,7 +29,7 @@ function TxtBox(x,y,msg,color,dur,font) {
   };
 
   this.draw = function() {
-    var ctx = canvas.getContext('2d');
+    var ctx = State.ctx;
     ctx.font = this.font;
     ctx.fillStyle = this.color;
     ctx.textAlign = 'center';

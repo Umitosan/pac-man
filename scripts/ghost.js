@@ -605,11 +605,12 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.moveGhost = function() {
     let edgeGap = 10;
+    let canvas = State.canvas;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (CANVAS.width-edgeGap)) {  // handle the TUNNEL
+      if ((this.x+this.vel) > (canvas.width-edgeGap)) {  // handle the TUNNEL
         this.x = edgeGap*2;
       } else if ((this.x+this.vel) < edgeGap) {
-        this.x = CANVAS.width-(edgeGap*2);
+        this.x = canvas.width-(edgeGap*2);
       } else {
         this.x += this.vel;
       }
@@ -651,7 +652,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.draw = function() {
     // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    ctx.drawImage(  /*image*/   this.spriteSheet,
+    State.ctx.drawImage(  /*image*/   this.spriteSheet,
                     /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
                     /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
                     /*sWidth*/  this.spriteFrameWidth,

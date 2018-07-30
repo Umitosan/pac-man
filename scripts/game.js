@@ -26,9 +26,10 @@ function Game(updateDur) {
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
 
   this.init = function() {
+    let spacing = State.gridSpacing;
     // Pac(x,y,velocity,width,direction,moveState)
-    this.myPac = new Pac( /* x */             (14*State.gridSpacing)+(State.gridSpacing/2),
-                          /* y */             24*State.gridSpacing,
+    this.myPac = new Pac( /* x */             (14*spacing)+(spacing/2),
+                          /* y */             24*spacing,
                           /* velocity */      3,
                           /* direction */     'right',
                           /* moveState */     'stop'
@@ -38,8 +39,8 @@ function Game(updateDur) {
     this.updateLives();
     this.myLevel = new Level(3);
     this.myLevel.init();
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
-                                /*   y   */  State.gridSpacing*12,
+    this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
+                                /*   y   */  spacing*12,
                                 /* name  */  "blinky",
                                 /* src   */  'img/blinky.png',
                                 /*frame0 */  2,
@@ -48,8 +49,8 @@ function Game(updateDur) {
                                 /* dots  */  0,
                                 /* allow */ true
                               ));
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*14+(State.gridSpacing/2),
-                                /*   y   */  State.gridSpacing*15,
+    this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
+                                /*   y   */  spacing*15,
                                 /* name  */  "pinky",
                                 /* src   */  'img/pinky.png',
                                 /*frame0 */  2,
@@ -58,8 +59,8 @@ function Game(updateDur) {
                                 /* dots  */  0,
                                 /* allow */ true
                               ));
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*13-(State.gridSpacing/2),
-                                /*   y   */  State.gridSpacing*15,
+    this.ghosts.push(new Ghost( /*   x   */  spacing*13-(spacing/2),
+                                /*   y   */  spacing*15,
                                 /* name  */  "inky",
                                 /* src   */  'img/inky.png',
                                 /*frame0 */  2,
@@ -68,8 +69,8 @@ function Game(updateDur) {
                                 /* dots  */  30,
                                 /* allow */ false
                               ));
-    this.ghosts.push(new Ghost( /*   x   */  State.gridSpacing*16+(State.gridSpacing/2),
-                                /*   y   */  State.gridSpacing*15,
+    this.ghosts.push(new Ghost( /*   x   */  spacing*16+(spacing/2),
+                                /*   y   */  spacing*15,
                                 /* name  */  "clyde",
                                 /* src   */ 'img/clyde.png',
                                 /*frame0 */  2,
@@ -81,15 +82,15 @@ function Game(updateDur) {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].init();
     }
-    this.pausedTxt = new TxtBox(/* x     */ State.gridSpacing*15-10,
-                                /* y     */ State.gridSpacing*19-10,
+    this.pausedTxt = new TxtBox(/* x     */ spacing*15-10,
+                                /* y     */ spacing*19-10,
                                 /* msg   */ 'PAUSED',
                                 /* color */ Colors.pacYellow,
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
-    this.readyTxt = new TxtBox( /* x     */ State.gridSpacing*15-10,
-                                /* y     */ State.gridSpacing*19-10,
+    this.readyTxt = new TxtBox( /* x     */ spacing*15-10,
+                                /* y     */ spacing*19-10,
                                 /* msg   */ 'READY!',
                                 /* color */ Colors.pacYellow,
                                 /* dur   */ 2000,
@@ -204,12 +205,14 @@ function Game(updateDur) {
   };
 
   this.drawGrid = function() {
+    let canvas = State.canvas;
+    let spacing = State.gridSpacing;
     for (let i = 0; i < State.gridWidth+2; i++) {
       // function drawLine(x1,y1,x2,y2,width,color)
-      drawLine(i*State.gridSpacing,0,i*State.gridSpacing,CANVAS.height,1,'green');
+      drawLine(i*spacing,0,i*spacing,canvas.height,1,'green');
     }
     for (let i = 0; i < State.gridHeight+2; i++) {
-      drawLine(0,i*State.gridSpacing,CANVAS.width,i*State.gridSpacing,1,'green');
+      drawLine(0,i*spacing,canvas.width,i*spacing,1,'green');
     }
   };
 

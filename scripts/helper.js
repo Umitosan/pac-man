@@ -22,7 +22,7 @@ var Colors = {
 };
 
 function clearCanvas() {
-  ctx.clearRect(-1, -1, canvas.width+1, canvas.height+1); // offset by 1 px because the whole canvas is offset initially (for better pixel accuracy)
+  State.ctx.clearRect(-1, -1, State.canvas.width+1, State.canvas.height+1); // offset by 1 px because the whole canvas is offset initially (for better pixel accuracy)
 }
 
 function getRandomIntInclusive(min, max) {
@@ -69,6 +69,7 @@ function invertRGBAstr(str) {
 }
 
 function drawLine(x1,y1,x2,y2,width,color) {
+  let ctx = State.ctx;
   ctx.save();
   ctx.beginPath();
   ctx.strokeStyle = color;
@@ -80,6 +81,7 @@ function drawLine(x1,y1,x2,y2,width,color) {
 }
 
 function roundRect(x, y, w, h, r) {
+  let ctx = State.ctx;
   if (w < 2 * r) r = w / 2;
   if (h < 2 * r) r = h / 2;
   ctx.beginPath();
