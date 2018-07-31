@@ -6,7 +6,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.x = x;
   this.y = y;
   this.vel = 3;
-  this.lives = 2;
+  this.lives = 0;
   this.diameter = (State.gridSpacing*2)-10;
   this.radius = ((State.gridSpacing*2)-10)/2;
   this.color = Colors.pacYellow;
@@ -197,21 +197,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.lives -= 1;
     console.log('pac lives left: ', this.lives);
     State.myGame.updateLives();
-    if (this.lives === -1) {
-      console.log("GAME OVER SON!");
-      // game over
-
-      // game over screen
-      // game over txt
-      // maybe game over animation
-      // final score etc game summary, play again?
-      // firebase high scores?
-    }
     console.log('pac movestate = ', this.moveState);
-  };
-
-  this.gameOver = function() {
-
   };
 
   this.nextMouth = function() {
@@ -399,7 +385,12 @@ function Pac(x,y,velocity,direction,moveState)  {
         }
     } else if (this.moveState === 'dying2') {
         if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
-          State.myGame.softReset();
+          if (this.lives === -1) { // game over
+            console.log("GAME OVER SON!");
+            State.myGame.gameOverInit();
+          } else { // game continues to new life
+            State.myGame.softReset();
+          }
         } else {
           this.nextDeathSparkle();
         }

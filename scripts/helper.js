@@ -17,8 +17,9 @@ var Colors = {
   blue: 'rgba(0, 0, 230, 0.7)',
   pacYellow: 'rgba(255,255,1,1)',
   aqua: 'rgba(127,255,212,1)',
+  aqua2: 'rgba(0,190,190,1)',
   dotPink: 'rgba(247, 200, 183,1)',
-  ghostPink: 'rgba(255,192,203,1)'
+  ghostPink: 'rgba(255,192,203,1)',
 };
 
 function clearCanvas() {

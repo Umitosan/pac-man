@@ -16,7 +16,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.targetX = 'none';
   this.targetY = 'none';
   this.direction = dir;
-  this.moveState = mvState; // chillbase, exitbase, chase, flee(aka frightened), scatter, base, tpaused, stop
+  this.moveState = mvState; // chillbase, exitbase, chase, flee(aka frightened), scatter, base, tpaused, stop, gameover
   this.lastMoveState = 'tpaused';
   this.eatenTxtBox = undefined;
   this.chillCoef = 1;
@@ -77,8 +77,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.vel = 1; // chillbase speed
       this.changeDir('down');
       this.updateSprite('down');
-    } else {
+    } else if (this.name === 'pinky') {
       this.startExitBase();
+    } else {
+      console.log('ghost soft reset probs');
     }
     this.timedPause(2000);
   };
@@ -554,7 +556,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+4,
                                   /* msg   */ msg,
-                                  /* color */ Colors.white,
+                                  /* color */ Colors.aqua,
                                   /* dur   */ 2000,
                                   /* font  */ '18px joystix'
     );
@@ -776,7 +778,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 function getGhostChangeTarget(ghostName) {
   let spacing = State.gridSpacing;
   if (ghostName === 'blinky') { // BLINKY ONLY
-    console.log('blinky gets a prototype');
+    // console.log('blinky gets a prototype');
     State.myGame.ghosts[0].changeTarget = function() {
       if (this.moveState === 'chase') {
         this.targetX = State.myGame.myPac.x;
@@ -795,7 +797,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'pinky') { // PINKY ONLY
-    console.log('pinky gets a prototype');
+    // console.log('pinky gets a prototype');
     State.myGame.ghosts[1].changeTarget = function() {
       if (this.moveState === 'chase') {
           if (State.myGame.myPac.direction === 'left') {
@@ -828,7 +830,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'inky') {
-    console.log('inky gets a prototype');
+    // console.log('inky gets a prototype');
     State.myGame.ghosts[2].changeTarget = function() {
       if (this.moveState === 'chase') {
         this.targetX = State.myGame.myPac.x;
@@ -847,7 +849,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'clyde') {
-    console.log('clyde gets a prototype');
+    // console.log('clyde gets a prototype');
     State.myGame.ghosts[3].changeTarget = function() {
       if (this.moveState === 'chase') {
         this.targetX = State.myGame.myPac.x;

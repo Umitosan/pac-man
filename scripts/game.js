@@ -16,6 +16,7 @@ function Game(updateDur) {
 
   this.pausedTxt = undefined;
   this.readyTxt = undefined;
+  this.gameoverTxt = undefined;
   this.currentTxt = undefined;
 
   this.bigPillEffect = false;
@@ -24,6 +25,10 @@ function Game(updateDur) {
   this.bigPillEffectStart = null; // exact time effect started
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
+
+  this.scatterGhostsTimer = undefined;
+
+  this.gameover = false;
 
   this.init = function() {
     let spacing = State.gridSpacing;
@@ -96,6 +101,13 @@ function Game(updateDur) {
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
+    this.gameoverTxt = new TxtBox(/* x     */ spacing*15-10,
+                                  /* y     */ spacing*19-10,
+                                  /* msg   */ 'GAME OVER!',
+                                  /* color */ Colors.pacYellow,
+                                  /* dur   */ 2000,
+                                  /* font  */ '42px joystix'
+                              );
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
   };
@@ -109,6 +121,24 @@ function Game(updateDur) {
     this.readyTxt.show = true;
     setTimeout( () => { this.readyTxt.show = false; },2000);
     clearCanvas();
+  };
+
+  this.gameOverInit = function() {
+    // game over screen
+    // game over txt
+    // maybe game over animation
+    // final score etc game summary, play again?
+    // firebase high scores?
+    this.gameover = true;
+    this.myPac.moveState = 'gameover';
+    this.ghosts.forEach(function(g) {
+      g.moveState = 'gameover';
+    });
+    this.myPac.moveState = 'gameover';
+    // TxtBox(x,y,msg,color,dur,font)
+    this.currentTxt = this.gameoverTxt;
+    this.currentTxt.on();
+    console.log('myGame = ', State.myGame);
   };
 
   this.updateLives = function() { // update the number of pac life images below game
@@ -217,21 +247,24 @@ function Game(updateDur) {
   };
 
   this.draw = function() {
-    if (this.gridOn) this.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
-    if (this.ghosts.length > 0) {
-      for (let g = 0; g < this.ghosts.length; g++ ) {
-        this.ghosts[g].draw();
+    if (!this.gameover) {
+      if (this.gridOn) this.drawGrid();
+      if (this.ghosts.length > 0) {
+        for (let g = 0; g < this.ghosts.length; g++ ) {
+          this.ghosts[g].draw();
+        }
       }
+      if (this.myPac) this.myPac.draw();
+      if (this.pausedTxt.show === true) this.pausedTxt.draw();
+    } else { // game over
+      if (this.currentTxt.show === true) this.currentTxt.draw();
     }
-    if (this.myPac) this.myPac.draw();
-    if (this.pausedTxt.show === true) this.pausedTxt.draw();
-    if (this.readyTxt.show === true) this.readyTxt.draw();
   };
 
   this.update = function() {
 
-    if (!this.paused) { // performance based update: this.update() runs every this.updateDuration milliseconds
+    if ( (!this.paused) && (!this.gameover) ){ // performance based update: this.update() runs every this.updateDuration milliseconds
 
           if (State.playTime < 1) { // make sure on first update() only run once
             this.lastUpdate = performance.now();
@@ -266,10 +299,12 @@ function Game(updateDur) {
           }
 
           this.updatePlayTime();
-    } else if (this.paused === true) {
-      // do nothin
+    } else if ( (this.paused === true) && (!this.gameover) ) {
+      // chill
+    } else if (this.gameover) {
+      // chill
     } else {
-      console.log('game pause issue');
+      console.log('unhandeled game update case');
     }
 
   }; // game update
