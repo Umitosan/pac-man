@@ -115,7 +115,7 @@ function getNearestIntersection(someX, someY) {
   foundRow = Math.round(someY/spacing)-1; // -1 to offset the fact that arrays count starting at 0
   foundCol = Math.round(someX/spacing)-1;
 
-  foundChar = myGame.myLevel.currentLevel[ foundRow ][ foundCol ];
+  foundChar = State.myGame.myLevel.currentLevel[ foundRow ][ foundCol ];
 
   return { char: foundChar,
             row: foundRow,

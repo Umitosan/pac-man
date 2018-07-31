@@ -13,7 +13,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.lineW = 2;
   this.pixX = 0; // pixel test
   this.pixY = 0; // pixel test
-  this.moveState = moveState; // go, stop, tpaused, dying1, dying2
+  this.moveState = moveState; // go, stop, tpaused, dying1, dying2, gameover
   this.lastMoveState = 'tpaused';
   this.direction = direction; // also relates to mouth direction and rotation
 
@@ -169,10 +169,10 @@ function Pac(x,y,velocity,direction,moveState)  {
     let c = data.col;
     if ( (data.char === 0) || (data.char === 'B') ) {
       pillType = data.char;
-      myGame.updateScore(data.char);
-      myGame.myLevel.currentLevel[r][c] = '-';
-      myGame.ghosts[2].updateDotsCounter(); // update inky
-      myGame.ghosts[3].updateDotsCounter(); // update clyde
+      State.myGame.updateScore(data.char);
+      State.myGame.myLevel.currentLevel[r][c] = '-';
+      State.myGame.ghosts[2].updateDotsCounter(); // update inky
+      State.myGame.ghosts[3].updateDotsCounter(); // update clyde
     }
     return pillType;
   };
@@ -186,9 +186,9 @@ function Pac(x,y,velocity,direction,moveState)  {
     // soft game reset
     // start new life animation
     // resume game
-    console.log('pac died, hit by ghost');
+    console.log('pac die');
     this.moveState = 'dying1';
-    myGame.stopAllGhosts();
+    State.myGame.stopAllGhosts();
     this.timedPause(200);
     this.direction = 'up';
     this.rotatePacFace();
@@ -196,14 +196,22 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.mouthSize = getRadianAngle(20);
     this.lives -= 1;
     console.log('pac lives left: ', this.lives);
-    myGame.updateLives();
-    myGame.stopAllGhosts();
+    State.myGame.updateLives();
     if (this.lives === -1) {
       console.log("GAME OVER SON!");
       // game over
+
       // game over screen
+      // game over txt
+      // maybe game over animation
+      // final score etc game summary, play again?
+      // firebase high scores?
     }
     console.log('pac movestate = ', this.moveState);
+  };
+
+  this.gameOver = function() {
+
   };
 
   this.nextMouth = function() {
@@ -326,7 +334,7 @@ function Pac(x,y,velocity,direction,moveState)  {
       ctx.rotate(-this.rotateFace);
       ctx.translate(-this.x,-this.y);
     }
-    if (myGame.pxBoxOn) this.drawPixTestBox();
+    if (State.myGame.pxBoxOn) this.drawPixTestBox();
   }; // draw
 
   this.update = function() {
@@ -338,7 +346,7 @@ function Pac(x,y,velocity,direction,moveState)  {
               this.hopToIn();
             } else {
               let pill = this.tryEatPill();
-              if (pill === 'B') { myGame.startGhostFleeState(); }
+              if (pill === 'B') { State.myGame.startGhostFleeState(); }
               this.movePac();
               this.nextMouth();
             }
@@ -353,7 +361,7 @@ function Pac(x,y,velocity,direction,moveState)  {
             this.hopToIn();
           } else {
             let pill = this.tryEatPill();
-            if (pill === 'B') { myGame.startGhostFleeState(); }
+            if (pill === 'B') { State.myGame.startGhostFleeState(); }
             this.movePac();
             this.nextMouth();
           }
@@ -374,7 +382,7 @@ function Pac(x,y,velocity,direction,moveState)  {
             this.changeDir(State.lastDirKey);
             State.lastDirKey = 'none';
             let pill = this.tryEatPill();
-            if (pill === 'B') { myGame.startGhostFleeState(); }
+            if (pill === 'B') { State.myGame.startGhostFleeState(); }
             this.movePac();
             this.nextMouth();
           }
@@ -391,10 +399,12 @@ function Pac(x,y,velocity,direction,moveState)  {
         }
     } else if (this.moveState === 'dying2') {
         if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
-          myGame.softReset();
+          State.myGame.softReset();
         } else {
           this.nextDeathSparkle();
         }
+    } else if (this.moveState === 'gameover') {
+      // show gameover animation
     } else {
         console.log("[move state problems]");
     }

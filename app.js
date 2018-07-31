@@ -72,12 +72,12 @@ function gameLoop(timestamp) {
   // timestamp uses performance.now() to compute the time
   State.myReq = requestAnimationFrame(gameLoop);
 
-  if ( (State.loopRunning === true) && (State.gameStarted === true) ) { myGame.update();  }
+  if ( (State.loopRunning === true) && (State.gameStarted === true) ) { State.myGame.update();  }
 
   clearCanvas();
   if (State.gameStarted === false) {
       State.ctx.imageSmoothingEnabled = false;   // turns off AntiAliasing
-    // myGame.drawBG();
+    // State.myGame.drawBG();
     State.ctx.drawImage(State.bg,4,4,State.canvas.width-9,State.canvas.height-9);
     State.ctx.beginPath();
     State.ctx.strokeStyle = Colors.blue;
@@ -85,7 +85,7 @@ function gameLoop(timestamp) {
     State.ctx.rect(2, 2, State.canvas.width-4, State.canvas.height-4);
     State.ctx.stroke();
   } else {
-    myGame.draw();
+    State.myGame.draw();
   }
 
 }
@@ -95,58 +95,58 @@ function gameLoop(timestamp) {
 //////////////////////////////////////////////////////////////////////////////////
 function keyDown(event) {
     event.preventDefault(); // prevents page from scrolling within window frame
-    myGame.lastKey = event.keyCode;
+    State.myGame.lastKey = event.keyCode;
     let code = event.keyCode;
     switch (code) {
         case 37: // Left key
-          if (myGame.paused === false) {
-            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
               State.lastDirKey = 'left';
             }
           }
           break;
         case 39: //Right key
-          if (myGame.paused === false) {
-            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
               State.lastDirKey = 'right';
             }
           }
           break;
         case 38: // Up key
-          if (myGame.paused === false) {
-            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
               State.lastDirKey = 'up';
             }
           }
           break;
         case 40: //Down key
-          if (myGame.paused === false) {
-            if ( (myGame.myPac.moveState === 'stop') || ((myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
               State.lastDirKey = 'down';
             }
           }
           break;
         case 32: // spacebar
-          if (myGame.paused === true) {
-            myGame.unpauseIt();
-          } else if (myGame.paused === false) {
-            myGame.pauseIt();
+          if (State.myGame.paused === true) {
+            State.myGame.unpauseIt();
+          } else if (State.myGame.paused === false) {
+            State.myGame.pauseIt();
           } else {
             //nothin
           }
-          console.log('myGame.paused NOW = ', myGame.paused);
+          console.log('State.myGame.paused NOW = ', State.myGame.paused);
           break;
         case 71: // G key
           console.log('toggle grid');
-          myGame.gridOn = (myGame.gridOn) ? false : true;
+          State.myGame.gridOn = (State.myGame.gridOn) ? false : true;
           break;
         case 68: // D key
           console.log('toggle level');
-          // myGame.toggleLvl(); // old option to change level draw type
+          // State.myGame.toggleLvl(); // old option to change level draw type
           break;
         case 88: // X key
           console.log('toggle px test box');
-          myGame.pxBoxOn = (myGame.pxBoxOn) ? false : true;
+          State.myGame.pxBoxOn = (State.myGame.pxBoxOn) ? false : true;
           break;
         case 67: // C key
           console.log('c button');
@@ -190,8 +190,8 @@ $(document).ready(function() {
     State.ctx =  State.canvas.getContext('2d');
     clearCanvas();
     $('#score').text('0000');
-    myGame = new Game(10); // param = ms per update()
-    myGame.init();
+    State.myGame = new Game(10); // param = ms per update()
+    State.myGame.init();
     State.canvas.focus();  // set focus to canvas on start so keybindings work, if needed
     // console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);

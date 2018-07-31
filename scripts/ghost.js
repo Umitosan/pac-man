@@ -473,7 +473,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
           this.dotsEatenSwitch = true;
           this.startExitBase();
         }
-      } else if ( (this.name === 'clyde') && (myGame.ghosts[2].dotsEatenSwitch === true) ) {
+      } else if ( (this.name === 'clyde') && (State.myGame.ghosts[2].dotsEatenSwitch === true) ) {
         this.dotCounter += 1;
         if (this.dotCounter === this.dotLimit) {
           console.log(this.name+" is now allowed to leave base");
@@ -486,15 +486,15 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
 
 
-    // if ( (myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[2].dotLimit)) ) {
-    //   console.log(myGame.ghosts[2].name+" is now allowed to leave base");
-    //   myGame.ghosts[2].dotsEatenSwitch = true;
-    //   myGame.ghosts[2].startExitBase();
+    // if ( (State.myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - State.myGame.ghosts[2].dotLimit)) ) {
+    //   console.log(State.myGame.ghosts[2].name+" is now allowed to leave base");
+    //   State.myGame.ghosts[2].dotsEatenSwitch = true;
+    //   State.myGame.ghosts[2].startExitBase();
     // }
-    // if ( (myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - myGame.ghosts[3].dotLimit)) ) {
-    //   console.log(myGame.ghosts[3].name+" is now allowed to leave base");
-    //   myGame.ghosts[3].dotsEatenSwitch = true;
-    //   myGame.ghosts[3].startExitBase();
+    // if ( (State.myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - State.myGame.ghosts[3].dotLimit)) ) {
+    //   console.log(State.myGame.ghosts[3].name+" is now allowed to leave base");
+    //   State.myGame.ghosts[3].dotsEatenSwitch = true;
+    //   State.myGame.ghosts[3].startExitBase();
     // }
   };
 
@@ -548,9 +548,9 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     this.moveState = 'base';
     this.changeTarget();
     this.changeVel(this.baseVel);
-    myGame.bigPillGhostsEaten += 1;
-    myGame.updateScore('G');
-    let msg = ''+ Math.pow(2,myGame.bigPillGhostsEaten) +'00';
+    State.myGame.bigPillGhostsEaten += 1;
+    State.myGame.updateScore('G');
+    let msg = ''+ Math.pow(2,State.myGame.bigPillGhostsEaten) +'00';
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+4,
                                   /* msg   */ msg,
@@ -559,7 +559,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                                   /* font  */ '18px joystix'
     );
     this.eatenTxtBox.startTimer();
-    myGame.pauseAllChars(500);
+    State.myGame.pauseAllChars(500);
   };
 
   this.updateSprite = function(dir) {
@@ -625,12 +625,12 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   }; // move
 
   this.checkHitPac = function() {
-    let xDif = Math.abs(this.x - myGame.myPac.x);
-    let yDif = Math.abs(this.y - myGame.myPac.y);
+    let xDif = Math.abs(this.x - State.myGame.myPac.x);
+    let yDif = Math.abs(this.y - State.myGame.myPac.y);
     if ( ((xDif < 20) && (yDif < 20)) ) {
           console.log('ghost collide pac');
           if (this.moveState === 'chase') {
-            myGame.myPac.die();
+            State.myGame.myPac.die();
           } else if (this.moveState === 'flee') {
             this.initEaten();
           } else if (this.moveState === 'base') {
@@ -777,10 +777,10 @@ function getGhostChangeTarget(ghostName) {
   let spacing = State.gridSpacing;
   if (ghostName === 'blinky') { // BLINKY ONLY
     console.log('blinky gets a prototype');
-    myGame.ghosts[0].changeTarget = function() {
+    State.myGame.ghosts[0].changeTarget = function() {
       if (this.moveState === 'chase') {
-        this.targetX = myGame.myPac.x;
-        this.targetY = myGame.myPac.y;
+        this.targetX = State.myGame.myPac.x;
+        this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*1;
         this.targetY = spacing*1;
@@ -796,20 +796,20 @@ function getGhostChangeTarget(ghostName) {
     };
   } else if (ghostName === 'pinky') { // PINKY ONLY
     console.log('pinky gets a prototype');
-    myGame.ghosts[1].changeTarget = function() {
+    State.myGame.ghosts[1].changeTarget = function() {
       if (this.moveState === 'chase') {
-          if (myGame.myPac.direction === 'left') {
-            this.targetX = myGame.myPac.x - (spacing*2);
-            this.targetY = myGame.myPac.y;
-          } else if (myGame.myPac.direction === 'right') {
-            this.targetX = myGame.myPac.x + (spacing*2);
-            this.targetY = myGame.myPac.y;
-          } else if (myGame.myPac.direction === 'up') {
-            this.targetX = myGame.myPac.x;
-            this.targetY = myGame.myPac.y - (spacing*2);
-          } else if (myGame.myPac.direction === 'down') {
-            this.targetX = myGame.myPac.x;
-            this.targetY = myGame.myPac.y + (spacing*2);
+          if (State.myGame.myPac.direction === 'left') {
+            this.targetX = State.myGame.myPac.x - (spacing*2);
+            this.targetY = State.myGame.myPac.y;
+          } else if (State.myGame.myPac.direction === 'right') {
+            this.targetX = State.myGame.myPac.x + (spacing*2);
+            this.targetY = State.myGame.myPac.y;
+          } else if (State.myGame.myPac.direction === 'up') {
+            this.targetX = State.myGame.myPac.x;
+            this.targetY = State.myGame.myPac.y - (spacing*2);
+          } else if (State.myGame.myPac.direction === 'down') {
+            this.targetX = State.myGame.myPac.x;
+            this.targetY = State.myGame.myPac.y + (spacing*2);
           } else {
             console.log('pinky changeTarget pac positioning prob');
           }
@@ -829,10 +829,10 @@ function getGhostChangeTarget(ghostName) {
     };
   } else if (ghostName === 'inky') {
     console.log('inky gets a prototype');
-    myGame.ghosts[2].changeTarget = function() {
+    State.myGame.ghosts[2].changeTarget = function() {
       if (this.moveState === 'chase') {
-        this.targetX = myGame.myPac.x;
-        this.targetY = myGame.myPac.y;
+        this.targetX = State.myGame.myPac.x;
+        this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*27;
         this.targetY = spacing*30;
@@ -848,10 +848,10 @@ function getGhostChangeTarget(ghostName) {
     };
   } else if (ghostName === 'clyde') {
     console.log('clyde gets a prototype');
-    myGame.ghosts[3].changeTarget = function() {
+    State.myGame.ghosts[3].changeTarget = function() {
       if (this.moveState === 'chase') {
-        this.targetX = myGame.myPac.x;
-        this.targetY = myGame.myPac.y;
+        this.targetX = State.myGame.myPac.x;
+        this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*1;
         this.targetY = spacing*30;

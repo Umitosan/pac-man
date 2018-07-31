@@ -113,7 +113,7 @@ function Game(updateDur) {
 
   this.updateLives = function() { // update the number of pac life images below game
     $( "div.bonus-row").children().css('background-image','none');
-    for (var i = 1; i < myGame.myPac.lives+1; i++) {
+    for (var i = 1; i < this.myPac.lives+1; i++) {
       $( "div.bonus-row").children('#life'+i).css('background-image','url(img/pac.png)');
     }
   };
@@ -132,13 +132,13 @@ function Game(updateDur) {
   this.updateScore = function(lvlChar) {
     if (lvlChar === 0) {
       this.score += 10;
-      $('#score').text(myGame.score);
+      $('#score').text(this.score);
     } else if (lvlChar === 'B') {
       this.score += 50;
-      $('#score').text(myGame.score);
+      $('#score').text(this.score);
     } else if (lvlChar === 'G') { // ghost eaten
-      this.score += Math.pow(2,myGame.bigPillGhostsEaten)*100;
-      $('#score').text(myGame.score);
+      this.score += Math.pow(2,this.bigPillGhostsEaten)*100;
+      $('#score').text(this.score);
     } else {
       console.log('updateScore problems, char is = ', lvlChar);
     }
@@ -185,7 +185,7 @@ function Game(updateDur) {
 
   this.pauseIt = function() {
     console.log('GAME paused');
-    myGame.paused = true;
+    this.paused = true;
     this.pausedTxt.on();
     if (this.bigPillEffect === true) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
@@ -194,7 +194,7 @@ function Game(updateDur) {
 
   this.unpauseIt = function() {
     console.log('GAME un-paused');
-    myGame.paused = false;
+    this.paused = false;
     this.pausedTxt.off();
     if (this.bigPillEffect === true) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
@@ -217,7 +217,7 @@ function Game(updateDur) {
   };
 
   this.draw = function() {
-    if (myGame.gridOn) myGame.drawGrid();
+    if (this.gridOn) this.drawGrid();
     if (this.lvlOnType !== 0) this.myLevel.draw();
     if (this.ghosts.length > 0) {
       for (let g = 0; g < this.ghosts.length; g++ ) {
@@ -231,7 +231,7 @@ function Game(updateDur) {
 
   this.update = function() {
 
-    if (!this.paused) { // performance based update: myGame.update() runs every myGame.updateDuration milliseconds
+    if (!this.paused) { // performance based update: this.update() runs every this.updateDuration milliseconds
 
           if (State.playTime < 1) { // make sure on first update() only run once
             this.lastUpdate = performance.now();
