@@ -462,7 +462,35 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.changeVel(this.chaseVel);
       this.updateSprite(this.direction);
     } else {
-      // nothin
+      // not ready to switch states
+    }
+  };
+
+  this.startScatter = function() {
+     if ( (this.moveState === 'chase') || ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
+      console.log(this.name + ': START scatter');
+      this.lastMoveState = this.moveState;
+      this.moveState = 'scatter';
+      this.tryReverseDir();
+      this.prevInter = getNearestIntersection(this.x,this.y);
+      this.spriteRow = 0;
+      this.frameTotal = 2;
+      this.updateSprite(this.direction);
+    } else {
+      // wrong state so nothin
+    }
+  };
+
+  this.stopScatter = function() {
+    if ( (this.moveState === 'scatter') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
+      console.log(this.name + ': STOP scatter');
+      this.moveState = 'chase';
+      this.spriteRow = 0;
+      this.frameTotal = 2;
+      this.changeVel(this.chaseVel);
+      this.updateSprite(this.direction);
+    } else {
+      // not ready to switch states
     }
   };
 
@@ -600,13 +628,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
-  this.nextFrame = function() { // updates animation frame
+  this.nextSpriteFrame = function() { // updates animation frame
     if (this.curFrame < (this.frame0 + this.frameTotal-1)) {
       this.curFrame += 1;
     } else {
       this.curFrame = this.frame0;
     }
-  }; // nextFrame
+  }; // nextSpriteFrame
 
   this.moveGhost = function() {
     let edgeGap = 10;
@@ -720,6 +748,27 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
             this.moveGhost();
           }
           this.checkHitPac();
+    } else if (this.moveState === 'scatter') { // run towards designated corner for a small amount of time
+        if ( atGridIntersection(this.x,this.y,this.vel) && (this.isNewInter() === true) ) { // check which way to go
+            this.prevInter = getNearestIntersection(this.x,this.y); // helps prevent changing dir 2 times at same interseciton
+            let newDir = this.getNewDirection();
+            if (newDir !== this.direction) {
+              this.changeDir(newDir);
+              this.hopToIn();
+              this.timedPause(30); // 30ms pauses at intersections
+              this.moveGhost();
+            } else {
+              this.moveGhost();
+              if (this.inTunnel() === true) {
+                this.changeVel(this.tunnelVel);
+              } else {
+                this.changeVel(this.chaseVel);
+              }
+            }
+        } else {
+          this.moveGhost();
+        }
+        this.checkHitPac();
     } else if (this.moveState === 'base') { // ghost was eaten move to base
           if ( (Math.abs(this.x - this.targetX) <= this.vel+2) && (Math.abs(this.y - this.targetY) <= this.vel+2) ) {  // ghost has arrived in base, resume chase
             this.startExitBase();
@@ -764,7 +813,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       // nothin
     }
     // update the animation frame
-    if ((State.playTime % this.spriteFrameDur) < 17) { this.nextFrame(); }
+    if ((State.playTime % this.spriteFrameDur) < 17) { this.nextSpriteFrame(); }
     // check TxtBox should clear
     if (this.eatenTxtBox !== undefined) {
       this.eatenTxtBox.update();
@@ -784,7 +833,10 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.myGame.myPac.x;
         this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
-        this.targetX = spacing*1;
+        this.targetX = spacing*24;
+        this.targetY = spacing*1;
+      } else if (this.moveState === 'scatter') {
+        this.targetX = spacing*24;
         this.targetY = spacing*1;
       } else if (this.moveState === 'base') {
         this.targetX = spacing*14+(spacing/2);
@@ -816,7 +868,10 @@ function getGhostChangeTarget(ghostName) {
             console.log('pinky changeTarget pac positioning prob');
           }
       } else if (this.moveState === 'flee') {
-        this.targetX = spacing*24;
+        this.targetX = spacing*1;
+        this.targetY = spacing*1;
+      } else if (this.moveState === 'scatter') {
+        this.targetX = spacing*1;
         this.targetY = spacing*1;
       } else if (this.moveState === 'base') {
         this.targetX = this.startPosX;
@@ -838,6 +893,9 @@ function getGhostChangeTarget(ghostName) {
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*27;
         this.targetY = spacing*30;
+      } else if (this.moveState === 'scatter') {
+        this.targetX = spacing*27;
+        this.targetY = spacing*30;
       } else if (this.moveState === 'base') {
         this.targetX = this.startPosX+(spacing/2);  // this is to offset the fact that ghost can't reach startPosX
         this.targetY = this.startPosY;
@@ -855,6 +913,9 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = State.myGame.myPac.x;
         this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
+        this.targetX = spacing*1;
+        this.targetY = spacing*30;
+      } else if (this.moveState === 'scatter') {
         this.targetX = spacing*1;
         this.targetY = spacing*30;
       } else if (this.moveState === 'base') {
@@ -921,9 +982,14 @@ function getGhostChangeTarget(ghostName) {
 //                                             -
 //                                             -
 // SCATTER MODE:
-// Ghosts alternate between scatter and chase modes during gameplay at predetermined intervals.
-// These mode changes are easy to spot as the ghosts simultaneously reverse direction when they occur.
-// Scatter modes happen four times per level before the ghosts stay in chase mode indefinitely.
+//  - Ghosts alternate between scatter and chase modes on timers
+//  - All ghosts ghosts simultaneously reverse direction
+//  - Scatter modes happen 4 times per level before the ghosts stay in chase mode indefinitely.
+//       Scatter for 7 seconds, then Chase for 20 seconds.
+//       Scatter for 7 seconds, then Chase for 20 seconds.
+//       Scatter for 5 seconds, then Chase for 20 seconds.
+//       Scatter for 5 seconds, then switch to Chase mode permanently.
+//
 //
 // FRIGHTENED MODE:  (aka 'flee')
 //  - Ghosts turn blue for length of time depending on lvl.

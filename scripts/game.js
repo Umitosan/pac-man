@@ -26,7 +26,11 @@ function Game(updateDur) {
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
 
-  this.scatterGhostsTimer = undefined;
+  // scatter
+  this.scatterOn = false;
+  this.scatterTimer = undefined;
+  this.scatterStartTime = undefined;
+  this.scatterCount = 4; // scatter has a max of 4 times per lvl after which ghosts only chase
 
   this.gameover = false;
 
@@ -112,8 +116,8 @@ function Game(updateDur) {
     this.currentTxt.startTimer(); // turn on the ready txt
   };
 
-  this.softReset = function() {
-    console.log('game softReset');
+  this.newLifeReset = function() {
+    console.log('game newLifeReset');
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
@@ -129,6 +133,7 @@ function Game(updateDur) {
     // maybe game over animation
     // final score etc game summary, play again?
     // firebase high scores?
+    console.log("GAME OVER SON!");
     this.gameover = true;
     this.myPac.moveState = 'gameover';
     this.ghosts.forEach(function(g) {
@@ -192,6 +197,45 @@ function Game(updateDur) {
     this.bigPillGhostsEaten = 0;
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
+  };
+
+  this.checkScatterTime = function() {
+
+    if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
+        if ( (this.scatterCount === 4) && (Math.round(State.playTime) === Math.round((5*16.67))) ) { // start scatter after first 5 sec
+          this.startGhostsScatterState();
+        } else if ( Math.round(State.playTime % 20) === 0) {
+          this.startGhostsScatterState();
+        } else {
+          // nothin
+        }
+    } else if (this.scatterOn) { // check to see if it's time to turn it off
+        if ( (performance.now() - this.scatterStartTime()) > Math.round((3*16.67)) ) { // 1 sec ~= 16.67 ms
+          this.stopGhostsScatterState();
+        }
+    } else {
+      // nothin
+    }
+
+  };
+
+  this.startGhostsScatterState = function() {
+      console.log('start - ghosts scatter');
+      this.scatterStartTime = performance.now();
+      this.scatterOn = true;
+      this.scatterCount--;
+      this.ghosts.forEach( function(g) {
+        g.startScatter();
+      });
+  };
+
+  this.stopGhostsScatterState = function() {
+      console.log('stop - ghosts scatter');
+      this.scatterStartTime = undefined;
+      this.scatterOn = false;
+      this.ghosts.forEach( function(g) {
+        g.stopScatter();
+      });
   };
 
   this.startGhostsBlinking = function() {
@@ -297,8 +341,8 @@ function Game(updateDur) {
               this.startGhostsBlinkingStarted = true;
             }
           }
-
           this.updatePlayTime();
+          this.checkScatterTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
       // chill
     } else if (this.gameover) {
