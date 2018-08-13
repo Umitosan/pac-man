@@ -342,7 +342,7 @@ function Game(updateDur) {
             }
           }
           this.updatePlayTime();
-          this.checkScatterTime();
+          // this.checkScatterTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
       // chill
     } else if (this.gameover) {

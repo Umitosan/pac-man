@@ -6,12 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "_comment": "-a override ip, -p port, -o open",
-    "start": "http-server -a localhost -p 5000 --cors -o"
-    },
+    "_commnet2-start": "http-server -a localhost -p 5000 --cors -o",
+    "start": "node server.js",
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Umitosan/pac-man.git"
-
   },
   "author": "Dominic Brown",
   "license": "ISC",
@@ -20,10 +20,11 @@
   },
   "homepage": "https://github.com/Umitosan/pac-man#readme",
   "dependencies": {
+    "express": "^4.16.3",
     "http-server": "^0.11.1"
   },
   "engines": {
-      "node": "8.9.1",
-      "npm": "5.8.0"
+    "node": "8.9.1",
+    "npm": "5.8.0"
   }
 }
