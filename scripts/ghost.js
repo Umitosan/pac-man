@@ -436,7 +436,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.startFlee = function() {
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      console.log(this.name+' already fleeing, stop blining');
+      // console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
     } else if ( (this.moveState === 'chase') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
       // console.log(this.name+' flee started');
@@ -453,9 +453,9 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.stopFlee = function() {
-    console.log(this.name+' stop flee run');
+    // console.log(this.name+' stop flee run');
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      console.log('ghost flee stopped');
+      // console.log('ghost flee stopped');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
@@ -529,7 +529,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.startExitBase = function() { // after returning to base, reset state to exitbase etc
-    console.log(this.name+" started to exit base");
+    // console.log(this.name+" started to exit base");
     this.moveState = 'exitbase';
     this.changeTarget();
     this.vel = this.exitBaseVel;
@@ -552,7 +552,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.startChase = function() {
-    console.log("Ghost: startChase");
+    // console.log("Ghost: startChase");
     this.prevInter = getNearestIntersection(this.x,this.y); // set initial prevInter at start of chase
     this.y = State.gridSpacing*12;  // this is an alternative to hopToIn in order to snap to the
     this.moveState = 'chase';

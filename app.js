@@ -28,8 +28,10 @@ var State = {
   loopRunning: false,
   gameStarted: false,
   myReq: undefined,
-  playTime: 0,
+  playTime: undefined,
+  playTimeMarker: undefined,
   playStart: undefined,
+  pauseStartTime: undefined,
   lastFrameTimeMs: 0, // The last time the loop was run
   maxFPS: 60, // The maximum FPS allowed
   pageLoadTime: 0,
@@ -50,7 +52,9 @@ function hardReset() {
     gameStarted: false,
     myReq: undefined, // holds the ID # of the current requestAnimationFrame
     playTime: 0,
+    playTimeMarker: undefined,
     playStart: undefined,
+    pauseStartTime: undefined,
     lastFrameTimeMs: 0, // The last time the loop was run
     maxFPS: 60, // The maximum FPS allowed
     pageLoadTime: 0,
@@ -207,7 +211,6 @@ $(document).ready(function() {
   $('#start-btn').click(function() {
     console.log("start button clicked");
     if (State.myReq !== undefined) {  // reset game loop if already started
-      console.log('tried to cancel');
       cancelAnimationFrame(State.myReq);
       hardReset();
     }
@@ -221,6 +224,7 @@ $(document).ready(function() {
     // console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();
+    State.playTimeMarker = performance.now();
     State.loopRunning = true;
     State.gameStarted = true;
   });

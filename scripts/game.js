@@ -159,7 +159,8 @@ function Game(updateDur) {
   };
 
   this.updatePlayTime = function() {
-    State.playTime = performance.now() - State.playStart;
+    State.playTime += (performance.now() - State.playTimeMarker);
+    State.playTimeMarker = performance.now();
     let roundedPlayTime = Math.floor(State.playTime / 1000);
     $('#clock').text(roundedPlayTime);
   };
@@ -201,26 +202,26 @@ function Game(updateDur) {
 
   this.checkScatterTime = function() {
 
-    if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
-        if ( (this.scatterCount === 4) && (Math.round(State.playTime) === Math.round((5*16.67))) ) { // start scatter after first 5 sec
-          this.startGhostsScatterState();
-        } else if ( Math.round(State.playTime % 20) === 0) {
-          this.startGhostsScatterState();
-        } else {
-          // nothin
-        }
-    } else if (this.scatterOn) { // check to see if it's time to turn it off
-        if ( (performance.now() - this.scatterStartTime()) > Math.round((3*16.67)) ) { // 1 sec ~= 16.67 ms
-          this.stopGhostsScatterState();
-        }
-    } else {
-      // nothin
-    }
+    // if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
+    //     if ( (this.scatterCount === 4) && (Math.round(State.playTime) === Math.round((10*16.67))) ) { // start scatter after first 10 sec
+    //       this.startGhostsScatterState();
+    //     } else if ( Math.round(State.playTime % 20) === 0) {
+    //       this.startGhostsScatterState();
+    //     } else {
+    //       // nothin
+    //     }
+    // } else if (this.scatterOn) { // check to see if it's time to turn it off
+    //     if ( (performance.now() - this.scatterStartTime) > Math.round((3*16.67)) ) { // 1 sec ~= 16.67 ms
+    //       this.stopGhostsScatterState();
+    //     }
+    // } else {
+    //   // nothin
+    // }
 
   };
 
   this.startGhostsScatterState = function() {
-      console.log('start - ghosts scatter');
+      console.log('start - scatter');
       this.scatterStartTime = performance.now();
       this.scatterOn = true;
       this.scatterCount--;
@@ -230,7 +231,7 @@ function Game(updateDur) {
   };
 
   this.stopGhostsScatterState = function() {
-      console.log('stop - ghosts scatter');
+      console.log('stop - scatter');
       this.scatterStartTime = undefined;
       this.scatterOn = false;
       this.ghosts.forEach( function(g) {
@@ -259,6 +260,7 @@ function Game(updateDur) {
 
   this.pauseIt = function() {
     console.log('GAME paused');
+    State.pauseStartTime = performance.now();
     this.paused = true;
     this.pausedTxt.on();
     if (this.bigPillEffect === true) {
@@ -275,6 +277,7 @@ function Game(updateDur) {
     }
     // this prevents pac from updating many times after UNpausing
     this.lastUpdate = performance.now();
+    State.playTimeMarker = performance.now();
     this.timeGap = 0;
   };
 
@@ -342,7 +345,7 @@ function Game(updateDur) {
             }
           }
           this.updatePlayTime();
-          // this.checkScatterTime();
+          this.checkScatterTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
       // chill
     } else if (this.gameover) {
