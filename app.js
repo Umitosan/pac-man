@@ -99,91 +99,96 @@ function gameLoop(timestamp) {
 //////////////////////////////////////////////////////////////////////////////////
 function keyDown(event) {
     event.preventDefault(); // prevents page from scrolling within window frame
-    State.myGame.lastKey = event.keyCode;
     let code = event.keyCode;
-    switch (code) {
-        case 37: // Left key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
-              State.lastDirKey = 'left';
+    if (State.myGame !== undefined) {
+      State.myGame.lastKey = event.keyCode;
+      switch (code) {
+          case 37: // Left key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+                State.lastDirKey = 'left';
+              }
             }
-          }
-          break;
-        case 39: //Right key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
-              State.lastDirKey = 'right';
+            break;
+          case 39: //Right key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+                State.lastDirKey = 'right';
+              }
             }
-          }
-          break;
-        case 38: // Up key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
-              State.lastDirKey = 'up';
+            break;
+          case 38: // Up key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+                State.lastDirKey = 'up';
+              }
             }
-          }
-          break;
-        case 40: //Down key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
-              State.lastDirKey = 'down';
+            break;
+          case 40: //Down key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+                State.lastDirKey = 'down';
+              }
             }
-          }
-          break;
-        case 65: // A key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
-              State.lastDirKey = 'left';
+            break;
+          case 65: // A key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+                State.lastDirKey = 'left';
+              }
             }
-          }
-          break;
-        case 68: // D key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
-              State.lastDirKey = 'right';
+            break;
+          case 68: // D key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+                State.lastDirKey = 'right';
+              }
             }
-          }
-          break;
-        case 87: // W key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
-              State.lastDirKey = 'up';
+            break;
+          case 87: // W key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+                State.lastDirKey = 'up';
+              }
             }
-          }
-          break;
-        case 83: // S key
-          if (State.myGame.paused === false) {
-            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
-              State.lastDirKey = 'down';
+            break;
+          case 83: // S key
+            if (State.myGame.paused === false) {
+              if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+                State.lastDirKey = 'down';
+              }
             }
-          }
-          break;
-        case 32: // spacebar
-          if (State.myGame.paused === true) {
-            State.myGame.unpauseIt();
-          } else if (State.myGame.paused === false) {
-            State.myGame.pauseIt();
-          } else {
-            //nothin
-          }
-          console.log('State.myGame.paused NOW = ', State.myGame.paused);
-          break;
-        case 71: // G key
-          console.log('toggle grid');
-          State.myGame.gridOn = (State.myGame.gridOn) ? false : true;
-          break;
-        case 76: // L key
-          console.log('toggle level');
-          // State.myGame.toggleLvl(); // old option to change level draw type
-          break;
-        case 88: // X key
-          console.log('toggle px test box');
-          State.myGame.pxBoxOn = (State.myGame.pxBoxOn) ? false : true;
-          break;
-        default: // Everything else
+            break;
+          case 32: // spacebar
+            if (State.myGame.paused === true) {
+              State.myGame.unpauseIt();
+            } else if (State.myGame.paused === false) {
+              State.myGame.pauseIt();
+            } else {
+              //nothin
+            }
+            console.log('State.myGame.paused NOW = ', State.myGame.paused);
+            break;
+          case 71: // G key
+            console.log('toggle grid');
+            State.myGame.gridOn = (State.myGame.gridOn) ? false : true;
+            break;
+          case 76: // L key
+            console.log('toggle level');
+            // State.myGame.toggleLvl(); // old option to change level draw type
+            break;
+          case 88: // X key
+            console.log('toggle px test box');
+            State.myGame.pxBoxOn = (State.myGame.pxBoxOn) ? false : true;
+            break;
+          default: // Everything else
+            console.log("key = ", code);
+            break;
+      }
+    } else {
           console.log("key = ", code);
-          break;
     }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
