@@ -126,6 +126,34 @@ function keyDown(event) {
             }
           }
           break;
+        case 65: // A key
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+              State.lastDirKey = 'left';
+            }
+          }
+          break;
+        case 68: // D key
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+              State.lastDirKey = 'right';
+            }
+          }
+          break;
+        case 87: // W key
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+              State.lastDirKey = 'up';
+            }
+          }
+          break;
+        case 83: // S key
+          if (State.myGame.paused === false) {
+            if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+              State.lastDirKey = 'down';
+            }
+          }
+          break;
         case 32: // spacebar
           if (State.myGame.paused === true) {
             State.myGame.unpauseIt();
@@ -140,16 +168,13 @@ function keyDown(event) {
           console.log('toggle grid');
           State.myGame.gridOn = (State.myGame.gridOn) ? false : true;
           break;
-        case 68: // D key
+        case 76: // L key
           console.log('toggle level');
           // State.myGame.toggleLvl(); // old option to change level draw type
           break;
         case 88: // X key
           console.log('toggle px test box');
           State.myGame.pxBoxOn = (State.myGame.pxBoxOn) ? false : true;
-          break;
-        case 67: // C key
-          console.log('c button');
           break;
         default: // Everything else
           console.log("key = ", code);

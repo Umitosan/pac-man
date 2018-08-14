@@ -31,9 +31,18 @@
           <canvas id="canvas" width="726" height="801" tabindex="0"></canvas>     <!-- add 1 pixel to dimentions for offset -->
         </div>
         <div class="right-col">
+          <div id="start-group">
+            <div><span id="start-btn-label" class="label-yellow">Start</span></div>
+            <div class="spacer"></div>
+            <img id="start-btn" src="img/player1start.png" alt="start-btn">
+          </div>
+          <div class="line"></div>
           <table class="keycaps">
             <tr>
-              <p class="label">controls</p>
+              <div class="label-yellow">movement</div>
+            </tr>
+            <tr>
+              <div class="spacer"></div>
             </tr>
             <tr>
               <th></th>
@@ -46,20 +55,33 @@
               <th class="key"><p>&#x25B6;</p></th>
             </tr>
           </table>
-          <p><span class="lg-text">space</span> - pause</p>
-          <div id="start-group">
-            <p><span id="start-btn-label" class="lg-text">Start</span></p>
-            <img id="start-btn" src="img/player1start.png" alt="start-btn">
+          <div class="spacer">
           </div>
+          <table class="keycaps">
+            <tr>
+              <th></th>
+              <th class="key"><p>W</p></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th class="key"><p>S</p></th>
+              <th class="key"><p>A</p></th>
+              <th class="key"><p>D</p></th>
+            </tr>
+          </table>
+          <div class="spacer"></div>
+          <div><span class="label-yellow">pause</span> - spacebar</div>
+          <div class="line"></div>
           <div class="debug-container">
             <p>Debuging keys</p>
-            <p><span class="lg-text">G</span> - grid</p>
-            <p><span class="lg-text">D</span> - level</p>
-            <p><span class="lg-text">X</span> - px test box</p>
+            <p><span class="label-yellow">G</span> - grid</p>
+            <p><span class="label-yellow">L</span> - level</p>
+            <p><span class="label-yellow">X</span> - px test box</p>
             <p>px win</p>
             <div class="pixel-window">
             </div>
           </div>
+
         </div>
       </div>
       <div class="bonus-row">
