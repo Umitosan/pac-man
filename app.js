@@ -32,9 +32,9 @@ var State = {
   playTimeMarker: undefined,
   playStart: undefined,
   pauseStartTime: undefined,
+  pageLoadTime: 0,
   lastFrameTimeMs: 0, // The last time the loop was run
   maxFPS: 60, // The maximum FPS allowed
-  pageLoadTime: 0,
   frameCounter: 0,
   gridSpacing: 25, // dimentions of grid in pixels
   gridWidth: 28,
@@ -55,9 +55,9 @@ function hardReset() {
     playTimeMarker: undefined,
     playStart: undefined,
     pauseStartTime: undefined,
+    pageLoadTime: 0,
     lastFrameTimeMs: 0, // The last time the loop was run
     maxFPS: 60, // The maximum FPS allowed
-    pageLoadTime: 0,
     frameCounter: 0,
     gridSpacing: 25, // dimentions of grid in pixels
     gridWidth: 28,

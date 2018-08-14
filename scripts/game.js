@@ -30,6 +30,7 @@ function Game(updateDur) {
   this.scatterOn = false;
   this.scatterTimer = undefined;
   this.scatterStartTime = undefined;
+  this.scatterDuration = 4;  // # of seconds the ghosts will scatter for
   this.scatterCount = 4; // scatter has a max of 4 times per lvl after which ghosts only chase
 
   this.gameover = false;
@@ -201,23 +202,22 @@ function Game(updateDur) {
   };
 
   this.checkScatterTime = function() {
-
-    // if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
-    //     if ( (this.scatterCount === 4) && (Math.round(State.playTime) === Math.round((10*16.67))) ) { // start scatter after first 10 sec
-    //       this.startGhostsScatterState();
-    //     } else if ( Math.round(State.playTime % 20) === 0) {
-    //       this.startGhostsScatterState();
-    //     } else {
-    //       // nothin
-    //     }
-    // } else if (this.scatterOn) { // check to see if it's time to turn it off
-    //     if ( (performance.now() - this.scatterStartTime) > Math.round((3*16.67)) ) { // 1 sec ~= 16.67 ms
-    //       this.stopGhostsScatterState();
-    //     }
-    // } else {
-    //   // nothin
-    // }
-
+    if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
+      let timeRound = Math.round(State.playTime / 1000);
+      if ( ((timeRound % 10) === 0) && (timeRound > 9) ) { // prevent scatter in first 19 sec
+        // console.log("timeRound = " , timeRound);
+        this.startGhostsScatterState();
+      }
+    } else if (this.scatterOn) { // check to see if it's time to turn it off
+        let timeSinceScatter = Math.round( (performance.now() - this.scatterStartTime) / 1000 );
+        // console.log("timeSinceScatter = ", timeSinceScatter);
+        if ( timeSinceScatter >= this.scatterDuration ) {
+          // console.log("(performance.now() - this.scatterStartTime) = ", (performance.now() - this.scatterStartTime)/1000 );
+          this.stopGhostsScatterState();
+        }
+    } else {
+      // nothin
+    }
   };
 
   this.startGhostsScatterState = function() {

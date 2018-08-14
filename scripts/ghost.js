@@ -468,7 +468,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.startScatter = function() {
      if ( (this.moveState === 'chase') || ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
-      console.log(this.name + ': START scatter');
+      // console.log(this.name + ': START scatter');
       this.lastMoveState = this.moveState;
       this.moveState = 'scatter';
       this.tryReverseDir();
@@ -483,7 +483,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.stopScatter = function() {
     if ( (this.moveState === 'scatter') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
-      console.log(this.name + ': STOP scatter');
+      // console.log(this.name + ': STOP scatter');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
