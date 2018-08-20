@@ -184,7 +184,7 @@ function Game(updateDur) {
   this.startGhostFleeState = function() {  // pac initiates this when he eats a big pill, @(pac.update)
     console.log('start ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].startFlee();
+      this.ghosts[i].tryStartFlee();
     }
     this.bigPillGhostsEaten = 0;
     this.bigPillEffect = true;
@@ -225,17 +225,18 @@ function Game(updateDur) {
       this.scatterStartTime = performance.now();
       this.scatterOn = true;
       this.scatterCount--;
+      console.log(this.scatterCount+" scatters left");
       this.ghosts.forEach( function(g) {
         g.startScatter();
       });
   };
 
   this.stopGhostsScatterState = function() {
-      console.log('stop - scatter');
+      console.log('game.stopGhostsScatterState');
       this.scatterStartTime = undefined;
       this.scatterOn = false;
       this.ghosts.forEach( function(g) {
-        g.stopScatter();
+        g.tryStopScatter();
       });
   };
 

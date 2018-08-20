@@ -434,12 +434,15 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
-  this.startFlee = function() {
+  this.tryStartFlee = function() {
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      // console.log(this.name+' already fleeing, stop blining');
+      console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
-    } else if ( (this.moveState === 'chase') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
-      // console.log(this.name+' flee started');
+    } else if ( (this.moveState === 'chase') ||
+                ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ||
+                (this.moveState === 'scatter') ||
+                ((this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
+      console.log(this.name+' flee started');
       this.lastMoveState = this.moveState;
       this.moveState = 'flee';
       this.tryReverseDir();
@@ -481,15 +484,16 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
-  this.stopScatter = function() {
+  this.tryStopScatter = function() {
     if ( (this.moveState === 'scatter') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
-      // console.log(this.name + ': STOP scatter');
+      console.log(this.name + ': STOPED scatter');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
       this.changeVel(this.chaseVel);
       this.updateSprite(this.direction);
     } else {
+      console.log(this.name + ': tried but didnt need to stop scatter');
       // not ready to switch states
     }
   };
