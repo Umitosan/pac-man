@@ -227,7 +227,7 @@ function Game(updateDur) {
       this.scatterCount--;
       console.log(this.scatterCount+" scatters left");
       this.ghosts.forEach( function(g) {
-        g.startScatter();
+        g.tryStartScatter();
       });
   };
 

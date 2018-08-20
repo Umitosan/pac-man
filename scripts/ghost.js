@@ -469,7 +469,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     }
   };
 
-  this.startScatter = function() {
+  this.tryStartScatter = function() {
      if ( (this.moveState === 'chase') || ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
       // console.log(this.name + ': START scatter');
       this.lastMoveState = this.moveState;
@@ -758,6 +758,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
             let newDir = this.getNewDirection();
             if (newDir !== this.direction) {
               this.changeDir(newDir);
+              this.updateSprite(newDir);
               this.hopToIn();
               this.timedPause(30); // 30ms pauses at intersections
               this.moveGhost();
