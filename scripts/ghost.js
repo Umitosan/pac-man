@@ -11,6 +11,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.vel = 1.5;
   this.chaseVel = 2.5;
   this.baseVel = 3.5;
+  this.fleeVel = 1.8;
   this.exitBaseVel = 1.5;
   this.tunnelVel = 1.5;
   this.targetX = 'none';
@@ -450,6 +451,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.spriteRow = 1;
       this.frame0 = 0;
       this.curFrame = 0;
+      this.changeVel(this.fleeVel);
     } else {
       // wrong state so nothin
     }
@@ -745,7 +747,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 if (this.inTunnel() === true) {
                   this.changeVel(this.tunnelVel);
                 } else {
-                  this.changeVel(this.chaseVel);
+                  this.changeVel(this.fleeVel);
                 }
               }
           } else {
@@ -990,6 +992,7 @@ function getGhostChangeTarget(ghostName) {
 //  - Ghosts alternate between scatter and chase modes on timers
 //  - All ghosts ghosts simultaneously reverse direction
 //  - Scatter modes happen 4 times per level before the ghosts stay in chase mode indefinitely.
+//  - scatter timer reset after Pa
 //       Scatter for 7 seconds, then Chase for 20 seconds.
 //       Scatter for 7 seconds, then Chase for 20 seconds.
 //       Scatter for 5 seconds, then Chase for 20 seconds.
@@ -999,6 +1002,7 @@ function getGhostChangeTarget(ghostName) {
 // FRIGHTENED MODE:  (aka 'flee')
 //  - Ghosts turn blue for length of time depending on lvl.
 //  - ghosts reverse direciton when mode starts
+//  - ghosts move slower
 //  - ghosts move in psudo random direciton after
 //      - every ghost life and level they choose a random direction to use when fightened
 //      - if a wall blocks this random seeded direction then they look for an alternate dir in this order:
