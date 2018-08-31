@@ -4,7 +4,7 @@ The classic arcade game recreated using HTML5's canvas.
 
 ## links
 
-* [Live site](https://umitosan.github.io/pac-man/)
+* [Live site](http://www.pacman.dombrown.net/)
 
 ## bug list
 
