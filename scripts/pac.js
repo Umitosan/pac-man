@@ -197,6 +197,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.lives -= 1;
     console.log('pac lives left: ', this.lives);
     State.myGame.updateLives();
+    State.myGame.scatterCount = 4; // reset the scatter counter
     console.log('pac movestate = ', this.moveState);
   };
 

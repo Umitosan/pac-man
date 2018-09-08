@@ -505,14 +505,14 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       if (this.name === 'inky') {
         this.dotCounter += 1;
         if (this.dotCounter === this.dotLimit) {
-          console.log(this.name+" is now allowed to leave base");
+          // console.log(this.name+" is now allowed to leave base");
           this.dotsEatenSwitch = true;
           this.startExitBase();
         }
       } else if ( (this.name === 'clyde') && (State.myGame.ghosts[2].dotsEatenSwitch === true) ) {
         this.dotCounter += 1;
         if (this.dotCounter === this.dotLimit) {
-          console.log(this.name+" is now allowed to leave base");
+          // console.log(this.name+" is now allowed to leave base");
           this.dotsEatenSwitch = true;
           this.startExitBase();
         }
@@ -797,7 +797,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         this.nextChillAnim();
     } else if (this.moveState === 'exitbase') {
           if (Math.abs(this.y - this.targetY) <= 4) { // only need to check the Y dir because it's going up
-              console.log('EXIT REACHED');
+              // console.log('EXIT REACHED');
               this.startChase();
           } else if ( (Math.abs(((this.x + this.vel) - this.targetX)) <= (Math.abs(this.vel)-1) ) && (this.x !== this.targetX) ) { // if close to targetX, snap to targetX
             this.x = this.targetX;
@@ -991,10 +991,11 @@ function getGhostChangeTarget(ghostName) {
 //                                             -
 //                                             -
 // SCATTER MODE:
+//  - when game starts scatter is ON
 //  - Ghosts alternate between scatter and chase modes on timers
 //  - All ghosts ghosts simultaneously reverse direction
 //  - Scatter modes happen 4 times per level before the ghosts stay in chase mode indefinitely.
-//  - scatter timer reset after Pa
+//  - scatter timer reset after Pac Dies
 //       Scatter for 7 seconds, then Chase for 20 seconds.
 //       Scatter for 7 seconds, then Chase for 20 seconds.
 //       Scatter for 5 seconds, then Chase for 20 seconds.

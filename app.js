@@ -214,7 +214,7 @@ $(document).ready(function() {
   State.myReq = requestAnimationFrame(gameLoop);
 
   $('#start-btn').click(function() {
-    console.log("start button clicked");
+    // console.log("start button clicked");
     if (State.myReq !== undefined) {  // reset game loop if already started
       cancelAnimationFrame(State.myReq);
       hardReset();

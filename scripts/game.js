@@ -26,12 +26,14 @@ function Game(updateDur) {
   this.bigPillGhostsEaten = 0;  // total ghosts eaten this pill period
   this.startGhostsBlinkingStarted = false; // toggle ghosts blinking just once
 
-  // scatter
+  // scatter & chase timers
   this.scatterOn = false;
   this.scatterTimer = undefined;
   this.scatterStartTime = undefined;
-  this.scatterDuration = 4;  // # of seconds the ghosts will scatter for
   this.scatterCount = 4; // scatter has a max of 4 times per lvl after which ghosts only chase
+  this.scatterDuration = 7;  // # of seconds the ghosts will scatter for
+  this.chaseDuration = 20; // # of seconds the ghosts will chase for
+  this.chaseStartTime = undefined;
 
   this.gameover = false;
 
@@ -128,6 +130,14 @@ function Game(updateDur) {
     clearCanvas();
   };
 
+  this.checkLevelComplete = function() {
+
+  };
+
+  this.levelCompleteInit = function() {
+    //
+  };
+
   this.gameOverInit = function() {
     // game over screen
     // game over txt
@@ -162,8 +172,7 @@ function Game(updateDur) {
   this.updatePlayTime = function() {
     State.playTime += (performance.now() - State.playTimeMarker);
     State.playTimeMarker = performance.now();
-    let roundedPlayTime = Math.floor(State.playTime / 1000);
-    $('#clock').text(roundedPlayTime);
+    $('#clock').text( (Math.floor(State.playTime / 1000)) );
   };
 
   this.updateScore = function(lvlChar) {
@@ -201,31 +210,37 @@ function Game(updateDur) {
     this.bigPillEffectStart = null;
   };
 
-  this.checkScatterTime = function() {
-    if ( (!this.scatterOn) && (this.scatterCount !== 0) ) {
-      let timeRound = Math.round(State.playTime / 1000);
-      if ( ((timeRound % 10) === 0) && (timeRound > 9) ) { // prevent scatter in first 19 sec
-        // console.log("timeRound = " , timeRound);
-        this.startGhostsScatterState();
-      }
-    } else if (this.scatterOn) { // check to see if it's time to turn it off
+  this.checkScatterChaseTime = function() {
+    if (this.scatterOn === false) {
+        let playTimeSeconds = State.playTime / 1000;
+        if ( (this.scatterCount > 0) && (this.scatterCount < 4) ) {
+            // console.log('playTimeSeconds = ', playTimeSeconds);
+            // console.log('(this.chaseStartTime/1000) ', (this.chaseStartTime/1000));
+            if ( ((playTimeSeconds) - (this.chaseStartTime/1000)) > this.chaseDuration ) {
+              this.startGhostsScatterState();
+            }
+        } else if ( (this.scatterCount === 4) && (playTimeSeconds > 2) ) {
+            this.startGhostsScatterState();
+        } else  {
+          // scatterCount 0 - do nothin - chase forever
+        }
+    } else if (this.scatterOn === true) { // check to see if it's time to turn it off
         let timeSinceScatter = Math.round( (performance.now() - this.scatterStartTime) / 1000 );
-        // console.log("timeSinceScatter = ", timeSinceScatter);
         if ( timeSinceScatter >= this.scatterDuration ) {
-          // console.log("(performance.now() - this.scatterStartTime) = ", (performance.now() - this.scatterStartTime)/1000 );
           this.stopGhostsScatterState();
         }
     } else {
-      // nothin
+      // scatter count is 0 so just chase forever
     }
   };
 
   this.startGhostsScatterState = function() {
       console.log('start - scatter');
-      this.scatterStartTime = performance.now();
+      this.scatterStartTime = State.playTime; // using playtime so that pause also affects scatter duration
       this.scatterOn = true;
       this.scatterCount--;
-      console.log(this.scatterCount+" scatters left");
+      this.chaseStartTime = undefined;
+      console.log(this.scatterCount+" - scatters left");
       this.ghosts.forEach( function(g) {
         g.tryStartScatter();
       });
@@ -235,6 +250,7 @@ function Game(updateDur) {
       console.log('game.stopGhostsScatterState');
       this.scatterStartTime = undefined;
       this.scatterOn = false;
+      this.chaseStartTime = State.playTime;
       this.ghosts.forEach( function(g) {
         g.tryStopScatter();
       });
@@ -349,7 +365,7 @@ function Game(updateDur) {
             }
           }
           this.updatePlayTime();
-          this.checkScatterTime();
+          this.checkScatterChaseTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
       // chill
     } else if (this.gameover) {
