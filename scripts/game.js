@@ -248,7 +248,10 @@ function Game(updateDur) {
 
   this.pauseAllChars = function(pauseDur) {  // runs a tmp pause on pac and ghosts
     for (var i = 0; i < this.ghosts.length; i++) {
-      this.ghosts[i].timedPause(pauseDur);
+      let g = this.ghosts[i];
+      if (g.moveState !== 'base') {
+        g.timedPause(pauseDur);
+      }
     }
     this.myPac.timedPause(pauseDur);
   };

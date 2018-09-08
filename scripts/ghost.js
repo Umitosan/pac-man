@@ -10,7 +10,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.spriteImgSrc = src;
   this.vel = 1.5;
   this.chaseVel = 2.5;
-  this.baseVel = 3.5;
+  this.baseVel = 4.5;
   this.fleeVel = 1.8;
   this.exitBaseVel = 1.5;
   this.tunnelVel = 1.5;
@@ -943,7 +943,9 @@ function getGhostChangeTarget(ghostName) {
 
 
 
-// Ghost personality overview
+// GHOSTS
+// GHOSTS
+// GHOSTS
 //
 // some info here https://www.youtube.com/watch?v=l7-SHTktjJc
 //
