@@ -37,6 +37,7 @@ function TxtBox(x,y,msg,color,dur,font) {
   };
 
   this.update = function() {
+    // console.log('txt up');
     if ((this.durTotal - (performance.now() - this.startTime)) < 0) {
       this.finishTimer();
     }

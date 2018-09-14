@@ -20,6 +20,7 @@ function Game(updateDur) {
   this.lvlCompleteTxt = undefined;
   this.currentTxt = undefined;
 
+  // big pill effect
   this.bigPillEffect = false;
   this.bigPillEffectDur = 8000; // milliseconds
   this.bigPillEffectDurElapsed = 0; // milliseconds elapsed for effect, used mainly when pausing the game
@@ -37,6 +38,7 @@ function Game(updateDur) {
   this.chaseStartTime = undefined;
 
   this.gameover = false;
+  this.levelTransition = false;
 
   this.init = function() {
     let spacing = State.gridSpacing;
@@ -50,9 +52,8 @@ function Game(updateDur) {
     // init ghosts
     this.myPac.init();
     this.updateLives();
-    this.myLevel = new Level(3);
-    this.myLevel.init();
-    this.myLevel.loadLvl('test1'); // for testing lvl completion
+    this.myLevel = new Level(3); // Level(drawMode)
+    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -144,6 +145,22 @@ function Game(updateDur) {
     this.pauseIt();
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;
+    this.currentTxt.on();
+    setTimeout( () => { this.nextLvlReset(); }, 3000);
+  };
+
+  this.nextLvlReset = function() {
+    console.log('next level starting');
+    this.myPac.softReset();
+    for (var i = 0; i < this.ghosts.length; i++) {
+      this.ghosts[i].softReset();
+    }
+    this.currentTxt = this.readyTxt;
+    this.currentTxt.startTimer();
+    clearCanvas();
+    this.myLevel.loadLvl('lvl2');
+    this.currentTxt = this.readyTxt;
+    this.unpauseIt();
     this.currentTxt.on();
   };
 
@@ -352,7 +369,6 @@ function Game(updateDur) {
             let timesToUpdate = this.timeGap / this.updateDuration;
             for (let i=1; i < timesToUpdate; i++) {
               this.myPac.update();
-              if ( this.currentTxt.show && (this.currentTxt.startTime !== null) ) { this.currentTxt.update(); }
               for (let g=0;g < this.ghosts.length; g++ ) {
                 this.ghosts[g].update();
               }
@@ -381,6 +397,9 @@ function Game(updateDur) {
     } else {
       console.log('unhandeled game update case');
     }
+
+    // ALWAYS check if text needs showing
+    if ( (this.currentTxt.show) && (this.currentTxt.startTime !== null) ) { this.currentTxt.update(); }
 
   }; // game update
 }
