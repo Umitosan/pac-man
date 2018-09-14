@@ -174,7 +174,7 @@ function Pac(x,y,velocity,direction,moveState)  {
       State.myGame.ghosts[2].updateDotsCounter(); // update inky
       State.myGame.ghosts[3].updateDotsCounter(); // update clyde
       if (State.myGame.myLevel.countDots() < 1) { // level complete!
-        State.myGame.pauseIt();
+        State.myGame.levelCompleteInit();
       }
     }
     return pillType;

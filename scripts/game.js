@@ -17,6 +17,7 @@ function Game(updateDur) {
   this.pausedTxt = undefined;
   this.readyTxt = undefined;
   this.gameoverTxt = undefined;
+  this.lvlCompleteTxt = undefined;
   this.currentTxt = undefined;
 
   this.bigPillEffect = false;
@@ -51,6 +52,7 @@ function Game(updateDur) {
     this.updateLives();
     this.myLevel = new Level(3);
     this.myLevel.init();
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -103,17 +105,24 @@ function Game(updateDur) {
                               );
     this.readyTxt = new TxtBox( /* x     */ spacing*15-10,
                                 /* y     */ spacing*19-10,
-                                /* msg   */ 'READY!',
+                                /* msg   */ 'READY !',
                                 /* color */ Colors.pacYellow,
                                 /* dur   */ 2000,
                                 /* font  */ '42px joystix'
                               );
     this.gameoverTxt = new TxtBox(/* x     */ spacing*15-10,
                                   /* y     */ spacing*19-10,
-                                  /* msg   */ 'GAME OVER!',
+                                  /* msg   */ 'GAME OVER !',
                                   /* color */ Colors.pacYellow,
                                   /* dur   */ 2000,
                                   /* font  */ '42px joystix'
+                              );
+    this.lvlCompleteTxt = new TxtBox(/* x     */ spacing*15-10,
+                                     /* y     */ spacing*19-10,
+                                     /* msg   */ 'LEVEL COMPLETE !',
+                                     /* color */ Colors.pacYellow,
+                                     /* dur   */ 2000,
+                                     /* font  */ '42px joystix'
                               );
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
@@ -125,17 +134,17 @@ function Game(updateDur) {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
     }
-    this.readyTxt.show = true;
-    setTimeout( () => { this.readyTxt.show = false; },2000);
+    this.currentTxt = this.readyTxt;
+    this.currentTxt.startTimer();
     clearCanvas();
   };
 
-  this.checkLevelComplete = function() {
-
-  };
-
   this.levelCompleteInit = function() {
-    //
+    console.log('level complete');
+    this.pauseIt();
+    this.currentTxt.off();
+    this.currentTxt = this.lvlCompleteTxt;
+    this.currentTxt.on();
   };
 
   this.gameOverInit = function() {
@@ -282,7 +291,8 @@ function Game(updateDur) {
     console.log('GAME paused');
     State.pauseStartTime = performance.now();
     this.paused = true;
-    this.pausedTxt.on();
+    this.currentTxt = this.pausedTxt;
+    this.currentTxt.on();
     if (this.bigPillEffect === true) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
     }
@@ -291,7 +301,7 @@ function Game(updateDur) {
   this.unpauseIt = function() {
     console.log('GAME un-paused');
     this.paused = false;
-    this.pausedTxt.off();
+    this.currentTxt.off();
     if (this.bigPillEffect === true) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
     }
@@ -323,10 +333,8 @@ function Game(updateDur) {
         }
       }
       if (this.myPac) this.myPac.draw();
-      if (this.pausedTxt.show === true) this.pausedTxt.draw();
-    } else { // game over
-      if (this.currentTxt.show === true) this.currentTxt.draw();
     }
+    if (this.currentTxt.show === true) this.currentTxt.draw();
   };
 
   this.update = function() {
