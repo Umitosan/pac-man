@@ -173,6 +173,9 @@ function Pac(x,y,velocity,direction,moveState)  {
       State.myGame.myLevel.currentLevel[r][c] = '-';
       State.myGame.ghosts[2].updateDotsCounter(); // update inky
       State.myGame.ghosts[3].updateDotsCounter(); // update clyde
+      if (State.myGame.myLevel.countDots() < 1) { // level complete!
+        State.myGame.pauseIt();
+      }
     }
     return pillType;
   };
@@ -285,21 +288,22 @@ function Pac(x,y,velocity,direction,moveState)  {
 
   this.draw = function() {
     let ctx = State.ctx;
+
     // context.arc(x,y,r,sAngle,eAngle,counterclockwise);
     // sAngle	The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
     // eAngle	The ending angle, in radians
     // counterclockwise	Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
-
     if (this.moveState === 'dying2') { // make the beautiful sparkles happen!
-      for (let i = 0; i < this.deathSparkles.length; i++) {
+      let dSpark = this.deathSparkles;
+      for (let i = 0; i < dSpark.length; i++) {
         ctx.lineWidth = getRandomIntInclusive(1,12);
-        ctx.strokeStyle = this.deathSparkles[i].color;
+        ctx.strokeStyle = dSpark[i].color;
         // ctx.strokeStyle = Colors.pacYellow;
         // ctx.strokeStyle = randColor('rgba'); // full random color madness
-        let x = this.deathSparkles[i].x;
-        let y = this.deathSparkles[i].y;
-        let angle = this.deathSparkles[i].angle;
-        let len = this.deathSparkles[i].len;
+        let x = dSpark[i].x;
+        let y = dSpark[i].y;
+        let angle = dSpark[i].angle;
+        let len = dSpark[i].len;
         // single ray
         ctx.beginPath();
         ctx.moveTo( x , y );
@@ -321,11 +325,12 @@ function Pac(x,y,velocity,direction,moveState)  {
       ctx.rotate(-this.rotateFace);
       ctx.translate(-this.x,-this.y);
     }
-    if (State.myGame.pxBoxOn) this.drawPixTestBox();
+    if (State.myGame.pxBoxOn) { this.drawPixTestBox(); }
   }; // draw
 
   this.update = function() {
-    if (this.moveState === 'go') {
+    let mState = this.moveState;
+    if (mState === 'go') {
         if (State.lastDirKey === 'none') {
             if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
               this.moveState = 'stop';
@@ -338,9 +343,10 @@ function Pac(x,y,velocity,direction,moveState)  {
               this.nextMouth();
             }
         } else if (State.lastDirKey !== 'none') {
-          if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(State.lastDirKey) === true) ) {
+          let lastKey = State.lastDirKey;
+          if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(lastKey) === true) ) {
             this.hopToIn();
-            this.changeDir(State.lastDirKey);
+            this.changeDir(lastKey);
             State.lastDirKey = 'none';
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
             this.moveState = 'stop';
@@ -355,18 +361,19 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           console.log("[lastDirKey problems]");
         }
-    } else if (this.moveState === 'tpaused') {
+    } else if (mState === 'tpaused') {
         // check to see if it's time to resume movement after an intersection
         if (this.timedPauseState === true) {
           if ((performance.now() - this.timedPauseBegin) > this.timedPauseDur) {
             this.tmpUnpause();
           }
         }
-    } else if (this.moveState === 'stop') {
-        if (State.lastDirKey !== 'none') {
-          if (this.inBounds(State.lastDirKey) === true) {
+    } else if (mState === 'stop') {
+        let lastKey = State.lastDirKey;
+        if (lastKey !== 'none') {
+          if (this.inBounds(lastKey) === true) {
             this.moveState = "go";
-            this.changeDir(State.lastDirKey);
+            this.changeDir(lastKey);
             State.lastDirKey = 'none';
             let pill = this.tryEatPill();
             if (pill === 'B') { State.myGame.startGhostFleeState(); }
@@ -376,7 +383,7 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           // lastDirKey is nothing so just sit at the intersection and wait for user input
         }
-    } else if (this.moveState === 'dying1') {
+    } else if (mState === 'dying1') {
         if (this.deathMouthAnimFinished === false) {
           this.nextDeathMouth();
         } else if (this.deathMouthAnimFinished === true) {
@@ -384,7 +391,7 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           console.log('deathMouthAnimFinished probs');
         }
-    } else if (this.moveState === 'dying2') {
+    } else if (mState === 'dying2') {
         if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
           if (this.lives === -1) { // game over
             State.myGame.gameOverInit();
@@ -394,7 +401,7 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           this.nextDeathSparkle();
         }
-    } else if (this.moveState === 'gameover') {
+    } else if (mState === 'gameover') {
       // show gameover animation
     } else {
         console.log("[move state problems]");
