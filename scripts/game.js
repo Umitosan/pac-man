@@ -37,6 +37,9 @@ function Game(updateDur) {
   this.chaseDuration = 20; // # of seconds the ghosts will chase for
   this.chaseStartTime = undefined;
 
+  // animations
+  this.animList = undefined;
+
   this.gameover = false;
   this.levelTransition = false;
 
@@ -53,7 +56,7 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -125,9 +128,10 @@ function Game(updateDur) {
                                      /* dur   */ 2000,
                                      /* font  */ '42px joystix'
                               );
+    this.animList = [];
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
-  };
+  }; // init
 
   this.newLifeReset = function() {
     console.log('game newLifeReset');
@@ -143,6 +147,9 @@ function Game(updateDur) {
   this.levelCompleteInit = function() {
     console.log('level complete');
     this.pauseIt();
+    let pdAnim = new PacDeath(State.ctx,this.myPac.x,this.myPac.y,Colors.pacYellow);
+    pdAnim.init();
+    this.animList.push(pdAnim);
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;
     this.currentTxt.on();
@@ -151,6 +158,7 @@ function Game(updateDur) {
 
   this.nextLvlReset = function() {
     console.log('next level starting');
+    this.animList.pop();
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
@@ -351,6 +359,11 @@ function Game(updateDur) {
       }
       if (this.myPac) this.myPac.draw();
     }
+    if (this.animList.length > 0) {
+      for (let i = 0; i < this.animList.length; i++) {
+        this.animList[i].draw();
+      }
+    }
     if (this.currentTxt.show === true) this.currentTxt.draw();
   };
 
@@ -396,6 +409,13 @@ function Game(updateDur) {
       // chill
     } else {
       console.log('unhandeled game update case');
+    }
+
+    // always update animations regarless of state?
+    if (this.animList.length > 0) {
+      for (let i = 0; i < this.animList.length; i++) {
+        this.animList[i].update();
+      }
     }
 
     // ALWAYS check if text needs showing

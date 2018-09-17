@@ -337,8 +337,7 @@ function Pac(x,y,velocity,direction,moveState)  {
               State.lastDirKey = 'none';
               this.hopToIn();
             } else {
-              let pill = this.tryEatPill();
-              if (pill === 'B') { State.myGame.startGhostFleeState(); }
+              if (this.tryEatPill() === 'B') { State.myGame.startGhostFleeState(); }
               this.movePac();
               this.nextMouth();
             }
@@ -353,8 +352,7 @@ function Pac(x,y,velocity,direction,moveState)  {
             State.lastDirKey = 'none';
             this.hopToIn();
           } else {
-            let pill = this.tryEatPill();
-            if (pill === 'B') { State.myGame.startGhostFleeState(); }
+            if (this.tryEatPill() === 'B') { State.myGame.startGhostFleeState(); }
             this.movePac();
             this.nextMouth();
           }

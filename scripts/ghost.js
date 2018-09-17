@@ -917,6 +917,8 @@ function getGhostChangeTarget(ghostName) {
     // console.log('clyde gets a prototype');
     State.myGame.ghosts[3].changeTarget = function() {
       if (this.moveState === 'chase') {
+        //  when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
+        //  when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen
         this.targetX = State.myGame.myPac.x;
         this.targetY = State.myGame.myPac.y;
       } else if (this.moveState === 'flee') {
