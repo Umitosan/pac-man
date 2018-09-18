@@ -515,7 +515,7 @@ function Level(drawMode) {
           ctx.fill();
         } else if (this.currentLevel[r][c] === 'T') {
           ctx.beginPath();
-          ctx.fillStyle = Colors.aqua;
+          ctx.fillStyle = Colors.ghostAqua;
           ctx.rect( (spacing-2 + c * spacing), (spacing-10 + r * spacing), 4, 20 ); // x y width height
           ctx.fill();
         } else {

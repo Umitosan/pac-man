@@ -56,7 +56,7 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('test1'); // for testing lvl completion
+    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -147,9 +147,13 @@ function Game(updateDur) {
   this.levelCompleteInit = function() {
     console.log('level complete');
     this.pauseIt();
-    let pdAnim = new PacDeath(State.ctx,this.myPac.x,this.myPac.y,Colors.pacYellow);
+    let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,Colors.pacYellow);
     pdAnim.init();
     this.animList.push(pdAnim);
+    for (var i = 0; i < this.ghosts.length; i++) {
+      let g = this.ghosts[i];
+      let gdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,Colors.blue);
+    }
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;
     this.currentTxt.on();
@@ -369,7 +373,7 @@ function Game(updateDur) {
 
   this.update = function() {
 
-    if ( (!this.paused) && (!this.gameover) ){ // performance based update: this.update() runs every this.updateDuration milliseconds
+    if ( (!this.paused) && (!this.gameover) ) { // performance based update: this.update() runs every this.updateDuration milliseconds
 
           if (State.playTime < 1) { // make sure on first update() only run once
             this.lastUpdate = performance.now();
@@ -380,12 +384,16 @@ function Game(updateDur) {
 
           if ( this.timeGap >= this.updateDuration ) {
             let timesToUpdate = this.timeGap / this.updateDuration;
-            for (let i=1; i < timesToUpdate; i++) {
-              this.myPac.update();
-              for (let g=0;g < this.ghosts.length; g++ ) {
-                this.ghosts[g].update();
-              }
-            }
+            // if (timesToUpdate < 2) { // JUST A TEST!!!!! for slow computers
+                for (let i=1; i < timesToUpdate; i++) {
+                  this.myPac.update();
+                  for (let g=0;g < this.ghosts.length; g++ ) {
+                    this.ghosts[g].update();
+                  }
+                }
+            // } else {
+            //   console.log('frames skipped!');
+            // }
             this.lastUpdate = performance.now();
           }
 

@@ -406,7 +406,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     this.timedPauseState = true;
     this.timedPauseDur = dur;
     this.timedPauseBegin = performance.now();
-    this.lastMoveState = this.moveState;
+    if (this.moveState === 'tpaused') { // edge case that makes both last and current move state the same: 'tPaused'
+      // want this.lastMoveState to stay the same, otherwise we lose that information
+    } else {  //
+      this.lastMoveState = this.moveState;
+    }
     this.moveState = 'tpaused';
   };
 
@@ -590,7 +594,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     this.eatenTxtBox = new TxtBox(/* x     */ this.x,
                                   /* y     */ this.y+4,
                                   /* msg   */ msg,
-                                  /* color */ Colors.aqua,
+                                  /* color */ Colors.ghostAqua,
                                   /* dur   */ 2000,
                                   /* font  */ '18px joystix'
     );

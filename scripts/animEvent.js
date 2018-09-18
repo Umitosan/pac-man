@@ -27,7 +27,7 @@
 // }
 
 
-function PacDeath(ctx,x,y,c='rand') {
+function SparkAnim(ctx,x,y,c='rand') {
   this.ctx = ctx;
   this.startX = x;
   this.startY = y;
@@ -66,7 +66,7 @@ function PacDeath(ctx,x,y,c='rand') {
 
   this.finish = function() {
     // clean up and start new funk
-    console.log('pacDeath finished');
+    console.log('sparkAnim finished');
   };
 
   this.draw = function() {
