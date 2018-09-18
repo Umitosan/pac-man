@@ -56,7 +56,7 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('test1'); // for testing lvl completion
+    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
