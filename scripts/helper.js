@@ -6,20 +6,22 @@
 
 // ref https://www.w3schools.com/colors/colors_shades.asp
 var Colors = {
-  black:    'rgba(0, 0, 0, 1)',
-  darkGrey: 'rgba(50, 50, 50, 1)',
+  black:      'rgba(0, 0, 0, 1)',
+  darkGrey:   'rgba(50, 50, 50, 1)',
   lightGreyTrans: 'rgba(50, 50, 50, 0.3)',
-  greyReset: 'rgb(211,211,211)',
-  lighterGreyReset: 'rgb(240,240,240)',
-  white: 'rgba(250, 250, 250, 1)',
-  red: 'rgba(230, 0, 0, 1)',
-  green: 'rgba(0, 230, 0, 1)',
-  blue: 'rgba(0, 0, 230, 0.7)',
-  pacYellow: 'rgba(255,255,1,1)',
-  ghostAqua: 'rgba(127,255,212,1)',
-  aqua2: 'rgba(0,190,190,1)',
-  dotPink: 'rgba(247, 200, 183,1)',
-  ghostPink: 'rgba(255,192,203,1)',
+  greyReset:  'rgba(211, 211, 211, 1)',
+  lighterGreyReset: 'rgba(240, 240, 240, 1)',
+  white:      'rgba(250, 250, 250, 1)',
+  red:        'rgba(230, 0, 0, 1)',
+  green:      'rgba(0, 230, 0, 1)',
+  blue:       'rgba(0, 0, 230, 0.7)',
+  pacYellow:  'rgba(255, 255, 1, 1)',
+  ghostRed:   'rgba(202, 24, 24, 1)',
+  ghostPink:  'rgba(255, 192, 203, 1)',
+  ghostAqua:  'rgba(127, 255, 212, 1)',
+  ghostOrange:'rgb(255, 165, 0, 1)',
+  aqua2:      'rgba(0, 190, 190, 1)',
+  dotPink:    'rgba(247, 200,183,1)',
 };
 
 function clearCanvas() {

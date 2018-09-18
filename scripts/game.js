@@ -56,7 +56,7 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -150,9 +150,17 @@ function Game(updateDur) {
     let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,Colors.pacYellow);
     pdAnim.init();
     this.animList.push(pdAnim);
-    for (var i = 0; i < this.ghosts.length; i++) {
+    for (let i = 0; i < this.ghosts.length; i++) {
       let g = this.ghosts[i];
-      let gdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,Colors.blue);
+      let col;
+      if (g.moveState === "flee") {
+        col = Colors.blue;
+      } else {
+        col = g.bodyColor;
+      }
+      let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,col);
+      ghostAnim.init();
+      this.animList.push(ghostAnim);
     }
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;

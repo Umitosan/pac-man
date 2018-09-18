@@ -7,6 +7,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   this.x = x;
   this.y = y;
   this.name = name;
+  this.bodyColor = undefined;
   this.spriteImgSrc = src;
   this.vel = 1.5;
   this.chaseVel = 2.5;
@@ -53,6 +54,23 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.targetY = spacing*12;
       this.changeDir(this.direction);
       this.updateSprite(this.direction);
+    }
+    switch (this.name) {
+      case "blinky":
+        this.bodyColor = Colors.ghostRed;
+        break;
+      case "pinky":
+        this.bodyColor = Colors.ghostPink;
+        break;
+      case "inky":
+        this.bodyColor = Colors.ghostAqua;
+        break;
+      case "clyde":
+        this.bodyColor = Colors.ghostOrange;
+        break;
+      default:
+        console.log('didnt find ghost color');
+        break;
     }
     this.timedPause(2000);
   };
