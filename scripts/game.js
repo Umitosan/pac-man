@@ -184,6 +184,8 @@ function Game(updateDur) {
 
   this.nextLvlReset = function() {
     console.log('next level starting');
+    this.nextLvlResetStartTime = undefined;
+    this.nextLlvlResetElapsed = undefined;
     this.animList = [];
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
@@ -193,6 +195,7 @@ function Game(updateDur) {
     this.currentTxt.startTimer();
     clearCanvas();
     this.myLevel.loadLvl('lvl1');
+    // this.myLevel.loadLvl('test1');
     this.currentTxt = this.readyTxt;
     this.unpauseIt();
     this.currentTxt.on();
