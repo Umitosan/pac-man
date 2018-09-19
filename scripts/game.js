@@ -5,6 +5,7 @@ function Game(updateDur) {
   this.paused = false;
   this.myPac = undefined;
   this.myLevel = undefined;
+  this.levelVal = 1;
   this.ghosts = [];
   this.score = 0;
   this.updateDuration = updateDur;  // milliseconds duration between update()
@@ -178,7 +179,7 @@ function Game(updateDur) {
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer();
     clearCanvas();
-    this.myLevel.loadLvl('lvl2');
+    this.myLevel.loadLvl('lvl1');
     this.currentTxt = this.readyTxt;
     this.unpauseIt();
     this.currentTxt.on();

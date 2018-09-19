@@ -120,7 +120,11 @@ function Level(drawMode) {
   this.loadLvl = function(lvlStr) {
     let canvas = State.canvas;
     this.currentLevel = undefined;
-    this.currentLevel = this.allLevels[lvlStr];
+    // Javascript loves passing references, need map and slice to shallow copy 2d array sheesh
+    let testArr = this.allLevels[lvlStr].map(function(i) {
+      return i.slice();
+    });
+    this.currentLevel = testArr;
     this.drawWalls1();
     // context.getImageData(x,y,width,height);
     this.lvlImage = undefined;
