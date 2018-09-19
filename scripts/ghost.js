@@ -692,7 +692,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     let yDif = Math.abs(this.y - State.myGame.myPac.y);
     if ( ((xDif < 20) && (yDif < 20)) ) {
           console.log('ghost collide pac');
-          if (this.moveState === 'chase') {
+          if ( (this.moveState === 'chase') || (this.moveState === 'scatter') ) {
             State.myGame.myPac.die();
           } else if (this.moveState === 'flee') {
             this.initEaten();
