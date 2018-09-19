@@ -711,24 +711,28 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.draw = function() {
-    let spacing = State.gridSpacing;
-    // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
-    // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    State.ctx.drawImage(  /*image*/   this.spriteSheet,
-                    /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
-                    /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
-                    /*sWidth*/  this.spriteFrameWidth,
-                    /*sHeight*/ this.spriteFrameWidth,
-                    /* dx */    this.x-spacing+2,
-                    /* dy */    this.y-spacing+2,
-                    /*dWidth*/  spacing*2-6,
-                    /*dHidth*/  spacing*2-6
-    );
-    if (this.eatenTxtBox !== undefined) {
-      if (this.eatenTxtBox.show === true) {
-        this.eatenTxtBox.draw();
-      }
-    }
+    if (this.moveState === 'lvlchange') {
+        // don't draw ghost
+    } else {
+        let spacing = State.gridSpacing;
+        // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+        // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        State.ctx.drawImage(  /*image*/   this.spriteSheet,
+                        /* sx */    (this.curFrame)*(this.spriteFrameWidth), // read sprite shit right to left like this:  (this.spriteWidth*this.frameTotal-this.spriteWidth) - (this.spriteWidth*this.curFrame)
+                        /* sy */    (this.spriteRow)*(this.spriteFrameWidth),
+                        /*sWidth*/  this.spriteFrameWidth,
+                        /*sHeight*/ this.spriteFrameWidth,
+                        /* dx */    this.x-spacing+2,
+                        /* dy */    this.y-spacing+2,
+                        /*dWidth*/  spacing*2-6,
+                        /*dHidth*/  spacing*2-6
+        );
+        if (this.eatenTxtBox !== undefined) {
+          if (this.eatenTxtBox.show === true) {
+            this.eatenTxtBox.draw();
+          }
+        }
+    } // end else
   };
 
   this.update = function() {
@@ -837,6 +841,8 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
             }
           }
     } else if (this.moveState === 'stop') {
+      // nothin
+    } else if   (this.moveState === 'lvlchange') {
       // nothin
     } else {
       // nothin

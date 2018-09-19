@@ -1,47 +1,28 @@
 /* jshint esversion: 6 */
 
-// an Animation Event is a scripted animation object that can be fired off and forgotten...
-//   making animations simpler/easier to organize and control
-// function AnimEvent(x,y,duration) {
-//   this.startX = x;
-//   this.startX = y;
-//   this.dur = duration;
-//   this.startTime = undefined;
-//
-//   this.init = function() {
-//     this.startTime = performance.now();
-//   };
-//
-//   this.start = function() {
-//   };
-//
-//   this.finish = function() {
-//   };
-//
-//   this.draw = function() {
-//   };
-//
-//   this.update = function() {
-//   };
-//
-// }
-
-
-function SparkAnim(ctx,x,y,c='rand') {
+function SparkAnim(ctx,x,y,quant,color='rand') {
   this.ctx = ctx;
   this.startX = x;
   this.startY = y;
-  this.dur = 3000;
-  this.color = c;
+  this.quantity = quant;
+  this.color = color;
   this.sparkles = undefined;
-  this.startTime = undefined;
+
+  // timing
   this.complete = false;
+  this.startTime = undefined;
+  this.dur = 3000;
+  this.pauseBegin = undefined;
+  this.pauseElapsedTime = 0;
 
   this.init = function() {
     this.complete = false;
     this.startTime = performance.now();
+    this.dur = 3000;
+    this.pauseBegin = undefined;
+    this.pauseElapsedTime = 0;
     this.sparkles = [];
-    for (var i = 0; i < 600; i++) {
+    for (let i = 0; i < this.quantity; i++) {
       let color;
       let randX =  this.startX + getRandomIntInclusive(-15,15);
       let randY =  this.startY + getRandomIntInclusive(-15,15);
@@ -62,6 +43,14 @@ function SparkAnim(ctx,x,y,c='rand') {
                             });
     } // for
     // console.log('this.sparkles = ', this.sparkles);
+  };
+
+  this.pauseIt = function() {
+    this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+  };
+
+  this.unpauseIt = function() {
+    this.pauseBegin = (performance.now() - this.pauseElapsedTime);
   };
 
   this.finish = function() {
@@ -95,10 +84,11 @@ function SparkAnim(ctx,x,y,c='rand') {
     // console.log('updating spark');
     if (this.complete === false) {
         let sp = this.sparkles;
-        if ((performance.now() - this.startTime) > this.dur) {
+        if (this.pauseElapsedTime > this.dur) {
           this.complete = true;
           this.finish();
         } else {
+          this.pauseElapsedTime = (performance.now() - this.pauseBegin);
           let sp = this.sparkles;
           for (let i = 0; i < sp.length; i++) {
             let angle = sp[i].angle;

@@ -4,8 +4,8 @@
 function Game(updateDur) {
   this.paused = false;
   this.myPac = undefined;
-  this.myLevel = undefined;
-  this.levelVal = 1;
+  this.myLevel = undefined;  // lvl data
+  this.levelVal = 1;  // lvl idetifier
   this.ghosts = [];
   this.score = 0;
   this.updateDuration = updateDur;  // milliseconds duration between update()
@@ -41,6 +41,10 @@ function Game(updateDur) {
   // animations
   this.animList = undefined;
 
+  // next level
+  this.nextLvlResetStartTime = undefined;
+  this.nextLlvlResetElapsed = undefined;
+
   this.gameover = false;
   this.levelTransition = false;
 
@@ -57,7 +61,8 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1'); // for testing lvl completion
+    this.myLevel.loadLvl('lvl1');
+    // this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -147,31 +152,39 @@ function Game(updateDur) {
 
   this.levelCompleteInit = function() {
     console.log('level complete');
-    this.pauseIt();
-    let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,Colors.pacYellow);
+    for (var i = 0; i < this.ghosts.length; i++) {
+      let g = this.ghosts[i];
+      g.lastMoveState = g.moveState;
+      g.moveState = 'lvlchange';
+    }
+    this.myPac.lastMoveState = this.myPac.moveState;
+    this.myPac.moveState = 'lvlchange';
+    // SparkAnim(ctx,x,y,quant,color='rand')
+    let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,200,Colors.pacYellow);
     pdAnim.init();
     this.animList.push(pdAnim);
     for (let i = 0; i < this.ghosts.length; i++) {
       let g = this.ghosts[i];
       let col;
-      if (g.moveState === "flee") {
+      if (g.lastMoveState === "flee") {
         col = Colors.blue;
       } else {
         col = g.bodyColor;
       }
-      let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,col);
+      // SparkAnim(ctx,x,y,quant,color='rand')
+      let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,200,col);
       ghostAnim.init();
       this.animList.push(ghostAnim);
     }
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;
     this.currentTxt.on();
-    setTimeout( () => { this.nextLvlReset(); }, 3000);
+    this.nextLvlResetStartTime = performance.now(); // starts 3 second timer for next level
   };
 
   this.nextLvlReset = function() {
     console.log('next level starting');
-    this.animList.pop();
+    this.animList = [];
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
@@ -334,6 +347,14 @@ function Game(updateDur) {
     if (this.bigPillEffect === true) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
     }
+    if (this.nextLvlResetStartTime !== undefined) {
+      this.nextLlvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
+    }
+    if (this.animList.length > 0) {
+      for (var i = 0; i < this.animList.length; i++) {
+        this.animList[i].pauseIt();
+      }
+    }
   };
 
   this.unpauseIt = function() {
@@ -342,6 +363,14 @@ function Game(updateDur) {
     this.currentTxt.off();
     if (this.bigPillEffect === true) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
+    }
+    if (this.nextLvlResetStartTime !== undefined) {
+      this.nextLvlResetStartTime = (performance.now() - this.nextLlvlResetElapsed);
+    }
+    if (this.animList.length > 0) {
+      for (var i = 0; i < this.animList.length; i++) {
+        this.animList[i].unpauseIt();
+      }
     }
     // this prevents pac from updating many times after UNpausing
     this.lastUpdate = performance.now();
@@ -418,6 +447,23 @@ function Game(updateDur) {
               this.startGhostsBlinkingStarted = true;
             }
           }
+
+          // animations
+          if (this.animList.length > 0) {
+            for (let i = 0; i < this.animList.length; i++) {
+              this.animList[i].update();
+            }
+          }
+
+          if (this.nextLvlResetStartTime !== undefined) {
+            if ( this.nextLlvlResetElapsed > 3000) { // 3 sec before moving to next level
+              this.nextLvlReset();
+              this.nextLvlResetStartTime = undefined;
+            } else {
+              this.nextLlvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
+            }
+          }
+
           this.updatePlayTime();
           this.checkScatterChaseTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
@@ -426,13 +472,6 @@ function Game(updateDur) {
       // chill
     } else {
       console.log('unhandeled game update case');
-    }
-
-    // always update animations regarless of state?
-    if (this.animList.length > 0) {
-      for (let i = 0; i < this.animList.length; i++) {
-        this.animList[i].update();
-      }
     }
 
     // ALWAYS check if text needs showing

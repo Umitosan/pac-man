@@ -109,14 +109,6 @@ function Level(drawMode) {
     ]
   };
 
-  // this.init = function() {
-  //   let canvas = State.canvas;
-  //   this.drawWalls1();
-  //   this.loadLvl('lvl1');
-  //   // context.getImageData(x,y,width,height);
-  //   this.walls1img = State.ctx.getImageData(0,0,canvas.width,canvas.height);
-  // };
-
   this.loadLvl = function(lvlStr) {
     let canvas = State.canvas;
     this.currentLevel = undefined;

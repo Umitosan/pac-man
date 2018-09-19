@@ -13,7 +13,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.lineW = 2;
   this.pixX = 0; // pixel test
   this.pixY = 0; // pixel test
-  this.moveState = moveState; // go, stop, tpaused, dying1, dying2, gameover
+  this.moveState = moveState; // go, stop, tpaused, dying1, dying2, lvlchange, gameover
   this.lastMoveState = 'tpaused';
   this.direction = direction; // also relates to mouth direction and rotation
 
@@ -310,6 +310,8 @@ function Pac(x,y,velocity,direction,moveState)  {
         ctx.lineTo( x+(len*Math.cos(angle)) , y+(len*Math.sin(angle)) );
         ctx.stroke();
       }
+    } else if (this.moveState === 'lvlchange') {
+      // don't draw pac
     } else {
       ctx.fillStyle = this.color;
       ctx.strokeStyle = this.color;
@@ -399,6 +401,8 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else {
           this.nextDeathSparkle();
         }
+    } else if (mState === 'lvlchange') {
+      // chill
     } else if (mState === 'gameover') {
       // show gameover animation
     } else {
