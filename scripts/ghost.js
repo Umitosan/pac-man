@@ -494,8 +494,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.tryStartScatter = function() {
+    // console.log(this.name + " moveState = "+ this.moveState );
+    // console.log(this.name + " lastMoveState = "+ this.lastMoveState );
      if ( (this.moveState === 'chase') || ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
-      // console.log(this.name + ': START scatter');
+      console.log(this.name + ': START scatter');
       this.lastMoveState = this.moveState;
       this.moveState = 'scatter';
       this.tryReverseDir();
@@ -580,10 +582,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.startChase = function() {
-    // console.log("Ghost: startChase");
     this.prevInter = getNearestIntersection(this.x,this.y); // set initial prevInter at start of chase
     this.y = State.gridSpacing*12;  // this is an alternative to hopToIn in order to snap to the
-    this.moveState = 'chase';
+    if (State.myGame.scatterOn === true) {
+      this.moveState = 'scatter';
+    } else {
+      this.moveState = 'chase';
+    }
     this.changeVel(this.chaseVel);
     this.spriteRow = 0;
     let newDir = this.getNewDirection();

@@ -43,7 +43,8 @@ function Game(updateDur) {
 
   // next level
   this.nextLvlResetStartTime = undefined;
-  this.nextLlvlResetElapsed = undefined;
+  this.nextLvlResetElapsed = undefined;
+  this.levelStartTime = undefined;
 
   this.gameover = false;
   this.levelTransition = false;
@@ -61,8 +62,8 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1');
-    // this.myLevel.loadLvl('test1'); // for testing lvl completion
+    // this.myLevel.loadLvl('lvl1');
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -137,6 +138,7 @@ function Game(updateDur) {
     this.animList = [];
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
+    this.levelStartTime = performance.now();
   }; // init
 
   this.newLifeReset = function() {
@@ -185,7 +187,8 @@ function Game(updateDur) {
   this.nextLvlReset = function() {
     console.log('next level starting');
     this.nextLvlResetStartTime = undefined;
-    this.nextLlvlResetElapsed = undefined;
+    this.nextLvlResetElapsed = undefined;
+    this.resetAllScatterVars();
     this.animList = [];
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
@@ -194,11 +197,11 @@ function Game(updateDur) {
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer();
     clearCanvas();
-    this.myLevel.loadLvl('lvl1');
-    // this.myLevel.loadLvl('test1');
+    // this.myLevel.loadLvl('lvl1');
+    this.myLevel.loadLvl('test1');
     this.currentTxt = this.readyTxt;
-    this.unpauseIt();
     this.currentTxt.on();
+    this.levelStartTime = performance.now();
   };
 
   this.gameOverInit = function() {
@@ -274,32 +277,38 @@ function Game(updateDur) {
   };
 
   this.checkScatterChaseTime = function() {
-    if (this.scatterOn === false) {
-        let playTimeSeconds = State.playTime / 1000;
-        if ( (this.scatterCount > 0) && (this.scatterCount < 4) ) {
+    if ((performance.now() - this.levelStartTime) > 3500) { // 0.5 sec + initial ghost pause of 3 sec
+        if (this.scatterOn === false) {
+          let playTimeSeconds = State.playTime / 1000;
+          if ( (this.scatterCount > 0) && (this.scatterCount < 4) ) {
             // console.log('playTimeSeconds = ', playTimeSeconds);
             // console.log('(this.chaseStartTime/1000) ', (this.chaseStartTime/1000));
             if ( ((playTimeSeconds) - (this.chaseStartTime/1000)) > this.chaseDuration ) {
               this.startGhostsScatterState();
             }
-        } else if ( (this.scatterCount === 4) && (playTimeSeconds > 2) ) {
+          } else if ( (this.scatterCount === 4) && (playTimeSeconds > 2) ) {
             this.startGhostsScatterState();
-        } else  {
-          // scatterCount 0 - do nothin - chase forever
-        }
-    } else if (this.scatterOn === true) { // check to see if it's time to turn it off
+          } else  {
+            // scatterCount 0 - do nothin - chase forever
+          }
+        } else if (this.scatterOn === true) { // check to see if it's time to turn it off
         let timeSinceScatter = Math.round( (performance.now() - this.scatterStartTime) / 1000 );
         if ( timeSinceScatter >= this.scatterDuration ) {
           this.stopGhostsScatterState();
         }
+      } else {
+        // scatter count is 0 so just chase forever
+      }
     } else {
-      // scatter count is 0 so just chase forever
+      // console.log('too early to scatter');
+      // don't scatter for a bit when level starts
     }
+
   };
 
   this.startGhostsScatterState = function() {
       console.log('start - scatter');
-      this.scatterStartTime = State.playTime; // using playtime so that pause also affects scatter duration
+      this.scatterStartTime = performance.now();
       this.scatterOn = true;
       this.scatterCount--;
       this.chaseStartTime = undefined;
@@ -310,13 +319,21 @@ function Game(updateDur) {
   };
 
   this.stopGhostsScatterState = function() {
-      console.log('game.stopGhostsScatterState');
-      this.scatterStartTime = undefined;
-      this.scatterOn = false;
-      this.chaseStartTime = State.playTime;
-      this.ghosts.forEach( function(g) {
-        g.tryStopScatter();
-      });
+    console.log('game.stopGhostsScatterState');
+    this.scatterStartTime = undefined;
+    this.scatterOn = false;
+    this.chaseStartTime = State.playTime;
+    this.ghosts.forEach( function(g) {
+      g.tryStopScatter();
+    });
+  };
+
+  this.resetAllScatterVars = function() {
+    this.scatterOn = false;
+    this.scatterTimer = undefined;
+    this.scatterStartTime = undefined;
+    this.scatterCount = 4;
+    this.chaseStartTime = undefined;
   };
 
   this.startGhostsBlinking = function() {
@@ -351,7 +368,7 @@ function Game(updateDur) {
       this.bigPillEffectDurElapsed = (performance.now() - this.bigPillEffectStart);
     }
     if (this.nextLvlResetStartTime !== undefined) {
-      this.nextLlvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
+      this.nextLvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
     }
     if (this.animList.length > 0) {
       for (var i = 0; i < this.animList.length; i++) {
@@ -368,7 +385,7 @@ function Game(updateDur) {
       this.bigPillEffectStart = performance.now(); // set new effect start to accurately measure time elapsed for effect
     }
     if (this.nextLvlResetStartTime !== undefined) {
-      this.nextLvlResetStartTime = (performance.now() - this.nextLlvlResetElapsed);
+      this.nextLvlResetStartTime = (performance.now() - this.nextLvlResetElapsed);
     }
     if (this.animList.length > 0) {
       for (var i = 0; i < this.animList.length; i++) {
@@ -459,11 +476,11 @@ function Game(updateDur) {
           }
 
           if (this.nextLvlResetStartTime !== undefined) {
-            if ( this.nextLlvlResetElapsed > 3000) { // 3 sec before moving to next level
+            if ( this.nextLvlResetElapsed > 3000) { // 3 sec before moving to next level
               this.nextLvlReset();
               this.nextLvlResetStartTime = undefined;
             } else {
-              this.nextLlvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
+              this.nextLvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
             }
           }
 
