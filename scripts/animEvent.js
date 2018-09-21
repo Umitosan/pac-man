@@ -111,6 +111,10 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
   this.quantity = quant;
   this.color = color;
   this.lines = undefined;
+  this.maxHeight = 8;
+  this.maxWidth = 200;
+  this.xRange = 100;
+  this.yRange = 50;
 
   // timing
   this.complete = false;
@@ -128,16 +132,16 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
     this.lines = [];
 
     for (var i = 0; i < this.quantity; i++) {
-      let randX = getRandomIntInclusive(-25,25);
-      let randY = getRandomIntInclusive(-25,25);
-      let randW = getRandomIntInclusive(20,300);
-      let randH = getRandomIntInclusive(2,18);
+      let randX = getRandomIntInclusive(-this.xRange,this.xRange);
+      let randY = getRandomIntInclusive(-this.yRange,this.yRange);
+      let randW = getRandomIntInclusive(20,this.maxWidth);
+      let randH = getRandomIntInclusive(2,this.maxHeight);
       let randHcoef = randSign();
       let col;
       if (this.color === 'rand') {
         col = randColor('rgba');
       } else {
-        color = this.color;
+        col = this.color;
       }
       this.lines.push({ x: (randX + this.startX),
                         y: (randY + this.startY),
@@ -181,24 +185,22 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
   };
 
   this.update = function() {
+    let mHeight = this.maxHeight;
     if (this.complete === false) {
-      let line;
       for (let i = 0; i < this.lines.length; i++) {
-        line = this.lines[i];
-        // if (line.y+(line.height/2) >= 25) {
-        //   line.y -= 2;
-        // } else if ((line.y-(line.height/2)) < 25) {
-        //   line.y += 2;
-        // } else {
-        //   // nothin
-        // }
-        if (line.height >= 20) {
+        let line = this.lines[i];
+        if (line.height > mHeight) {
+          line.height = mHeight;
           line.hCoef *= -1;
-        } else if (line.height < 2){
+          line.height += line.hCoef;
+        } else if (line.height < 1){
+          line.height = 1;
           line.hCoef *= -1;
+          line.height += line.hCoef;
         } else {
           line.height += line.hCoef;
         }
+        line.width += 2;
       } // for
     } // if
   };

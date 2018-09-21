@@ -164,7 +164,7 @@ function Game(updateDur) {
     // SparkAnim(ctx,x,y,quant,color='rand')
     // let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,200,Colors.pacYellow);
     // PhaseAnim(ctx,x,y,quant,color='rand')
-    let pdAnim = new PhaseAnim(State.ctx,this.myPac.x,this.myPac.y,2,Colors.pacYellow);
+    let pdAnim = new PhaseAnim(State.ctx,this.myPac.x,this.myPac.y,6,Colors.pacYellow);
     pdAnim.init();
     this.animList.push(pdAnim);
     for (let i = 0; i < this.ghosts.length; i++) {
@@ -176,7 +176,8 @@ function Game(updateDur) {
         col = g.bodyColor;
       }
       // SparkAnim(ctx,x,y,quant,color='rand')
-      let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,200,col);
+      // let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,200,col);
+      let ghostAnim = new PhaseAnim(State.ctx,g.x,g.y,6,col);
       ghostAnim.init();
       this.animList.push(ghostAnim);
     }
