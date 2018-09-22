@@ -141,6 +141,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     // defined specifically for each ghost at getGhostChangeTarget()
   };
 
+  this.nearPac = function() {
+    // for clyde only
+  };
+
   this.tryDirs = function(dir1,dir2,dir3) { // tests 3 directions inBounds and returns first good one
     let someDir;
     if (this.inBounds(dir1) === true) {
@@ -949,11 +953,17 @@ function getGhostChangeTarget(ghostName) {
   } else if (ghostName === 'clyde') {
     // console.log('clyde gets a prototype');
     State.myGame.ghosts[3].changeTarget = function() {
+      let pac = State.myGame.myPac;
       if (this.moveState === 'chase') {
         //  when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
         //  when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen
-        this.targetX = State.myGame.myPac.x;
-        this.targetY = State.myGame.myPac.y;
+        if (this.nearPac() === true) { // go to corner
+          this.targetX = spacing*1;
+          this.targetY = spacing*30;
+        } else {
+          this.targetX = pac.x;
+          this.targetY = pac.y;
+        }
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*1;
         this.targetY = spacing*30;
@@ -969,7 +979,22 @@ function getGhostChangeTarget(ghostName) {
       } else {
         // nothin
       }
-    };
+    };  // changeTarget
+
+    State.myGame.ghosts[3].nearPac = function() {
+      let sp = State.gridSpacing;
+      let pac = State.myGame.myPac;
+      let gh = State.myGame.ghosts[3];
+      let nearBool = null;
+      // is clyde 8 spacing from pac on X or Y
+      if ( ((pac.x > gh.x) && (Math.floor((pac.x - gh.x) / sp) >= 8)) || ((pac.x < gh.x) && (Math.floor((gh.x - pac.x) / sp) >= 8)) ||
+           ((pac.y > gh.y) && (Math.floor((pac.y - gh.y) / sp) >= 8)) || ((pac.y < gh.y) && (Math.floor((gh.y - pac.y) / sp) >= 8)) )  {
+        nearBool = false;
+      } else {
+        nearBool = true;
+      }
+      return nearBool;
+    }; // nearPac
   } else {
     console.log('getGhostChangeTarget probs');
   }
