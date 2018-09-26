@@ -184,6 +184,7 @@ function Game(updateDur) {
     this.currentTxt.off();
     this.currentTxt = this.lvlCompleteTxt;
     this.currentTxt.on();
+    this.myLevel.lvlBlinkOn = true;
     this.nextLvlResetStartTime = performance.now(); // starts 3 second timer for next level
   };
 
@@ -204,6 +205,8 @@ function Game(updateDur) {
     // this.myLevel.loadLvl('test1');
     this.currentTxt = this.readyTxt;
     this.currentTxt.on();
+    this.myLevel.lvlBlinkOn = false;
+    this.myLevel.lvlImageSelect = 1;
     this.levelStartTime = performance.now();
   };
 

@@ -4,8 +4,14 @@ function Level(drawMode) {
   this.currentLevel = undefined;
   this.bigDotOffDur = 300;   // milliseconds
   this.bigDotBlinkTimer = 600;  // milliseconds
-  this.lvlImage = undefined;
+  this.lvlImage1 = undefined;
+  this.lvlImage2 = undefined;
+  this.lvlImageSelect = 1;
   this.drawMode = drawMode;
+
+  // end of level animation
+  this.lvlBlinkOn = false;
+  this.lvlBlinkDur = 300; // milliseconds to show each color of lvl
 
   this.allLevels = {
     lvl1: [
@@ -117,10 +123,13 @@ function Level(drawMode) {
       return i.slice();
     });
     this.currentLevel = testArr;
-    this.drawWalls1();
+    this.drawWalls1(Colors.blue);
     // context.getImageData(x,y,width,height);
-    this.lvlImage = undefined;
-    this.lvlImage = State.ctx.getImageData(0,0,canvas.width,canvas.height);
+    this.lvlImage1 = undefined;
+    this.lvlImage1 = State.ctx.getImageData(0,0,canvas.width,canvas.height);
+    this.drawWalls1(Colors.white);
+    this.lvlImage2 = undefined;
+    this.lvlImage2 = State.ctx.getImageData(0,0,canvas.width,canvas.height);
   };
 
   this.timeToBlink = function() {
@@ -166,13 +175,14 @@ function Level(drawMode) {
     }
   };
 
-  this.drawWalls1 = function() {
+  this.drawWalls1 = function(someColor) {
     let ctx = State.ctx;
     let s = State.gridSpacing;
     let corner = 10;
     let half = s/2;
+    let color = someColor;
 
-    ctx.strokeStyle = Colors.blue;
+    ctx.strokeStyle = color;
     ctx.lineWidth = 3;
 
     // roundRect(x, y, width, height, radius);
@@ -382,7 +392,7 @@ function Level(drawMode) {
       ctx.rect(s*13+12.5,s*13+2,s*2,8); // rect(x y width height)
       ctx.fill();
 
-      ctx.strokeStyle = Colors.blue;
+      ctx.strokeStyle = color;
 
       // roundRect(x, y, width, height, radius);
       roundRect(s*8, s*16, s*1, s*4, corner);
@@ -522,12 +532,30 @@ function Level(drawMode) {
   };
 
   this.drawWallsBG = function() {
-    State.ctx.putImageData(this.lvlImage,0,0);
+
+    if (this.lvlBlinkOn === true) {
+      if ((performance.now() % this.lvlBlinkDur) <= 16.67) {
+        if (this.lvlImageSelect === 1) {
+          this.lvlImageSelect = 2;
+        } else {
+          this.lvlImageSelect = 1;
+        }
+      }
+    }
+
+    if (this.lvlImageSelect === 1) {
+      State.ctx.putImageData(this.lvlImage1,0,0);
+    } else if (this.lvlImageSelect === 2) {
+      State.ctx.putImageData(this.lvlImage2,0,0);
+    } else {
+      console.log('lvlImageSelect prob');
+    }
+
   };
 
   this.draw = function() {
     if (this.drawMode === 1) {
-      this.drawWalls1();
+      this.drawWalls1(Colors.blue);
     } else if (this.drawMode === 2) {
       this.drawWalls2();
     } else if (this.drawMode === 3) {
