@@ -333,7 +333,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.update = function() {
     let mState = this.moveState;
     if (mState === 'go') {
-        if (State.lastDirKey === 'none') {
+        if (State.lastDirKey === 'none') { // Going forward, NO KEY input
             if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
               this.moveState = 'stop';
               State.lastDirKey = 'none';
@@ -343,12 +343,14 @@ function Pac(x,y,velocity,direction,moveState)  {
               this.movePac();
               this.nextMouth();
             }
-        } else if (State.lastDirKey !== 'none') {
+        } else if (State.lastDirKey !== 'none') { // Going forward, KEY pressed
           let lastKey = State.lastDirKey;
           if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(lastKey) === true) ) {
             this.hopToIn();
             this.changeDir(lastKey);
             State.lastDirKey = 'none';
+            this.movePac();
+            this.movePac(); // multiple moves at once when PAC rounds a corner, this creates a speed up effect like the original game
           } else if ( atGridIntersection(this.x,this.y,this.vel) && (this.inBounds(this.direction) === false) ) {
             this.moveState = 'stop';
             State.lastDirKey = 'none';
