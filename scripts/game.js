@@ -62,8 +62,8 @@ function Game(updateDur) {
     this.myPac.init();
     this.updateLives();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1');
-    // this.myLevel.loadLvl('test1'); // for testing lvl completion
+    // this.myLevel.loadLvl('lvl1');
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -161,10 +161,8 @@ function Game(updateDur) {
     }
     this.myPac.lastMoveState = this.myPac.moveState;
     this.myPac.moveState = 'lvlchange';
-    // SparkAnim(ctx,x,y,quant,color='rand')
-    // let pdAnim = new SparkAnim(State.ctx,this.myPac.x,this.myPac.y,200,Colors.pacYellow);
-    // PhaseAnim(ctx,x,y,quant,color='rand')
-    let pdAnim = new PhaseAnim(State.ctx,this.myPac.x,this.myPac.y,6,Colors.pacYellow);
+    // let pdAnim = new PhaseAnim(State.ctx,this.myPac.x,this.myPac.y,6,Colors.pacYellow);
+    let pdAnim = new PhaseAnim2(State.ctx,this.myPac.x,this.myPac.y,8,Colors.pacYellow);
     pdAnim.init();
     this.animList.push(pdAnim);
     for (let i = 0; i < this.ghosts.length; i++) {
@@ -175,9 +173,8 @@ function Game(updateDur) {
       } else {
         col = g.bodyColor;
       }
-      // SparkAnim(ctx,x,y,quant,color='rand')
-      // let ghostAnim = new SparkAnim(State.ctx,g.x,g.y,200,col);
-      let ghostAnim = new PhaseAnim(State.ctx,g.x,g.y,6,col);
+      // let ghostAnim = new PhaseAnim(State.ctx,g.x,g.y,6,col);
+      let ghostAnim = new PhaseAnim2(State.ctx,g.x,g.y,8,col);
       ghostAnim.init();
       this.animList.push(ghostAnim);
     }

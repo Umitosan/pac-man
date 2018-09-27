@@ -167,7 +167,6 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
   };
 
   this.draw = function() {
-    console.log('draw phase anim');
     if (this.complete === false) {
       let lines = this.lines;
       for (let i = 0; i < lines.length; i++) {
@@ -203,6 +202,123 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
         line.width += 2;
       } // for
     } // if
+  };
+
+}
+
+
+function PhaseAnim2(ctx,x,y,quant,color='rand') {
+  this.ctx = ctx;
+  this.startX = x;
+  this.startY = y;
+  this.quantity = quant;
+  this.color = color;
+  this.lines = undefined;
+  this.maxHeight = 5;
+  this.maxWidth = 60;
+  this.xRange = 50;
+  this.yRange = 20;
+
+  // timing
+  this.complete = false;
+  this.startTime = undefined;
+  this.totalDur = 3000;
+  this.pauseBegin = undefined;
+  this.pauseElapsedTime = 0;
+
+  this.init = function() {
+    this.complete = false;
+    this.startTime = performance.now();
+    this.totalDur = 3000;
+    this.pauseBegin = undefined;
+    this.pauseElapsedTime = 0;
+    this.lines = [];
+
+    for (var i = 0; i < this.quantity; i++) {
+      this.addLine();
+    }
+  };
+
+  this.addLine = function() {
+    let randX = getRandomIntInclusive(-this.xRange,this.xRange) + this.startX;
+    let randY = getRandomIntInclusive(-this.yRange,this.yRange) + this.startY;
+    let randW = getRandomIntInclusive(20,this.maxWidth);
+    let randH = getRandomIntInclusive(2,this.maxHeight);
+    let randHcoef = randSign();
+    let randVel = getRandomIntInclusive(1,3);
+    if (randX <= this.startX) { // if left of entity move left, else right
+      randVel *= -1;
+    }
+    let col;
+    if (this.color === 'rand') {
+      col = randColor('rgba');
+    } else {
+      col = this.color;
+    }
+    this.lines.push({ x: randX,
+                      y: randY,
+                      width: randW,
+                      height: randH,
+                      color: col,
+                      hCoef: randHcoef,
+                      vel: randVel
+                      });
+  };
+
+  this.pauseIt = function() {
+    this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+  };
+
+  this.unpauseIt = function() {
+    this.pauseBegin = (performance.now() - this.pauseElapsedTime);
+  };
+
+  this.finish = function() {
+    // clean up and start new funk
+    console.log('phaseAnim finished');
+  };
+
+  this.draw = function() {
+    if (this.complete === false) {
+      let lines = this.lines;
+      for (let i = 0; i < lines.length; i++) {
+        ctx.lineWidth = lines[i].height;
+        let x = lines[i].x;
+        let y = lines[i].y;
+        let w = lines[i].width;
+        ctx.strokeStyle = lines[i].color;
+        ctx.beginPath();
+        ctx.moveTo( (x-(w/2)) , y );
+        ctx.lineTo( (x+(w/2)) , y );
+        ctx.stroke();
+      } // for
+    } // if
+  };
+
+  this.update = function() {
+    let mHeight = this.maxHeight;
+    if (this.complete === false) {
+      for (let i = 0; i < this.lines.length; i++) {
+        let line = this.lines[i];
+        // if (line.height > mHeight) {  // this causes the lines to flicker
+        //   line.height = mHeight;
+        //   line.hCoef *= -1;
+        //   line.height += line.hCoef;
+        // } else if (line.height < 1){
+        //   line.height = 1;
+        //   line.hCoef *= -1;
+        //   line.height += line.hCoef;
+        // } else {
+        //   line.height += line.hCoef;
+        // }
+        // line.width += 1;
+        line.x += line.vel;
+      } // for
+    } // if
+    if ((performance.now() % 200) <= 16.67) {
+      this.addLine();
+    }
+
   };
 
 }
