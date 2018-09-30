@@ -5,19 +5,18 @@ function FruitGroup() {
   this.dx = undefined;
   this.dy = undefined;
   this.img = undefined;
-  this.showFruit = true;
+  this.showFruit = false;
 
   this.init = function(someSrc) {
-    console.log('fruit init');
+    let spacing = State.gridSpacing;
     let someImg = new Image();
     someImg.src = someSrc;
     this.img = someImg;
-    this.dx = 200;
-    this.dy = 200;
-  }
+    this.dx = (spacing*13)+(spacing/2);
+    this.dy = (spacing*17)+2;
+  };
 
   this.draw = function() {
-    // console.log('draw happened');
     let ctx = State.ctx;
     let spacing = State.gridSpacing;
     if (this.showFruit === true) {
@@ -34,7 +33,7 @@ function FruitGroup() {
 
   this.update = function() {
 
-  }
+  };
 
 }
 

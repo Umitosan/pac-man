@@ -1,5 +1,6 @@
 /* jshint esversion: 6 */
 
+
 function TxtBox(x,y,msg,color,dur,font) {
   this.x = x;
   this.y = y;

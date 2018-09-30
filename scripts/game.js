@@ -63,6 +63,7 @@ function Game(updateDur) {
     // init ghosts
     this.myPac.init();
     this.updateLives();
+    this.updateFruitList();
     this.myLevel = new Level(3); // Level(drawMode)
     this.myLevel.loadLvl('lvl1');
     // this.myLevel.loadLvl('test1'); // for testing lvl completion
@@ -110,7 +111,7 @@ function Game(updateDur) {
       this.ghosts[i].init();
     }
     this.myFruit = new FruitGroup();
-    this.myFruit.init();
+    this.myFruit.init('img/cherry.png');
     this.pausedTxt = new TxtBox(/* x     */ spacing*15-10,
                                 /* y     */ spacing*19-10,
                                 /* msg   */ 'PAUSED',
@@ -235,6 +236,10 @@ function Game(updateDur) {
     for (var i = 1; i < this.myPac.lives+1; i++) {
       $( "div.bonus-row").children('#life'+i).css('background-image','url(img/pac.png)');
     }
+  };
+
+  this.updateFruitList = function() {
+    $( "div.bonus-row #cherry").css('background-image','url(img/cherry.png)');
   };
 
   this.resetUpdateGap = function() {
