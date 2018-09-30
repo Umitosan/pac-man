@@ -37,6 +37,12 @@ function FruitGroup() {
 
 }
 
-// function Fruit() {
-//
-// }
+
+// 🍒 Cherry: 100 points.
+// 🍓 Strawberry: 300 points
+// 🍊 Orange: 500 points
+// 🍎 Apple: 700 points
+// 🍈 Melon: 1000 points
+// PM Galaxian Galaxian Boss: 2000 points
+// 🔔 Bell: 3000 points
+// 🔑 Key: 5000 points

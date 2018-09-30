@@ -77,22 +77,22 @@ function Pac(x,y,velocity,direction,moveState)  {
   };
 
   this.inBounds = function(tDir) {
-    var bounds = 'none';
-    var sp = State.gridSpacing;
-    var off = this.vel;
+    let bounds = 'none';
+    let sp = State.gridSpacing;
+    let off = this.vel;
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
-        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-sp+off,this.y) );
+        // console.log("LEFT bounds hit ", getNearestIntersection(x-sp+off,y) );
         bounds = false;  break;
       case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
-        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+sp-off,this.y) );
+        // console.log("RIGHT bounds hit ", getNearestIntersection(x+sp-off,y) );
         bounds = false;  break;
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
-        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-sp+off) );
+        // console.log("UP bounds hit ", getNearestIntersection(x,y-sp+off) );
         bounds = false;  break;
       case ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ):
-        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+sp-off) );
+        // console.log("DOWN bounds hit ", getNearestIntersection(x,this.y+sp-off) );
         bounds = false;  break;
       default:
         // console.log('no bounds hit, keep going fwd');
@@ -165,12 +165,10 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.tryEatPill = function() {
     let data = getNearestIntersection(this.x,this.y);
     let pillType = 'not pill';
-    let r = data.row;
-    let c = data.col;
     if ( (data.char === 0) || (data.char === 'B') ) {
       pillType = data.char;
       State.myGame.updateScore(data.char);
-      State.myGame.myLevel.currentLevel[r][c] = '-';
+      State.myGame.myLevel.currentLevel[data.row][data.col] = '-';
       State.myGame.ghosts[2].updateDotsCounter(); // update inky
       State.myGame.ghosts[3].updateDotsCounter(); // update clyde
       if (State.myGame.myLevel.countDots() < 1) { // level complete!
@@ -226,14 +224,15 @@ function Pac(x,y,velocity,direction,moveState)  {
 
   this.initDeathSparkles = function() {
     console.log('initDeathSparkles');
+    let getRII = getRandomIntInclusive;
     this.moveState = 'dying2';
     this.deathSparklesStart = performance.now();
     for (var i = 0; i < 600; i++) {
-      let randX =  this.x + getRandomIntInclusive(-15,15);
-      let randY =  this.y + getRandomIntInclusive(-15,15);
-      let randLen =  getRandomIntInclusive(10,30);
-      let randAngle = getRandomIntInclusive(1,360);
-      let randVel = getRandomIntInclusive(2,5) / 30;
+      let randX =  this.x + getRII(-15,15);
+      let randY =  this.y + getRII(-15,15);
+      let randLen =  getRII(10,30);
+      let randAngle = getRII(1,360);
+      let randVel = getRII(2,5) / 30;
       let color = randColor('rgba');
       this.deathSparkles.push({ x:     randX,
                                 y:     randY,

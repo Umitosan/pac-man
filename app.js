@@ -198,7 +198,7 @@ $(document).ready(function() {
 
   State.pageLoadTime = performance.now();
 
-  State.canvas =  $('#canvas')[0];
+  State.canvas =  document.getElementById('canvas');
   State.ctx =  State.canvas.getContext('2d');
   State.canvas.addEventListener('keydown',keyDown,false);
   // document.getElementById("game-container").addEventListener('keydown',keyDown,false);
@@ -214,12 +214,11 @@ $(document).ready(function() {
   State.myReq = requestAnimationFrame(gameLoop);
 
   $('#start-btn').click(function() {
-    // console.log("start button clicked");
     if (State.myReq !== undefined) {  // reset game loop if already started
       cancelAnimationFrame(State.myReq);
       hardReset();
     }
-    State.canvas =  $('#canvas')[0];
+    State.canvas =  document.getElementById('canvas');
     State.ctx =  State.canvas.getContext('2d');
     clearCanvas();
     $('#score').text('0000');

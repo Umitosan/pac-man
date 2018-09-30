@@ -51,10 +51,11 @@ function randColor(type) {
   // more muted colors example
       // return ( "#" + Math.round((getRandomIntInclusive(0,99999999) + 0x77000000)).toString(16) );
   // full spectum below
+  let getRII = getRandomIntInclusive; // perf
   if (type === 'hex') {
-    return ( "#" + Math.round((getRandomIntInclusive(0,0xffffff))).toString(16) );
+    return ( "#" + Math.round((getRII(0,0xffffff))).toString(16) );
   } else if (type === 'rgba') {
-    return ( 'rgba('+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+ getRandomIntInclusive(0,255) +','+1+')' );
+    return ( 'rgba('+ getRII(0,255) +','+ getRII(0,255) +','+ getRII(0,255) +','+1+')' );
   } else {
     console.log("Not valid option for randColor()");
     return undefined;

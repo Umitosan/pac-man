@@ -22,13 +22,14 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
     this.pauseBegin = undefined;
     this.pauseElapsedTime = 0;
     this.sparkles = [];
+    let getRII = getRandomIntInclusive;
     for (let i = 0; i < this.quantity; i++) {
       let color;
-      let randX =  this.startX + getRandomIntInclusive(-15,15);
-      let randY =  this.startY + getRandomIntInclusive(-15,15);
-      let randLen =  getRandomIntInclusive(10,30);
-      let randAngle = getRandomIntInclusive(1,360);
-      let randVel = getRandomIntInclusive(2,5) / 30;
+      let randX =  this.startX + getRII(-15,15);
+      let randY =  this.startY + getRII(-15,15);
+      let randLen =  getRII(10,30);
+      let randAngle = getRII(1,360);
+      let randVel = getRII(2,5) / 30;
       if (this.color === 'rand') {
         color = randColor('rgba');
       } else {
@@ -59,18 +60,16 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
   };
 
   this.draw = function() {
-    // console.log('drawing spark');
     if (this.complete === false) {
-        let sp = this.sparkles;
-        for (let i = 0; i < sp.length; i++) {
+        for (let i = 0; i < this.sparkles.length; i++) {
           ctx.lineWidth = getRandomIntInclusive(1,12);
-          ctx.strokeStyle = sp[i].color;
+          ctx.strokeStyle = this.sparkles[i].color;
           // ctx.strokeStyle = Colors.pacYellow;
           // ctx.strokeStyle = randColor('rgba'); // full random color madness
-          let x = sp[i].x;
-          let y = sp[i].y;
-          let angle = sp[i].angle;
-          let len = sp[i].len;
+          let x = this.sparkles[i].x;
+          let y = this.sparkles[i].y;
+          let angle = this.sparkles[i].angle;
+          let len = this.sparkles[i].len;
           // single ray
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -131,11 +130,13 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
     this.pauseElapsedTime = 0;
     this.lines = [];
 
+    let getRII = getRandomIntInclusive; // perf
+
     for (var i = 0; i < this.quantity; i++) {
-      let randX = getRandomIntInclusive(-this.xRange,this.xRange);
-      let randY = getRandomIntInclusive(-this.yRange,this.yRange);
-      let randW = getRandomIntInclusive(20,this.maxWidth);
-      let randH = getRandomIntInclusive(2,this.maxHeight);
+      let randX = getRII(-this.xRange,this.xRange);
+      let randY = getRII(-this.yRange,this.yRange);
+      let randW = getRII(20,this.maxWidth);
+      let randH = getRII(2,this.maxHeight);
       let randHcoef = randSign();
       let col;
       if (this.color === 'rand') {
@@ -240,12 +241,13 @@ function PhaseAnim2(ctx,x,y,quant,color='rand') {
   };
 
   this.addLine = function() {
-    let randX = getRandomIntInclusive(-this.xRange,this.xRange) + this.startX;
-    let randY = getRandomIntInclusive(-this.yRange,this.yRange) + this.startY;
-    let randW = getRandomIntInclusive(20,this.maxWidth);
-    let randH = getRandomIntInclusive(2,this.maxHeight);
+    let getRII = getRandomIntInclusive;
+    let randX = getRII(-this.xRange,this.xRange) + this.startX;
+    let randY = getRII(-this.yRange,this.yRange) + this.startY;
+    let randW = getRII(20,this.maxWidth);
+    let randH = getRII(2,this.maxHeight);
     let randHcoef = randSign();
-    let randVel = getRandomIntInclusive(1,3);
+    let randVel = getRII(1,3);
     if (randX <= this.startX) { // if left of entity move left, else right
       randVel *= -1;
     }
@@ -255,14 +257,14 @@ function PhaseAnim2(ctx,x,y,quant,color='rand') {
     } else {
       col = this.color;
     }
-    this.lines.push({ x: randX,
-                      y: randY,
-                      width: randW,
+    this.lines.push({ x:      randX,
+                      y:      randY,
+                      width:  randW,
                       height: randH,
-                      color: col,
-                      hCoef: randHcoef,
-                      vel: randVel
-                      });
+                      color:  col,
+                      hCoef:  randHcoef,
+                      vel:    randVel
+                    });
   };
 
   this.pauseIt = function() {
