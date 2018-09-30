@@ -49,6 +49,8 @@ function Game(updateDur) {
   this.gameover = false;
   this.levelTransition = false;
 
+  this.myFruit = undefined;
+
   this.init = function() {
     let spacing = State.gridSpacing;
     // Pac(x,y,velocity,width,direction,moveState)
@@ -107,6 +109,8 @@ function Game(updateDur) {
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].init();
     }
+    this.myFruit = new FruitGroup();
+    this.myFruit.init();
     this.pausedTxt = new TxtBox(/* x     */ spacing*15-10,
                                 /* y     */ spacing*19-10,
                                 /* msg   */ 'PAUSED',
@@ -430,6 +434,7 @@ function Game(updateDur) {
       }
     }
     if (this.currentTxt.show === true) this.currentTxt.draw();
+    this.myFruit.draw();
   };
 
   this.update = function() {
