@@ -38,11 +38,20 @@ function FruitGroup() {
 }
 
 
-// 🍒 Cherry: 100 points.
-// 🍓 Strawberry: 300 points
-// 🍊 Orange: 500 points
-// 🍎 Apple: 700 points
-// 🍈 Melon: 1000 points
-// PM Galaxian Galaxian Boss: 2000 points
-// 🔔 Bell: 3000 points
-// 🔑 Key: 5000 points
+/*  NOTES
+
+🍒 Cherry: 100 points.
+🍓 Strawberry: 300 points
+🍊 Orange: 500 points
+🍎 Apple: 700 points
+🍈 Melon: 1000 points
+PM Galaxian Galaxian Boss: 2000 points
+🔔 Bell: 3000 points
+🔑 Key: 5000 points
+
+ - two pieces of fruit which appear during each level near the middle of the maze.
+ - The first fruit appears when Pac-Man has eaten 70 of the dots in the maze, and the
+      - second when 170 have been eaten.
+
+
+*/
