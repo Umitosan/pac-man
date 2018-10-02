@@ -63,7 +63,7 @@ function Game(updateDur) {
     // init ghosts
     this.myPac.init();
     this.updateLives();
-    this.updateFruitList();
+    this.updateFruitBar();
     this.myLevel = new Level(3); // Level(drawMode)
     this.myLevel.loadLvl('lvl1');
     // this.myLevel.loadLvl('test1'); // for testing lvl completion
@@ -166,9 +166,9 @@ function Game(updateDur) {
     }
     this.myPac.lastMoveState = this.myPac.moveState;
     this.myPac.moveState = 'lvlchange';
-    // let pdAnim = new PhaseAnim(State.ctx,this.myPac.x,this.myPac.y,6,Colors.pacYellow);
-    let pdAnim = new PhaseAnim2(State.ctx,this.myPac.x,this.myPac.y,8,Colors.pacYellow);
+    let pdAnim = new PhaseAnim2(State.ctx,this.myPac.x,this.myPac.y,8,3000,Colors.pacYellow);
     pdAnim.init();
+    pdAnim.startIt();
     this.animList.push(pdAnim);
     for (let i = 0; i < this.ghosts.length; i++) {
       let g = this.ghosts[i];
@@ -178,9 +178,9 @@ function Game(updateDur) {
       } else {
         col = g.bodyColor;
       }
-      // let ghostAnim = new PhaseAnim(State.ctx,g.x,g.y,6,col);
-      let ghostAnim = new PhaseAnim2(State.ctx,g.x,g.y,8,col);
+      let ghostAnim = new PhaseAnim2(State.ctx,g.x,g.y,8,3000,col);
       ghostAnim.init();
+      ghostAnim.startIt();
       this.animList.push(ghostAnim);
     }
     this.currentTxt.off();
@@ -195,9 +195,12 @@ function Game(updateDur) {
     this.nextLvlResetStartTime = undefined;
     this.nextLvlResetElapsed = undefined;
     this.resetAllScatterVars();
-    this.animList = [];
+    for (let i = 0; i < this.animList.length; i++) {
+      this.animList[i].finishIt();
+    }
+    this.animList = [];  // delete all the anim objects
     this.myPac.softReset();
-    for (var i = 0; i < this.ghosts.length; i++) {
+    for (let i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
     }
     this.currentTxt = this.readyTxt;
@@ -238,7 +241,7 @@ function Game(updateDur) {
     }
   };
 
-  this.updateFruitList = function() {
+  this.updateFruitBar = function() {
     $( "div.bonus-row #cherry").css('background-image','url(img/cherry.png)');
   };
 
@@ -481,7 +484,7 @@ function Game(updateDur) {
             }
           }
 
-          // animations
+          // animations (pause and not paused)
           if (this.animList.length > 0) {
             for (let i = 0; i < this.animList.length; i++) {
               this.animList[i].update();
@@ -500,7 +503,12 @@ function Game(updateDur) {
           this.updatePlayTime();
           this.checkScatterChaseTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {
-      // chill
+          // animations (pause and not paused)
+          if (this.animList.length > 0) {
+            for (let i = 0; i < this.animList.length; i++) {
+              this.animList[i].update();
+            }
+          }
     } else if (this.gameover) {
       // chill
     } else {

@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-function SparkAnim(ctx,x,y,quant,color='rand') {
+function SparkAnim(ctx,x,y,quant,tDur,color='rand') {
   this.ctx = ctx;
   this.startX = x;
   this.startY = y;
@@ -11,14 +11,13 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
   // timing
   this.complete = false;
   this.startTime = undefined;
-  this.totalDur = 3000;
+  this.totalDur = undefined;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
 
   this.init = function() {
     this.complete = false;
-    this.startTime = performance.now();
-    this.totalDur = 3000;
+    this.totalDur = tDur;
     this.pauseBegin = undefined;
     this.pauseElapsedTime = 0;
     this.sparkles = [];
@@ -43,7 +42,10 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
                             color: color
                             });
     } // for
-    // console.log('this.sparkles = ', this.sparkles);
+  };
+
+  this.startIt = function() {
+    this.startTime = performance.now();
   };
 
   this.pauseIt = function() {
@@ -54,9 +56,11 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
     this.pauseBegin = (performance.now() - this.pauseElapsedTime);
   };
 
-  this.finish = function() {
-    // clean up and start new funk
-    console.log('sparkAnim finished');
+  this.finishIt = function() {
+    this.startTime = undefined;
+    this.pauseBegin = undefined;
+    this.pauseElapsedTime = 0;
+    this.complete = true;
   };
 
   this.draw = function() {
@@ -80,7 +84,6 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
   };
 
   this.update = function() {
-    // console.log('updating spark');
     if (this.complete === false) {
         let sp = this.sparkles;
         if (this.pauseElapsedTime > this.totalDur) {
@@ -103,7 +106,7 @@ function SparkAnim(ctx,x,y,quant,color='rand') {
 }
 
 
-function PhaseAnim(ctx,x,y,quant,color='rand') {
+function PhaseAnim(ctx,x,y,quant,tDur,color='rand') {
   this.ctx = ctx;
   this.startX = x;
   this.startY = y;
@@ -118,14 +121,13 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
   // timing
   this.complete = false;
   this.startTime = undefined;
-  this.totalDur = 3000;
+  this.totalDur = undefined;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
 
   this.init = function() {
     this.complete = false;
-    this.startTime = performance.now();
-    this.totalDur = 3000;
+    this.totalDur = tDur;
     this.pauseBegin = undefined;
     this.pauseElapsedTime = 0;
     this.lines = [];
@@ -154,6 +156,10 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
     }
   };
 
+  this.startIt = function() {
+    this.startTime = performance.now();
+  };
+
   this.pauseIt = function() {
     this.pauseElapsedTime = (performance.now() - this.pauseBegin);
   };
@@ -162,9 +168,11 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
     this.pauseBegin = (performance.now() - this.pauseElapsedTime);
   };
 
-  this.finish = function() {
-    // clean up and start new funk
-    console.log('phaseAnim finished');
+  this.finishIt = function() {
+    this.startTime = undefined;
+    this.pauseBegin = undefined;
+    this.pauseElapsedTime = 0;
+    this.complete = true;
   };
 
   this.draw = function() {
@@ -208,7 +216,7 @@ function PhaseAnim(ctx,x,y,quant,color='rand') {
 }
 
 
-function PhaseAnim2(ctx,x,y,quant,color='rand') {
+function PhaseAnim2(ctx,x,y,quant,tDur,color='rand') {
   this.ctx = ctx;
   this.startX = x;
   this.startY = y;
@@ -222,15 +230,14 @@ function PhaseAnim2(ctx,x,y,quant,color='rand') {
 
   // timing
   this.complete = false;
+  this.paused = false;
   this.startTime = undefined;
-  this.totalDur = 3000;
+  this.totalDur = tDur;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
 
   this.init = function() {
     this.complete = false;
-    this.startTime = performance.now();
-    this.totalDur = 3000;
     this.pauseBegin = undefined;
     this.pauseElapsedTime = 0;
     this.lines = [];
@@ -267,17 +274,30 @@ function PhaseAnim2(ctx,x,y,quant,color='rand') {
                     });
   };
 
+  this.startIt = function() {
+    this.startTime = performance.now();
+    this.complete = false;
+    this.paused = false;
+  };
+
   this.pauseIt = function() {
-    this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+    this.paused = true;
+    this.pauseBegin = performance.now();
   };
 
   this.unpauseIt = function() {
-    this.pauseBegin = (performance.now() - this.pauseElapsedTime);
+    let dif = (this.startTime + this.pauseElepsedTime);
+    this.startTime = dif;
+    this.pauseEleapsedTime = 0;
+    this.paused = false;
+    this.pauseBegin = undefined;
   };
 
-  this.finish = function() {
-    // clean up and start new funk
-    console.log('phaseAnim finished');
+  this.finishIt = function() {
+    this.startTime = undefined;
+    this.pauseBegin = undefined;
+    this.pauseElapsedTime = 0;
+    this.complete = true;
   };
 
   this.draw = function() {
@@ -298,29 +318,27 @@ function PhaseAnim2(ctx,x,y,quant,color='rand') {
   };
 
   this.update = function() {
-    let mHeight = this.maxHeight;
+    console.log('u');
     if (this.complete === false) {
-      for (let i = 0; i < this.lines.length; i++) {
-        let line = this.lines[i];
-        // if (line.height > mHeight) {  // this causes the lines to flicker
-        //   line.height = mHeight;
-        //   line.hCoef *= -1;
-        //   line.height += line.hCoef;
-        // } else if (line.height < 1){
-        //   line.height = 1;
-        //   line.hCoef *= -1;
-        //   line.height += line.hCoef;
-        // } else {
-        //   line.height += line.hCoef;
-        // }
-        // line.width += 1;
-        line.x += line.vel;
-      } // for
+      // check time is done
+      if (this.paused === false) {
+          // check time is up
+          if ((performance.now() - this.startTime) > this.totalDur) {
+            this.finishIt();
+          }
+          // update all the things
+          for (let i = 0; i < this.lines.length; i++) {
+            this.lines[i].x += this.lines[i].vel;
+          }
+          if ((performance.now() % 200) <= 16.67) {  // try to add a line
+            this.addLine();
+          }
+      } else if (this.paused === true) { // update pause calc
+          this.pauseElepsedTime = (performance.now() - this.pauseBegin);
+      } else { //
+        // nothin
+      }
     } // if
-    if ((performance.now() % 200) <= 16.67) {
-      this.addLine();
-    }
-
-  };
+  }; // update
 
 }

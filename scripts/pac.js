@@ -171,8 +171,15 @@ function Pac(x,y,velocity,direction,moveState)  {
       State.myGame.myLevel.currentLevel[data.row][data.col] = '-';
       State.myGame.ghosts[2].updateDotsCounter(); // update inky
       State.myGame.ghosts[3].updateDotsCounter(); // update clyde
-      if (State.myGame.myLevel.countDots() < 1) { // level complete!
+      let dotsTotal = State.myGame.myLevel.countDots();
+      if (dotsTotal < 1) { // level complete!
         State.myGame.levelCompleteInit(); // prepare for the next level
+      } else if (dotsTotal === 70) {  // first fruit appears
+        State.myGame.myFruit.start();
+      } else if (dotsTotal === 170) {  // second fruit appears
+        State.myGame.myFruit.start();
+      } else {
+        // nottin
       }
     }
     return pillType;

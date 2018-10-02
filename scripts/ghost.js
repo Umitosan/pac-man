@@ -1002,84 +1002,88 @@ function getGhostChangeTarget(ghostName) {
 
 
 
+/*
+ GHOSTS
+ GHOSTS
+ GHOSTS
 
-// GHOSTS
-// GHOSTS
-// GHOSTS
-//
-// some info here https://www.youtube.com/watch?v=l7-SHTktjJc
-//
-// more here https://www.gamasutra.com/view/feature/3938/the_pacman_dossier.php?print=1
-//
-// best info here http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
-//
-// CHARACTER  /  NICKNAME
-// SHADOW aka "BLINKY" - RED - goes straight for PacMan always
-//                           - he gets slightly faster over time (per level?) known as "Cruise Elroy"
-//                           - this is based directly on number of dots eaten (depends on lvl playing)
-//                           - stops being cruise elroy when pac dies
-//
-// SPEEDY aka "PINKY" - PINK - starts in ghost house but exits right away
-//                           - japanese word for him translates to 'chaser'
-//                           - he tries to land on the tile 2 tiles from pacman like and ambush
-//                           - old glitch: if pac facing up... tries to land on tile 4 in front and 4 to the left of pac
-//
-// BASHFUL aka "INKY" - AUQA  - stays in ghost house until pac man eats 30 small dots
-//                            - determined by 2 things: Pac facing direction AND blinky's vector
-//                            - targets tile 2 ahead of pacman and doubling the distance Blinky is away from it
-//                            - draw a vector from Blinky to 2 tiles ahead of pac... then double that distance is same direction
-//                            - also glitched... if pac facing up target tile is 2 ahead of pac and 2 to the left
-//                            - Japanese name is "kimagure" - 'fickle'
-//
-// POKEY aka "CLYDE" -  YELLOW - movments based on distance to PacMan
-//                             - leaves base after 1/3 of dots eaten (244/3 ~= 83)
-//                             - when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
-//                             - when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen
-//                             - Japanese name "otoboke" - 'feining ignorance'
-//
-// EVERY GHOST - has 3 MODES    1. Chase - normal as described above
-//                              2. Scatter - after a few seconds of gameplay depending on current level, they 'scatter' to a different corner of the map
-//                                         - BLINKY - top right
-//                                         - PINKY - top left
-//                                         - INKY - bottom right
-//                                         - CLYDE - bottom left
-//                                         - they enter the scatter mode a max of 4 TIMES per pac life or lvl
-//                                         - if scatter is done.. they will CHASE forever
-//                                3. Freighten - all turn blue and run away (aka 'flee')
-//                                             - all reverse direction
-//                                             - at corner psuedo random direction is chosen
-//                                             -
-//                                             -
-// SCATTER MODE:
-//  - when game starts scatter is ON
-//  - Ghosts alternate between scatter and chase modes on timers
-//  - All ghosts ghosts simultaneously reverse direction
-//  - Scatter modes happen 4 times per level before the ghosts stay in chase mode indefinitely.
-//  - scatter timer reset after Pac Dies
-//       Scatter for 7 seconds, then Chase for 20 seconds.
-//       Scatter for 7 seconds, then Chase for 20 seconds.
-//       Scatter for 5 seconds, then Chase for 20 seconds.
-//       Scatter for 5 seconds, then switch to Chase mode permanently.
-//
-//
-// FRIGHTENED MODE:  (aka 'flee')
-//  - Ghosts turn blue for length of time depending on lvl.
-//  - ghosts reverse direciton when mode starts
-//  - ghosts move slower
-//  - ghosts move in psudo random direciton after
-//      - every ghost life and level they choose a random direction to use when fightened
-//      - if a wall blocks this random seeded direction then they look for an alternate dir in this order:
-//          up, left, down, right  until one works
-//
-//
-//
-//  there are some SAFE ZONES in some levels where pac and go and never be attacked
-//
-//  PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
-//
-//  Ghosts MOVE SLOWER in tunnel
-//
-//  level start - INKY-PINKY-CLYDE are in the ghost house at the beginning - two side facing up and PINKY facing down
-//              - only BLINKY is outside and facing left
-//              - READY! in the middle of the screen
-//
+ some info here https:www.youtube.com/watch?v=l7-SHTktjJc
+
+ more here https:www.gamasutra.com/view/feature/3938/the_pacman_dossier.php?print=1
+
+ best info here http:gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
+
+ CHARACTER  /  NICKNAME
+ SHADOW aka "BLINKY" - RED - goes straight for PacMan always
+                           - he gets slightly faster over time (per level?) known as "Cruise Elroy"
+                           - this is based directly on number of dots eaten (depends on lvl playing)
+                           - stops being cruise elroy when pac dies
+                           - his speed increases by 5% and his behavior in Scatter mode changes.
+                            Even though Blinky’s targeting method is very simple, he does have one idiosyncrasy that the other ghosts do not; at two defined points in each level (based on the number of dots remaining), his speed increases by 5% and his behavior in Scatter mode changes. The timing of the speed change varies based on the level, with the change occurring earlier and earlier as the player progresses. The change to Scatter targeting is perhaps more significant than the speed increases, since it causes Blinky’s target tile to remain as Pac-Man’s position even while in Scatter mode, instead of his regular fixed tile in the upper-right corner. This effectively keeps Blinky in Chase mode permanently, though he will still be forced to reverse direction as a result of a mode switch. When in this enhanced state, Blinky is generally referred to as “Cruise Elroy”, though the origin of this term seems to be unknown. Not even the almighty Pac-Man Dossier has an answer here. If Pac-Man dies while Blinky is in Cruise Elroy mode, he reverts back to normal behavior temporarily, but returns to Elroy mode as soon as all other ghosts have exited the ghost house.
+
+ SPEEDY aka "PINKY" - PINK - starts in ghost house but exits right away
+                           - japanese word for him translates to 'chaser'
+                           - he tries to land on the tile 2 tiles from pacman like and ambush
+                           - old glitch: if pac facing up... tries to land on tile 4 in front and 4 to the left of pac
+
+ BASHFUL aka "INKY" - AUQA  - stays in ghost house until pac man eats 30 small dots
+                            - determined by 2 things: Pac facing direction AND blinky's vector
+                            - targets tile 2 ahead of pacman and doubling the distance Blinky is away from it
+                            - draw a vector from Blinky to 2 tiles ahead of pac... then double that distance is same direction
+                            - also glitched... if pac facing up target tile is 2 ahead of pac and 2 to the left
+                            - Japanese name is "kimagure" - 'fickle'
+
+ POKEY aka "CLYDE" -  YELLOW - movments based on distance to PacMan
+                             - leaves base after 1/3 of dots eaten (244/3 ~= 83)
+                             - when 8 tiles or less away from BLINKY.. he moves like BLINKY (moves straight for pacman)
+                             - when within 8 tiles of PACMAN.. he flees to the bottom left portion of screen
+                             - Japanese name "otoboke" - 'feining ignorance'
+
+ EVERY GHOST - has 3 MODES    1. Chase - normal as described above
+                              2. Scatter - after a few seconds of gameplay depending on current level, they 'scatter' to a different corner of the map
+                                         - BLINKY - top right
+                                         - PINKY - top left
+                                         - INKY - bottom right
+                                         - CLYDE - bottom left
+                                         - they enter the scatter mode a max of 4 TIMES per pac life or lvl
+                                         - if scatter is done.. they will CHASE forever
+                                3. Freighten - all turn blue and run away (aka 'flee')
+                                             - all reverse direction
+                                             - at corner psuedo random direction is chosen
+                                             -
+                                             -
+ SCATTER MODE:
+  - when game starts scatter is ON
+  - Ghosts alternate between scatter and chase modes on timers
+  - All ghosts ghosts simultaneously reverse direction
+  - Scatter modes happen 4 times per level before the ghosts stay in chase mode indefinitely.
+  - scatter timer reset after Pac Dies
+       Scatter for 7 seconds, then Chase for 20 seconds.
+       Scatter for 7 seconds, then Chase for 20 seconds.
+       Scatter for 5 seconds, then Chase for 20 seconds.
+       Scatter for 5 seconds, then switch to Chase mode permanently.
+
+
+ FRIGHTENED MODE:  (aka 'flee')
+  - Ghosts turn blue for length of time depending on lvl.
+  - ghosts reverse direciton when mode starts
+  - ghosts move slower
+  - ghosts move in psudo random direciton after
+      - every ghost life and level they choose a random direction to use when fightened
+      - if a wall blocks this random seeded direction then they look for an alternate dir in this order:
+          up, left, down, right  until one works
+
+
+
+  there are some SAFE ZONES in some levels where pac and go and never be attacked
+
+  PACMAN always turns corners INSTANTLY vs GHOSTS which pause for just a moment at each intersection
+
+  Ghosts MOVE SLOWER in tunnel
+
+  level start - INKY-PINKY-CLYDE are in the ghost house at the beginning - two side facing up and PINKY facing down
+              - only BLINKY is outside and facing left
+              - READY! in the middle of the screen
+
+
+*/
