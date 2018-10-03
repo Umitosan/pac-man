@@ -442,9 +442,7 @@ function Game(updateDur) {
       }
     }
     if (this.currentTxt.show === true) this.currentTxt.draw();
-    if (this.myFruit.show) {
-      this.myFruit.draw();
-    }
+    this.myFruit.draw();
   };
 
   this.update = function() {
@@ -501,11 +499,7 @@ function Game(updateDur) {
               this.nextLvlResetElapsed = (performance.now() - this.nextLvlResetStartTime);
             }
           }
-
-          // update fruit bonus
-          if (this.myFruit.show) {
-            this.myFruit.update();
-          }
+          this.myFruit.update();
           this.updatePlayTime();
           this.checkScatterChaseTime();
     } else if ( (this.paused === true) && (!this.gameover) ) {

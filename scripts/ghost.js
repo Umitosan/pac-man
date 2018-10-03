@@ -623,7 +623,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                                   /* msg   */ msg,
                                   /* color */ Colors.ghostAqua,
                                   /* dur   */ 2000,
-                                  /* font  */ '18px joystix'
+                                  /* font  */ '20px joystix'
     );
     this.eatenTxtBox.startTimer();
     State.myGame.pauseAllChars(500);
@@ -675,12 +675,11 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.moveGhost = function() {
     let edgeGap = 10;
-    let canvas = State.canvas;
     if ( (this.direction === 'left') || (this.direction === 'right') ) {
-      if ((this.x+this.vel) > (canvas.width-edgeGap)) {  // handle the TUNNEL
+      if ((this.x+this.vel) > (State.canvas.width-edgeGap)) {  // handle the TUNNEL
         this.x = edgeGap*2;
       } else if ((this.x+this.vel) < edgeGap) {
-        this.x = canvas.width-(edgeGap*2);
+        this.x = State.canvas.width-(edgeGap*2);
       } else {
         this.x += this.vel;
       }

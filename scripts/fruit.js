@@ -8,6 +8,7 @@ function FruitGroup() {
   this.dHeight = undefined;
   this.img = undefined;
   this.show = false;
+  this.eaten = false;
   this.eatenTxtBox = undefined;
   this.pointsList = { 'cherry':     100,
                       'strawberry': 300,
@@ -21,27 +22,29 @@ function FruitGroup() {
 
   // timing
   this.startTime = undefined;
-  this.totalDur = 3000;
+  this.totalDur = 6000;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
 
   this.init = function(someSrc) {
     let spacing = State.gridSpacing;
     let someImg = new Image();
+    this.eaten = false;
     someImg.src = someSrc;
     this.img = someImg;
     this.dx = (spacing*13)+(spacing/2);
     this.dy = (spacing*17);
     this.dWidth = spacing*2;
     this.dHeight = spacing*2;
-    let msg = ''+ '1' +'00';
-    this.eatenTxtBox = new TxtBox(/* x     */ this.x,
-                                  /* y     */ this.y+4,
-                                  /* msg   */ msg,
-                                  /* color */ Colors.ghostAqua,
-                                  /* dur   */ 2000,
-                                  /* font  */ '18px joystix'
-    );
+    let x = this.dx+25;
+    let y = this.dy+25+5;
+    this.eatenTxtBox =  new TxtBox(/* x     */ x,
+                                   /* y     */ y,
+                                   /* msg   */ '100',
+                                   /* color */ Colors.ghostAqua,
+                                   /* dur   */ 4000,
+                                   /* font  */ '20px joystix'
+                                 );
   };
 
   this.start = function() {
@@ -59,8 +62,14 @@ function FruitGroup() {
   };
 
   this.finish = function() {
+    console.log('fruit duration complete');
     this.pauseBegin = undefined;
+    this.startTime = undefined;
+    this.pauseElapsedTime = 0;
     this.show = false;
+    if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
+      this.eatenTxtBox.startTimer();
+    }
   };
 
   this.draw = function() {
@@ -84,20 +93,38 @@ function FruitGroup() {
       // ctx.rect(this.dx,this.dy,this.dWidth,this.dHeight); // x y width height
       // ctx.stroke();
     } // end if
+    if (this.eatenTxtBox.show === true) {
+      this.eatenTxtBox.draw();
+    }
   };
 
   this.update = function() {
-    if (this.pauseElapsedTime > this.totalDur) {
-      this.finish();
-    } else {
-      this.pauseElapsedTime = (performance.now() - this.pauseBegin);
-    }
+    // timing
+    if (this.startTime !== undefined) {
+        if (this.pauseBegin !== undefined) {  // paused so check pause stuff
+            if (this.pauseElapsedTime > this.totalDur) {
+              this.finish();
+            } else {
+              this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+            }
+        } else { // not paused so udpate duration passed
+          if ( (performance.now() - this.startTime + this.pauseElapsedTime) > this.totalDur ) {
+            this.finish();
+          }
+        } // if
+    } // if
+
     // check pac hit Fruit
     // console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
     // console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
     if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
       // pac eats fruit
+      this.eaten = true;
       this.finish();
+    }
+    // update eaten text
+    if (this.eatenTxtBox.show === true) {
+      this.eatenTxtBox.update();
     }
   };
 
