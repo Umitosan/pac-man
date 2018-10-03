@@ -174,9 +174,9 @@ function Pac(x,y,velocity,direction,moveState)  {
       let dotsTotal = State.myGame.myLevel.countDots();
       if (dotsTotal < 1) { // level complete!
         State.myGame.levelCompleteInit(); // prepare for the next level
-      } else if (dotsTotal === 70) {  // first fruit appears
+      } else if (dotsTotal === (244-2)) {  // (244-70) first fruit appears
         State.myGame.myFruit.start();
-      } else if (dotsTotal === 170) {  // second fruit appears
+      } else if (dotsTotal === (244-40)) {  // (244-170) second fruit appears
         State.myGame.myFruit.start();
       } else {
         // nottin

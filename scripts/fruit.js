@@ -4,8 +4,11 @@
 function FruitGroup() {
   this.dx = undefined;
   this.dy = undefined;
+  this.dWidth = undefined;
+  this.dHeight = undefined;
   this.img = undefined;
   this.show = false;
+  this.eatenTxtBox = undefined;
   this.pointsList = { 'cherry':     100,
                       'strawberry': 300,
                       'orange':     500,
@@ -28,11 +31,23 @@ function FruitGroup() {
     someImg.src = someSrc;
     this.img = someImg;
     this.dx = (spacing*13)+(spacing/2);
-    this.dy = (spacing*17)+2;
+    this.dy = (spacing*17);
+    this.dWidth = spacing*2;
+    this.dHeight = spacing*2;
+    let msg = ''+ '1' +'00';
+    this.eatenTxtBox = new TxtBox(/* x     */ this.x,
+                                  /* y     */ this.y+4,
+                                  /* msg   */ msg,
+                                  /* color */ Colors.ghostAqua,
+                                  /* dur   */ 2000,
+                                  /* font  */ '18px joystix'
+    );
   };
 
   this.start = function() {
+    console.log('start happened');
     this.startTime = performance.now();
+    this.show = true;
   };
 
   this.pauseIt = function() {
@@ -54,12 +69,20 @@ function FruitGroup() {
       let spacing = State.gridSpacing;
       // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
       // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
-      ctx.drawImage(  /*image*/   this.img,
-                      /* dx */    this.dx,
-                      /* dy */    this.dy,
-                      /*dWidth*/  spacing*2-6,
-                      /*dHidth*/  spacing*2-6
+      ctx.drawImage(  /*image*/    this.img,
+                      /* dx */     this.dx,
+                      /* dy */     this.dy,
+                      /*dWidth*/   this.dWidth,
+                      /*dHeidth*/  this.dHeight
       );
+      // placeholder box
+      // ctx.beginPath();
+      // ctx.strokeStyle = 'white';
+      // ctx.strokeWidth = 1;
+      // ctx.fillStyle = 'black';
+      // ctx.rect(this.dx+25,this.dy+25,5,5); // x y width height
+      // ctx.rect(this.dx,this.dy,this.dWidth,this.dHeight); // x y width height
+      // ctx.stroke();
     } // end if
   };
 
@@ -68,6 +91,13 @@ function FruitGroup() {
       this.finish();
     } else {
       this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+    }
+    // check pac hit Fruit
+    // console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
+    // console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
+    if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
+      // pac eats fruit
+      this.finish();
     }
   };
 
