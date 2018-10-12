@@ -256,19 +256,19 @@ function Game(updateDur) {
     $('#clock').text( (Math.floor(State.playTime / 1000)) );
   };
 
-  this.updateScore = function(lvlChar) {
+  this.updateScore = function(lvlChar,fruitScore=0) {
     if (lvlChar === 0) {
       this.score += 10;
-      $('#score').text(this.score);
     } else if (lvlChar === 'B') {
       this.score += 50;
-      $('#score').text(this.score);
     } else if (lvlChar === 'G') { // ghost eaten
       this.score += Math.pow(2,this.bigPillGhostsEaten)*100;
-      $('#score').text(this.score);
+    } else if (lvlChar === 'F') { // fruit eaten
+      this.score += fruitScore;
     } else {
       console.log('updateScore problems, char is = ', lvlChar);
     }
+    $('#score').text(this.score);
   };
 
   this.startGhostFleeState = function() {  // pac initiates this when he eats a big pill, @(pac.update)

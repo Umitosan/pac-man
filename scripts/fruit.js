@@ -42,7 +42,7 @@ function FruitGroup() {
                                    /* y     */ y,
                                    /* msg   */ '100',
                                    /* color */ Colors.ghostAqua,
-                                   /* dur   */ 4000,
+                                   /* dur   */ 7000,
                                    /* font  */ '20px joystix'
                                  );
   };
@@ -61,6 +61,16 @@ function FruitGroup() {
     this.pauseBegin = (performance.now() - this.pauseElapsedTime);
   };
 
+  this.checkPacCollision = function() {
+    // console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
+    // console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
+    if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
+      // pac eats fruit
+      this.eaten = true;
+      this.finish();
+    }
+  };
+
   this.finish = function() {
     console.log('fruit duration complete');
     this.pauseBegin = undefined;
@@ -70,6 +80,8 @@ function FruitGroup() {
     if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
       this.eatenTxtBox.startTimer();
     }
+    // update score
+    State.myGame.updateScore("F",this.pointsList.cherry);
   };
 
   this.draw = function() {
@@ -113,15 +125,7 @@ function FruitGroup() {
           }
         } // if
     } // if
-
-    // check pac hit Fruit
-    // console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
-    // console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
-    if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
-      // pac eats fruit
-      this.eaten = true;
-      this.finish();
-    }
+    this.checkPacCollision();
     // update eaten text
     if (this.eatenTxtBox.show === true) {
       this.eatenTxtBox.update();

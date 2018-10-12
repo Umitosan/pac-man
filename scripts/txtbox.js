@@ -41,7 +41,7 @@ function TxtBox(x,y,msg,color,dur,font) {
     // console.log('txt up');
     if ((this.durTotal - (performance.now() - this.startTime)) < 0) {
       this.finishTimer();
-      console.log('text finish timer');
+      // console.log('text finish timer');
     }
   };
 } // TxtBox
