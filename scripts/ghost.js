@@ -627,6 +627,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     );
     this.eatenTxtBox.startTimer();
     State.myGame.pauseAllChars(500);
+    State.myGame.sounds.ghost.play();
   };
 
   this.updateSprite = function(dir) {

@@ -34,6 +34,9 @@ function Pac(x,y,velocity,direction,moveState)  {
   this.timedPauseBegin = null;
   this.timedPauseDur = 0;
 
+  // sounds
+  this.runSoundOn = false;
+
   this.init = function() {
     this.timedPause(2000);
   }; // init
@@ -57,6 +60,8 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.lastMoveState = 'tpaused';
     State.lastDirKey = 'none';
     this.moveState = 'stop';
+    this.runSoundOn = false;
+    State.myGame.sounds.dots.pause();
     this.timedPause(2000);
   };
 
@@ -138,6 +143,10 @@ function Pac(x,y,velocity,direction,moveState)  {
       this.y += this.vel;
     } else {
       console.log(' move pac problems ');
+    }
+    if (this.runSoundOn === false) { // turn the waka waka on if pac just now starting to move
+      this.runSoundOn = true;
+      State.myGame.sounds.dots.play();
     }
   }; //move
 

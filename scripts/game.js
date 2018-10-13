@@ -51,6 +51,9 @@ function Game(updateDur) {
 
   this.myFruit = undefined;
 
+  // sounds
+  this.sounds = undefined;
+
   this.init = function() {
     let spacing = State.gridSpacing;
     // Pac(x,y,velocity,width,direction,moveState)
@@ -67,6 +70,21 @@ function Game(updateDur) {
     this.myLevel = new Level(3); // Level(drawMode)
     this.myLevel.loadLvl('lvl1');
     // this.myLevel.loadLvl('test1'); // for testing lvl completion
+    let s1 = new Sound('sounds/life_up.mp3',0.5);
+    let s2 = new Sound('sounds/interm.mp3',0.5);
+    let s3 = new Sound('sounds/lvl_start.mp3',0.4);
+    let s4 = new Sound('sounds/pac_death.mp3',0.5);
+    let s5 = new Sound('sounds/eat_fruit.mp3',0.5);
+    let s6 = new Sound('sounds/eat_ghost.mp3',0.8);
+    let s7 = new Sound('sounds/eat_dots.mp3',0.3,true); // Sound(src,vol,loopit=false)
+    this.sounds = { 'life':   s1,
+                    'interm': s2,
+                    'lvl':    s3,
+                    'death':  s4,
+                    'fruit':  s5,
+                    'ghost':  s6,
+                    'dots':   s7
+                  };
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",
@@ -144,6 +162,7 @@ function Game(updateDur) {
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
     this.levelStartTime = performance.now();
+    this.sounds.lvl.play();
   }; // init
 
   this.newLifeReset = function() {
@@ -390,6 +409,7 @@ function Game(updateDur) {
         this.animList[i].pauseIt();
       }
     }
+    this.pauseAllSounds();
   };
 
   this.unpauseIt = function() {
@@ -411,6 +431,13 @@ function Game(updateDur) {
     this.lastUpdate = performance.now();
     State.playTimeMarker = performance.now();
     this.timeGap = 0;
+    if (this.myPac.runSoundOn) { State.myGame.sounds.dots.play(); }
+  };
+
+  this.pauseAllSounds = function() {
+    for (var prop in this.sounds) {
+      this.sounds[prop].stop();
+    }
   };
 
   this.drawGrid = function() {

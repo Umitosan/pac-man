@@ -66,6 +66,8 @@ function hardReset() {
     bg: new Image()
   };
   State.bg.src = 'img/reference2.png';
+  // delete all sound elements
+  $('audio').each( function(e) { this.remove(); } );
 }
 
 //////////////////////////////////////////////////////////////////////////////////
