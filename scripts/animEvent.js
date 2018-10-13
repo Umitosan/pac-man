@@ -318,7 +318,6 @@ function PhaseAnim2(ctx,x,y,quant,tDur,color='rand') {
   };
 
   this.update = function() {
-    console.log('u');
     if (this.complete === false) {
       // check time is done
       if (this.paused === false) {

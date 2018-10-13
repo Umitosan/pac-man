@@ -68,8 +68,8 @@ function Game(updateDur) {
     this.updateLives();
     this.updateFruitBar();
     this.myLevel = new Level(3); // Level(drawMode)
-    this.myLevel.loadLvl('lvl1');
-    // this.myLevel.loadLvl('test1'); // for testing lvl completion
+    // this.myLevel.loadLvl('lvl1');
+    this.myLevel.loadLvl('test1'); // for testing lvl completion
     let s1 = new Sound('sounds/life_up.mp3',0.5);
     let s2 = new Sound('sounds/interm.mp3',0.5);
     let s3 = new Sound('sounds/lvl_start.mp3',0.4);
@@ -77,13 +77,15 @@ function Game(updateDur) {
     let s5 = new Sound('sounds/eat_fruit.mp3',0.5);
     let s6 = new Sound('sounds/eat_ghost.mp3',0.8);
     let s7 = new Sound('sounds/eat_dots.mp3',0.3,true); // Sound(src,vol,loopit=false)
+    let s8 = new Sound('sounds/ghost_blue.mp3',0.3); // Sound(src,vol,loopit=false)
     this.sounds = { 'life':   s1,
                     'interm': s2,
                     'lvl':    s3,
-                    'death':  s4,
+                    'pdeath': s4,
                     'fruit':  s5,
                     'ghost':  s6,
-                    'dots':   s7
+                    'dots':   s7,
+                    'gblue':  s8
                   };
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
@@ -178,6 +180,7 @@ function Game(updateDur) {
 
   this.levelCompleteInit = function() {
     console.log('level complete');
+    this.pauseAllSounds();
     for (var i = 0; i < this.ghosts.length; i++) {
       let g = this.ghosts[i];
       g.lastMoveState = g.moveState;
@@ -207,6 +210,7 @@ function Game(updateDur) {
     this.currentTxt.on();
     this.myLevel.lvlBlinkOn = true;
     this.nextLvlResetStartTime = performance.now(); // starts 3 second timer for next level
+    this.sounds.interm.play();
   };
 
   this.nextLvlReset = function() {
@@ -298,6 +302,7 @@ function Game(updateDur) {
     this.bigPillGhostsEaten = 0;
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
+    this.sounds.gblue.play();
   };
 
   this.stopGhostFleeState = function() {
@@ -308,6 +313,7 @@ function Game(updateDur) {
     this.bigPillGhostsEaten = 0;
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
+    this.sounds.gblue.stop();
   };
 
   this.checkScatterChaseTime = function() {

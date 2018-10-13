@@ -61,7 +61,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     State.lastDirKey = 'none';
     this.moveState = 'stop';
     this.runSoundOn = false;
-    State.myGame.sounds.dots.pause();
+    State.myGame.sounds.dots.stop();
     this.timedPause(2000);
   };
 
@@ -216,6 +216,8 @@ function Pac(x,y,velocity,direction,moveState)  {
     State.myGame.updateLives();
     State.myGame.scatterCount = 4; // reset the scatter counter
     console.log('pac movestate = ', this.moveState);
+    State.myGame.pauseAllSounds();
+    State.myGame.sounds.pdeath.play();
   };
 
   this.nextMouth = function() {
@@ -399,6 +401,10 @@ function Pac(x,y,velocity,direction,moveState)  {
           }
         } else {
           // lastDirKey is nothing so just sit at the intersection and wait for user input
+        }
+        if (this.runSoundOn === true) {
+          this.runSoundOn = false;
+          State.myGame.sounds.dots.stop();
         }
     } else if (mState === 'dying1') {
         if (this.deathMouthAnimFinished === false) {
