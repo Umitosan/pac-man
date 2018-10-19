@@ -71,13 +71,13 @@ function Game(updateDur) {
     // this.myLevel.loadLvl('lvl1');
     this.myLevel.loadLvl('test1'); // for testing lvl completion
     let s1 = new Sound('sounds/life_up.mp3',0.5);
-    let s2 = new Sound('sounds/interm.mp3',0.5);
+    let s2 = new Sound('sounds/interm_clean.mp3',0.4);
     let s3 = new Sound('sounds/lvl_start.mp3',0.4);
     let s4 = new Sound('sounds/pac_death.mp3',0.5);
     let s5 = new Sound('sounds/eat_fruit.mp3',0.5);
     let s6 = new Sound('sounds/eat_ghost.mp3',0.8);
-    let s7 = new Sound('sounds/eat_dots.mp3',0.3,true); // Sound(src,vol,loopit=false)
-    let s8 = new Sound('sounds/ghost_blue.mp3',0.3); // Sound(src,vol,loopit=false)
+    let s7 = new Sound('sounds/eat_dots_clean.mp3',0.2,true); // Sound(src,vol,loopit=false)
+    let s8 = new Sound('sounds/ghost_blue_clean.mp3',0.3,true); // Sound(src,vol,loopit=false)
     this.sounds = { 'life':   s1,
                     'interm': s2,
                     'lvl':    s3,
@@ -303,6 +303,7 @@ function Game(updateDur) {
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
     this.sounds.gblue.play();
+    this.sounds.dots.changeVol(0.1);
   };
 
   this.stopGhostFleeState = function() {
@@ -314,6 +315,7 @@ function Game(updateDur) {
     this.bigPillEffect = false;
     this.bigPillEffectStart = null;
     this.sounds.gblue.stop();
+    this.sounds.dots.changeVol(0.3);
   };
 
   this.checkScatterChaseTime = function() {
