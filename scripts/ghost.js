@@ -399,25 +399,45 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       if (this.inBounds('left') === true) {
         this.changeDir('left');
       } else {
+        console.log('-----');
         console.log(this.name+' tryReverse but cant go... left');
+        console.log('direction = ', this.direction);
+        console.log('x,y = '+x+","+y);
+        console.log('moveState, prevMoveState = '+this.moveState+","+this.prevMoveState);
+        console.log('-----');
       }
     } else if (dir === 'left') {
       if (this.inBounds('right') === true) {
         this.changeDir('right');
       } else {
+        console.log('-----');
         console.log(this.name+' tryReverse but cant go... right');
+        console.log('direction = ', this.direction);
+        console.log('x,y = '+x+","+y);
+        console.log('moveState, prevMoveState = '+this.moveState+","+this.prevMoveState);
+        console.log('-----');
       }
     } else if (dir === 'up') {
       if (this.inBounds('down') === true) {
         this.changeDir('down');
       } else {
+        console.log('-----');
         console.log(this.name+' tryReverse but cant go... down');
+        console.log('direction = ', this.direction);
+        console.log('x,y = '+x+","+y);
+        console.log('moveState, prevMoveState = '+this.moveState+","+this.prevMoveState);
+        console.log('-----');
       }
     } else if (dir === 'down') {
       if (this.inBounds('up') === true) {
         this.changeDir('up');
       } else {
-        console.log('tryReverse but cant go... up');
+        console.log('-----');
+        console.log(this.name+' tryReverse but cant go... up');
+        console.log('direction = ', this.direction);
+        console.log('x,y = '+x+","+y);
+        console.log('moveState, prevMoveState = '+this.moveState+","+this.prevMoveState);
+        console.log('-----');
       }
     } else {
       console.log(this.name+' reverseDir prob');
