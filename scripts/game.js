@@ -55,8 +55,10 @@ function Game(updateDur) {
 
   // sounds
   this.sounds = undefined;
+  this.soundsOn = true;
 
   this.init = function() {
+    // this.soundsOn = false; // debugging
     let spacing = State.gridSpacing;
     // Pac(x,y,velocity,width,direction,moveState)
     this.myPac = new Pac( /* x */             (14*spacing)+(spacing/2),
@@ -92,6 +94,11 @@ function Game(updateDur) {
                     'dots':   s7,
                     'gblue':  s8
                   };
+    if (this.soundsOn === false) {  // for debug perposes
+      for (let i in this.sounds) {
+        this.sounds[i].changeVol(0);
+      }
+    }
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
                                 /* name  */  "blinky",

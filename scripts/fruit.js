@@ -79,6 +79,8 @@ function FruitGroup() {
     this.show = false;
     if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
       this.eatenTxtBox.startTimer();
+      this.eaten = false;
+      State.myGame.pauseIt();
     }
     // update score
     State.myGame.updateScore("F",this.pointsList.cherry);
