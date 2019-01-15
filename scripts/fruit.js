@@ -22,7 +22,7 @@ function FruitGroup() {
 
   // timing
   this.startTime = undefined;
-  this.totalDur = 6000;
+  this.totalDur = 10000;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
 
@@ -42,13 +42,13 @@ function FruitGroup() {
                                    /* y     */ y,
                                    /* msg   */ '100',
                                    /* color */ Colors.ghostAqua,
-                                   /* dur   */ 7000,
+                                   /* dur   */ 6000,
                                    /* font  */ '20px joystix'
                                  );
   };
 
-  this.start = function() {
-    console.log('start happened');
+  this.start = function() { // occurs at 70 dots eaten and 170 dots eaten // handled by myPac.tryEatPill()
+    console.log('start fruit');
     this.startTime = performance.now();
     this.show = true;
   };
@@ -80,7 +80,7 @@ function FruitGroup() {
     if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
       this.eatenTxtBox.startTimer();
       this.eaten = false;
-      State.myGame.pauseIt();
+      // State.myGame.pauseIt();
     }
     // update score
     State.myGame.updateScore("F",this.pointsList.cherry);
