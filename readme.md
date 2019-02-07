@@ -14,14 +14,22 @@ This has been and extremely fun task for me and I've learned a lot about game de
 
 * element focus / keybindings should be better, easy to lose focus
 
-## features needed
+## future features list
 
+* Add touch controls for mobile already!!!
 * Inky and Clyde should exit the ghost house faster after the first time they do (when eaten, Pac dies)
 * Blinky should speed up slightly over time? or lvl? or pills eaten?
 * Levels should change multiple elements of the game making it harder
    * the duration of ghosts fleeing when the big pills are eaten should shorten with each level until it's 0 seconds of flees
 * add fruit bonuses!
 * deep dive into JS and Canvas docs to make performance better!
+
+## Run Locally
+
+* ( requires Node )
+* clone repo: ```git clone https://github.com/Umitosan/pac-man.git```
+* start local server in your terminal: ```node server.js```
+* open http://localhost:8080/ in your browser
 
 ## Technologies
 

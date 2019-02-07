@@ -40,6 +40,8 @@ var State = {
   gridWidth: 28,
   gridHeight: 31,
   lastDirKey: 'none',
+  lastTouchStartData: undefined,
+  lastTouchEndData: undefined,
   bg: new Image()
 };
 
@@ -63,6 +65,8 @@ function hardReset() {
     gridWidth: 28,
     gridHeight: 31,
     lastDirKey: 'none',
+    lastTouchStartData: undefined,
+    lastTouchEndData: undefined,
     bg: new Image()
   };
   State.bg.src = 'img/reference2.png';
@@ -193,6 +197,73 @@ function keyDown(event) {
 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////
+// TOUCH BINDINGS
+//////////////////////////////////////////////////////////////////////////////////
+
+
+function touchstart(event) {
+  event.preventDefault();
+  // console.log('touch START');
+  // console.log('data = ', event.changedTouches[0]);
+  State.lastTouchStartData = event.changedTouches[0];
+}
+function touchend(event) {
+  event.preventDefault();
+  // console.log('touch END');
+  // console.log('data = ', event.changedTouches[0]);
+  State.lastTouchEndData = event.changedTouches[0];
+  let x1 = Math.round(State.lastTouchStartData.pageX);
+  let y1 = Math.round(State.lastTouchStartData.pageY);
+  let x2 = Math.round(State.lastTouchEndData.pageX);
+  let y2 = Math.round(State.lastTouchEndData.pageY);
+  let xDiff = x1-x2;
+  let yDiff = y1-y2;
+  // console.log("x1,y1: ["+x1+","+y1+"]  x2,y2: ["+x2+","+y2+"]");
+  // console.log("xDiff,yDiff = "+xDiff+","+yDiff);
+  if (State.myGame.paused === false) {
+    if (Math.abs(xDiff) > Math.abs(yDiff)) { // desired vector along X-Axis
+      console.log('X vector');
+      if ((x1 - x2) > 0) { // swipe left
+        if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
+          State.lastDirKey = 'left';
+          // console.log('swipe LEFT');
+        }
+      } else if ((x1 - x2) < 0) { // swipe right
+        if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
+          State.lastDirKey = 'right';
+          // console.log('swipe RIGHT');
+        }
+      } else {
+        console.log('swipe X probs');
+      }
+    } else if (Math.abs(yDiff) > Math.abs(xDiff)) { // desired vector along Y-Axis
+      console.log('Y vector');
+      if ((y1 - y2) > 0) { // swipe up
+        if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
+          State.lastDirKey = 'up';
+          // console.log('swipe UP');
+        }
+      } else if ((y1 - y2) < 0) { // swipe down
+        if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
+          State.lastDirKey = 'down';
+          // console.log('swipe DOWN');
+        }
+      } else {
+        console.log('swipe Y probs');
+      }
+    } else {
+      // touch vector to small to tell intended direction OR xDiff and yDiff are the same (diagonal?)
+      console.log('diagonal touch vector?');
+    }
+
+  }
+}
+function touchmove(event) {
+  // event.preventDefault();
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // FRONT
 //////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +274,12 @@ $(document).ready(function() {
   State.canvas =  document.getElementById('canvas');
   State.ctx =  State.canvas.getContext('2d');
   State.canvas.addEventListener('keydown',keyDown,false);
+  State.canvas.addEventListener("touchstart", touchstart, false);
+  State.canvas.addEventListener("touchend", touchend, false);
+  State.canvas.addEventListener("touchmove", touchmove, false);
+
+  // Prevent scrolling when touching the canvas
+
   // document.getElementById("game-container").addEventListener('keydown',keyDown,false);
   // document.addEventListener('keyup',keyUp,false);
 
