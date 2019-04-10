@@ -55,10 +55,8 @@ function Game(updateDur) {
 
   // sounds
   this.sounds = undefined;
-  this.soundsOn = true;
 
   this.init = function() {
-    // this.soundsOn = false; // debugging
     let spacing = State.gridSpacing;
     // Pac(x,y,velocity,width,direction,moveState)
     this.myPac = new Pac( /* x */             (14*spacing)+(spacing/2),
@@ -77,27 +75,9 @@ function Game(updateDur) {
     } else {
       this.myLevel.loadLvl('lvl1');
     }
-    let s1 = new Sound('sounds/life_up.mp3',0.5);
-    let s2 = new Sound('sounds/interm_clean.mp3',0.3);
-    let s3 = new Sound('sounds/lvl_start.mp3',0.4);
-    let s4 = new Sound('sounds/pac_death.mp3',0.5);
-    let s5 = new Sound('sounds/eat_fruit.mp3',0.5);
-    let s6 = new Sound('sounds/eat_ghost.mp3',0.6);
-    let s7 = new Sound('sounds/eat_dots_clean.mp3',0.2,true); // Sound(src,vol,loopit=false)
-    let s8 = new Sound('sounds/ghost_blue_clean.mp3',0.3,true); // Sound(src,vol,loopit=false)
-    this.sounds = { 'life':   s1,
-                    'interm': s2,
-                    'lvl':    s3,
-                    'pdeath': s4,
-                    'fruit':  s5,
-                    'ghost':  s6,
-                    'dots':   s7,
-                    'gblue':  s8
-                  };
-    if (this.soundsOn === false) {  // for debug perposes
-      for (let i in this.sounds) {
-        this.sounds[i].changeVol(0);
-      }
+    this.soundsReset();
+    if (State.soundsOn === false) {
+      this.soundsOff();
     }
     this.ghosts.push(new Ghost( /*   x   */  spacing*14+(spacing/2),
                                 /*   y   */  spacing*12,
@@ -176,8 +156,39 @@ function Game(updateDur) {
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
     this.levelStartTime = performance.now();
-    this.sounds.lvl.play();
+    console.log("State.soundsOn = ", State.soundsOn);
+    if (State.soundsOn) {
+      this.sounds.lvl.play();
+    }
   }; // init
+
+  this.soundsReset = function() {
+    let s1 = new Sound('sounds/life_up.mp3',0.5);
+    let s2 = new Sound('sounds/interm_clean.mp3',0.3);
+    let s3 = new Sound('sounds/lvl_start.mp3',0.4);
+    let s4 = new Sound('sounds/pac_death.mp3',0.5);
+    let s5 = new Sound('sounds/eat_fruit.mp3',0.5);
+    let s6 = new Sound('sounds/eat_ghost.mp3',0.6);
+    let s7 = new Sound('sounds/eat_dots_clean.mp3',0.2,true); // Sound(src,vol,loopit=false)
+    let s8 = new Sound('sounds/ghost_blue_clean.mp3',0.3,true); // Sound(src,vol,loopit=false)
+    this.sounds = { 'life':   s1,
+                    'interm': s2,
+                    'lvl':    s3,
+                    'pdeath': s4,
+                    'fruit':  s5,
+                    'ghost':  s6,
+                    'dots':   s7,
+                    'gblue':  s8
+                  };
+  };
+
+  this.soundsOff = function() {
+    console.log('turning sounds to 0');
+    for (let i in this.sounds) {
+      this.sounds[i].changeVol(0);
+      this.sounds[i].stop();
+    }
+  };
 
   this.newLifeReset = function() {
     console.log('game newLifeReset');

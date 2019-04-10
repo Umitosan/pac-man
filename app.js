@@ -42,10 +42,12 @@ var State = {
   lastDirKey: 'none',
   lastTouchStartData: undefined,
   lastTouchEndData: undefined,
-  bg: new Image()
+  bg: new Image(),
+  soundsOn: true
 };
 
 function hardReset() {
+  let soundState = State.soundsOn;
   State = {
     canvas: undefined,
     ctx: undefined,
@@ -67,8 +69,13 @@ function hardReset() {
     lastDirKey: 'none',
     lastTouchStartData: undefined,
     lastTouchEndData: undefined,
-    bg: new Image()
+    bg: new Image(),
+    soundsOn: soundState
   };
+  if (State.soundsOn) {
+    $(".sound-img-contain").removeClass("sound-off");
+    $(".sound-img-contain").addClass("sound-on");
+  }
   State.bg.src = 'img/reference2.png';
   // delete all sound elements
   $('audio').each( function(e) { this.remove(); } );
@@ -165,6 +172,20 @@ function keyDown(event) {
               }
             }
             break;
+          case 77: // M key
+            State.soundsOn = (State.soundsOn) ? false : true;
+            if (State.soundsOn) {
+              // console.log('toggle sound -> ', 'ON');
+              $(".sound-img-contain").removeClass("sound-off");
+              $(".sound-img-contain").addClass("sound-on");
+              State.myGame.soundsReset();
+            } else {
+              // console.log('toggle sound -> ', 'OFF');
+              $(".sound-img-contain").removeClass("sound-on");
+              $(".sound-img-contain").addClass("sound-off");
+              State.myGame.soundsOff();
+            }
+          break;
           case 32: // spacebar
             if (State.myGame.paused === true) {
               State.myGame.unpauseIt();
@@ -191,8 +212,8 @@ function keyDown(event) {
             console.log("key = ", code);
             break;
       }
-    } else {
-          console.log("key = ", code);
+    } else { // keys useable outside of game context
+        console.log("key = ", code);
     }
 
 }
@@ -277,6 +298,28 @@ $(document).ready(function() {
   State.canvas.addEventListener("touchstart", touchstart, false);
   State.canvas.addEventListener("touchend", touchend, false);
   State.canvas.addEventListener("touchmove", touchmove, false);
+
+  document.getElementsByClassName("sound-img-contain")[0].addEventListener("click", function() {
+    if (State.soundsOn === false) {
+      // console.log('toggle sound -> ', 'ON');
+      State.soundsOn = true;
+      $(".sound-img-contain").removeClass("sound-off");
+      $(".sound-img-contain").addClass("sound-on");
+      if (State.myGame !== undefined) {
+        State.myGame.soundsReset();
+      }
+    } else {
+      // console.log('toggle sound -> ', 'OFF');
+      State.soundsOn = false;
+      $(".sound-img-contain").removeClass("sound-on");
+      $(".sound-img-contain").addClass("sound-off");
+      if (State.myGame !== undefined) {
+        State.myGame.soundsOff();
+      }
+      // console.log('State soundsOn = ', State.soundsOn);
+    }
+  });
+
 
   // Prevent scrolling when touching the canvas
 
