@@ -325,8 +325,10 @@ function Game(updateDur) {
     this.bigPillGhostsEaten = 0;
     this.bigPillEffect = true;
     this.bigPillEffectStart = performance.now();
-    this.sounds.gblue.play();
-    this.sounds.dots.changeVol(0.1);
+    if (State.soundsOn) {
+      this.sounds.gblue.play();
+      this.sounds.dots.changeVol(0.1);
+    }
   };
 
   this.stopGhostFleeState = function() {

@@ -144,7 +144,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     } else {
       console.log(' move pac problems ');
     }
-    if (this.runSoundOn === false) { // turn the waka waka on if pac just now starting to move
+    if ( (this.runSoundOn === false) && (State.soundsOn) ) { // turn the waka waka on if pac just now starting to move
       this.runSoundOn = true;
       State.myGame.sounds.dots.play();
     }

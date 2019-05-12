@@ -26,7 +26,7 @@ This has been and extremely fun task for me and I've learned a lot about game de
 
 ## Run Locally
 
-* ( requires Node )
+* ( requires Node, and Express )
 * clone repo: ```git clone https://github.com/Umitosan/pac-man.git```
 * start local server in your terminal: ```node server.js```
 * open http://localhost:8080/ in your browser
