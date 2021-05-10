@@ -548,7 +548,7 @@ function Level(drawMode) {
     } else if (this.lvlImageSelect === 2) {
       State.ctx.putImageData(this.lvlImage2,0,0);
     } else {
-      console.log('lvlImageSelect prob');
+      if (LOGS) console.log('lvlImageSelect prob');
     }
 
   };

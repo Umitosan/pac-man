@@ -69,7 +69,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         this.bodyColor = Colors.ghostOrange;
         break;
       default:
-        console.log('didnt find ghost color');
+        if (LOGS) console.log('didnt find ghost color');
         break;
     }
     this.timedPause(2000);
@@ -99,7 +99,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else if (this.name === 'pinky') {
       this.startExitBase();
     } else {
-      console.log('ghost soft reset probs');
+      if (LOGS) console.log('ghost soft reset probs');
     }
     this.timedPause(2000);
   };
@@ -155,7 +155,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       someDir = dir3;
     } else {
       someDir = undefined;
-      console.log('ghost: tryDir prob');
+      if (LOGS) console.log('ghost: tryDir prob');
     }
     return someDir;
   };
@@ -193,7 +193,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 newDir = newDir = this.try3Dirs(this.direction,'up','down');
               }
       } else {
-        console.log('ghost: getNewDir right prob');
+        if (LOGS) console.log('ghost: getNewDir right prob');
       }
     } else if (this.direction === 'left') {
             if (Math.abs(xDif) >= Math.abs(yDif)) {
@@ -219,7 +219,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 newDir = newDir = this.try3Dirs(this.direction,'up','down');
               }
       } else {
-        console.log('ghost: getNewDir left prob');
+        if (LOGS) console.log('ghost: getNewDir left prob');
       }
     } else if (this.direction === 'up') {
       if (Math.abs(yDif) >= Math.abs(xDif)) { // ghost wants to move in Y dir
@@ -245,13 +245,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 newDir = this.try3Dirs(this.direction,'left','right');
               }
       } else {
-        console.log('ghost: getNewDir left prob');
+        if (LOGS) console.log('ghost: getNewDir left prob');
       }
     } else if (this.direction === 'down') {
       if (Math.abs(yDif) >= Math.abs(xDif)) {
               if ( (yDif < 0) && (this.inBounds(this.direction) === true) ) { // try go down if ideal
                 newDir = this.direction;
-                // console.log('ghost SAME DIR');
+                // if (LOGS) console.log('ghost SAME DIR');
               } else { // get best right or left or straight
                   if (xDif < 0) { // try right, straight, left
                       newDir = this.try3Dirs('right',this.direction,'left');
@@ -272,10 +272,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
                 newDir = this.try3Dirs(this.direction,'left','right');
               }
       } else {
-        console.log('ghost: getNewDir left prob');
+        if (LOGS) console.log('ghost: getNewDir left prob');
       }
     } else {
-      console.log('ghost: getNewDirection prob' );
+      if (LOGS) console.log('ghost: getNewDirection prob' );
     }
     return newDir;
   };
@@ -291,7 +291,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else if (newDir === 'down') {
       this.vel = Math.abs(this.vel);
     } else {
-      console.log(' changeDir problems ');
+      if (LOGS) console.log(' changeDir problems ');
     }
   };
 
@@ -306,7 +306,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else if (dir === 'down') {
       this.vel = Math.abs(newVel);
     } else {
-      console.log(' changeVel problems ');
+      if (LOGS) console.log(' changeVel problems ');
     }
   };
 
@@ -320,7 +320,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         } else if (this.inBounds('down') === true) {
           newDir = 'down';
         } else {
-          console.log('cant random any direction');
+          if (LOGS) console.log('cant random any direction');
         }
       } else if (roll === 0)  {
         if (this.inBounds('down') === true) {
@@ -328,10 +328,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         } else if (this.inBounds('up') === true) {
           newDir = 'up';
         } else {
-          console.log('cant random any direction');
+          if (LOGS) console.log('cant random any direction');
         }
       } else {
-        console.log('ghost: getRandomTurnDir UD prob');
+        if (LOGS) console.log('ghost: getRandomTurnDir UD prob');
       }
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       if (roll === 1) {
@@ -340,7 +340,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         } else if (this.inBounds('left') === true) {
           newDir = 'left';
         } else {
-          console.log('cant random any direction');
+          if (LOGS) console.log('cant random any direction');
         }
       } else if (roll === 0) {
         if (this.inBounds('left') === true) {
@@ -348,13 +348,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         } else if (this.inBounds('right') === true) {
           newDir = 'right';
         } else {
-          console.log('cant random any direction');
+          if (LOGS) console.log('cant random any direction');
         }
       } else {
-        console.log('ghost: getRandomTurnDir LR prob');
+        if (LOGS) console.log('ghost: getRandomTurnDir LR prob');
       }
     } else {
-      console.log('ghost: getRandomTurnDir prob');
+      if (LOGS) console.log('ghost: getRandomTurnDir prob');
     }
     return newDir;
   };
@@ -366,16 +366,16 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-spacing+off,this.y).char === "#") ):
-        // console.log("LEFT bounds hit ", getNearestIntersection(this.x-spacing+off,this.y) );
+        // if (LOGS) console.log("LEFT bounds hit ", getNearestIntersection(this.x-spacing+off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'right') && ( getNearestIntersection(this.x+spacing-off,this.y).char === "#") ):
-        // console.log("RIGHT bounds hit ", getNearestIntersection(this.x+spacing-off,this.y) );
+        // if (LOGS) console.log("RIGHT bounds hit ", getNearestIntersection(this.x+spacing-off,this.y) );
         bounds = false;  break;
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-spacing+off).char === "#") ):
-        // console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-spacing+off) );
+        // if (LOGS) console.log("UP bounds hit ", getNearestIntersection(this.x,this.y-spacing+off) );
         bounds = false;  break;
       case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+spacing-off).char === "#") ):
-        // console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+spacing-off) );
+        // if (LOGS) console.log("DOWN bounds hit ", getNearestIntersection(this.x,this.y+spacing-off) );
         bounds = false;  break;
       case ( (tDir === 'down') && ( getNearestIntersection(this.x,this.y+spacing-off).char === "W") && (this.moveState !== 'base') ):
         // let the ghost go into the base to reset after being eaten
@@ -399,52 +399,52 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       if (this.inBounds('left') === true) {
         this.changeDir('left');
       } else {  // edge case: right after making 90 degree turn, ghost tried to reverse direction
-        console.log(this.name+' tryReverse but cant go... left');
-        console.log('dir = ', dir);
+        if (LOGS) console.log(this.name+' tryReverse but cant go... left');
+        if (LOGS) console.log('dir = ', dir);
         // State.myGame.pauseIt();
         let newDir = this.try3Dirs('up','down','left');
         this.changeDir(newDir);
         this.hopToIn();
-        console.log(this.name+' now going '+newDir);
+        if (LOGS) console.log(this.name+' now going '+newDir);
       }
     } else if (dir === 'left') {
       if (this.inBounds('right') === true) {
         this.changeDir('right');
       } else {  // edge case: right after making 90 degree turn, ghost tried to reverse direction
-        console.log(this.name+' tryReverse but cant go... right');
-        console.log('dir = ', dir);
+        if (LOGS) console.log(this.name+' tryReverse but cant go... right');
+        if (LOGS) console.log('dir = ', dir);
         // State.myGame.pauseIt();
         let newDir = this.try3Dirs('up','down','right');
         this.changeDir(newDir);
         this.hopToIn();
-        console.log(this.name+' now going '+newDir);
+        if (LOGS) console.log(this.name+' now going '+newDir);
       }
     } else if (dir === 'up') {
       if (this.inBounds('down') === true) {
         this.changeDir('down');
       } else {  // edge case: right after making 90 degree turn, ghost tried to reverse direction
-        console.log(this.name+' tryReverse but cant go... down');
-        console.log('dir = ', dir);
+        if (LOGS) console.log(this.name+' tryReverse but cant go... down');
+        if (LOGS) console.log('dir = ', dir);
         // State.myGame.pauseIt();
         let newDir = this.try3Dirs('left','right','down');
         this.changeDir(newDir);
         this.hopToIn();
-        console.log(this.name+' now going '+newDir);
+        if (LOGS) console.log(this.name+' now going '+newDir);
       }
     } else if (dir === 'down') {
       if (this.inBounds('up') === true) {
         this.changeDir('up');
       } else {  // edge case: right after making 90 degree turn, ghost tried to reverse direction
-        console.log(this.name+' tryReverse but cant go... up');
-        console.log('dir = ', dir);
+        if (LOGS) console.log(this.name+' tryReverse but cant go... up');
+        if (LOGS) console.log('dir = ', dir);
         // State.myGame.pauseIt();
         let newDir = this.try3Dirs('left','right','up');
         this.changeDir(newDir);
         this.hopToIn();
-        console.log(this.name+' now going '+newDir);
+        if (LOGS) console.log(this.name+' now going '+newDir);
       }
     } else {
-      console.log(this.name+' reverseDir prob');
+      if (LOGS) console.log(this.name+' reverseDir prob');
     }
   };
 
@@ -470,14 +470,14 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.startBlinking = function() {
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      // console.log(this.name+' started blinking');
+      // if (LOGS) console.log(this.name+' started blinking');
       this.frameTotal = 4;
     }
   };
 
   this.stopBlinking = function() {
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      // console.log(this.name+' STOP BLINKING');
+      // if (LOGS) console.log(this.name+' STOP BLINKING');
       this.frameTotal = 2;
       this.spriteRow = 1;
       this.frame0 = 0;
@@ -487,13 +487,13 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.tryStartFlee = function() {
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      // console.log(this.name+' already fleeing, stop blining');
+      // if (LOGS) console.log(this.name+' already fleeing, stop blining');
       this.stopBlinking();
     } else if ( (this.moveState === 'chase') ||
                 ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ||
                 (this.moveState === 'scatter') ||
                 ((this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
-      // console.log(this.name+' flee started');
+      // if (LOGS) console.log(this.name+' flee started');
       this.lastMoveState = this.moveState;
       this.moveState = 'flee';
       this.tryReverseDir();
@@ -508,9 +508,9 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.stopFlee = function() {
-    // console.log(this.name+' stop flee run');
+    // if (LOGS) console.log(this.name+' stop flee run');
     if ( (this.moveState === 'flee') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'flee')) ) {
-      // console.log('ghost flee stopped');
+      // if (LOGS) console.log('ghost flee stopped');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
@@ -522,10 +522,10 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
   };
 
   this.tryStartScatter = function() {
-    // console.log(this.name + " moveState = "+ this.moveState );
-    // console.log(this.name + " lastMoveState = "+ this.lastMoveState );
+    // if (LOGS) console.log(this.name + " moveState = "+ this.moveState );
+    // if (LOGS) console.log(this.name + " lastMoveState = "+ this.lastMoveState );
      if ( (this.moveState === 'chase') || ((this.moveState === 'tpaused') && (this.lastMoveState === 'chase')) ) {
-      // console.log(this.name + ': START scatter');
+      // if (LOGS) console.log(this.name + ': START scatter');
       this.lastMoveState = this.moveState;
       this.moveState = 'scatter';
       this.tryReverseDir();
@@ -540,14 +540,14 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
   this.tryStopScatter = function() {
     if ( (this.moveState === 'scatter') || ( (this.moveState === 'tpaused') && (this.lastMoveState === 'scatter')) ) {
-      // console.log(this.name + ': STOPED scatter');
+      // if (LOGS) console.log(this.name + ': STOPED scatter');
       this.moveState = 'chase';
       this.spriteRow = 0;
       this.frameTotal = 2;
       this.changeVel(this.chaseVel);
       this.updateSprite(this.direction);
     } else {
-      // console.log(this.name + ': tried but didnt need to stop scatter');
+      // if (LOGS) console.log(this.name + ': tried but didnt need to stop scatter');
       // not ready to switch states
     }
   };
@@ -557,14 +557,14 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       if (this.name === 'inky') {
         this.dotCounter += 1;
         if (this.dotCounter === this.dotLimit) {
-          // console.log(this.name+" is now allowed to leave base");
+          // if (LOGS) console.log(this.name+" is now allowed to leave base");
           this.dotsEatenSwitch = true;
           this.startExitBase();
         }
       } else if ( (this.name === 'clyde') && (State.myGame.ghosts[2].dotsEatenSwitch === true) ) {
         this.dotCounter += 1;
         if (this.dotCounter === this.dotLimit) {
-          // console.log(this.name+" is now allowed to leave base");
+          // if (LOGS) console.log(this.name+" is now allowed to leave base");
           this.dotsEatenSwitch = true;
           this.startExitBase();
         }
@@ -575,19 +575,19 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 
 
     // if ( (State.myGame.ghosts[2].dotsEatenSwitch === false) && (curDots === (244 - State.myGame.ghosts[2].dotLimit)) ) {
-    //   console.log(State.myGame.ghosts[2].name+" is now allowed to leave base");
+    //   if (LOGS) console.log(State.myGame.ghosts[2].name+" is now allowed to leave base");
     //   State.myGame.ghosts[2].dotsEatenSwitch = true;
     //   State.myGame.ghosts[2].startExitBase();
     // }
     // if ( (State.myGame.ghosts[3].dotsEatenSwitch === false) && (curDots === (244 - State.myGame.ghosts[3].dotLimit)) ) {
-    //   console.log(State.myGame.ghosts[3].name+" is now allowed to leave base");
+    //   if (LOGS) console.log(State.myGame.ghosts[3].name+" is now allowed to leave base");
     //   State.myGame.ghosts[3].dotsEatenSwitch = true;
     //   State.myGame.ghosts[3].startExitBase();
     // }
   };
 
   this.startExitBase = function() { // after returning to base, reset state to exitbase etc
-    // console.log(this.name+" started to exit base");
+    // if (LOGS) console.log(this.name+" started to exit base");
     this.moveState = 'exitbase';
     this.changeTarget();
     this.vel = this.exitBaseVel;
@@ -668,7 +668,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.frame0 = 6;
       this.curFrame = 6;
     } else {
-      console.log('ghost updateSprite probs');
+      if (LOGS) console.log('ghost updateSprite probs');
     }
   };
 
@@ -686,7 +686,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
       this.frame0 = 7;
       this.curFrame = 7;
     } else {
-      console.log('ghost updateEyesSprite probs');
+      if (LOGS) console.log('ghost updateEyesSprite probs');
     }
   };
 
@@ -711,7 +711,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       this.y += this.vel;
     } else {
-      console.log(' move ghost problems ');
+      if (LOGS) console.log(' move ghost problems ');
     }
   }; // move
 
@@ -719,7 +719,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     let xDif = Math.abs(this.x - State.myGame.myPac.x);
     let yDif = Math.abs(this.y - State.myGame.myPac.y);
     if ( ((xDif < 20) && (yDif < 20)) ) {
-          console.log('ghost collide pac');
+          if (LOGS) console.log('ghost collide pac');
           if ( (this.moveState === 'chase') || (this.moveState === 'scatter') ) {
             State.myGame.myPac.die();
           } else if (this.moveState === 'flee') {
@@ -739,7 +739,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
     if ( (this.prevInter.row !== curInter.row) || (this.prevInter.col !== curInter.col) ) {
       isNew = true;
     }
-    // console.log('isNewInter = ', isNew);
+    // if (LOGS) console.log('isNewInter = ', isNew);
     return isNew;
   };
 
@@ -856,7 +856,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
         this.nextChillAnim();
     } else if (this.moveState === 'exitbase') {
           if (Math.abs(this.y - this.targetY) <= 4) { // only need to check the Y dir because it's going up
-              // console.log('EXIT REACHED');
+              // if (LOGS) console.log('EXIT REACHED');
               this.startChase();
           } else if ( (Math.abs(((this.x + this.vel) - this.targetX)) <= (Math.abs(this.vel)-1) ) && (this.x !== this.targetX) ) { // if close to targetX, snap to targetX
             this.x = this.targetX;
@@ -895,7 +895,7 @@ function Ghost(x,y,name,src,frame0,mvState,dir,dots,allow) {
 function getGhostChangeTarget(ghostName) {
   let spacing = State.gridSpacing;
   if (ghostName === 'blinky') { // BLINKY ONLY
-    // console.log('blinky gets a prototype');
+    // if (LOGS) console.log('blinky gets a prototype');
     State.myGame.ghosts[0].changeTarget = function() {
       if (this.moveState === 'chase') {
         this.targetX = State.myGame.myPac.x;
@@ -917,7 +917,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'pinky') { // PINKY ONLY
-    // console.log('pinky gets a prototype');
+    // if (LOGS) console.log('pinky gets a prototype');
     State.myGame.ghosts[1].changeTarget = function() {
       if (this.moveState === 'chase') {
           if (State.myGame.myPac.direction === 'left') {
@@ -933,7 +933,7 @@ function getGhostChangeTarget(ghostName) {
             this.targetX = State.myGame.myPac.x;
             this.targetY = State.myGame.myPac.y + (spacing*2);
           } else {
-            console.log('pinky changeTarget pac positioning prob');
+            if (LOGS) console.log('pinky changeTarget pac positioning prob');
           }
       } else if (this.moveState === 'flee') {
         this.targetX = spacing*1;
@@ -945,7 +945,7 @@ function getGhostChangeTarget(ghostName) {
         this.targetX = this.startPosX;
         this.targetY = this.startPosY;
       } else if (this.moveState === 'exitbase') {
-        // console.log(this.name +" exitbase movestate updated" );
+        // if (LOGS) console.log(this.name +" exitbase movestate updated" );
         this.targetX = spacing*14+(spacing/2);
         this.targetY = spacing*12;
       } else {
@@ -953,7 +953,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'inky') {
-    // console.log('inky gets a prototype');
+    // if (LOGS) console.log('inky gets a prototype');
     State.myGame.ghosts[2].changeTarget = function() {
       if (this.moveState === 'chase') {
         this.targetX = State.myGame.myPac.x;
@@ -975,7 +975,7 @@ function getGhostChangeTarget(ghostName) {
       }
     };
   } else if (ghostName === 'clyde') {
-    // console.log('clyde gets a prototype');
+    // if (LOGS) console.log('clyde gets a prototype');
     State.myGame.ghosts[3].changeTarget = function() {
       let pac = State.myGame.myPac;
       if (this.moveState === 'chase') {
@@ -1020,7 +1020,7 @@ function getGhostChangeTarget(ghostName) {
       return nearBool;
     }; // nearPac
   } else {
-    console.log('getGhostChangeTarget probs');
+    if (LOGS) console.log('getGhostChangeTarget probs');
   }
 }
 

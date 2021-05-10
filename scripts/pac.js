@@ -1,4 +1,4 @@
-/* jshint esversion: 6 */
+/* jshint esversion: 6, asi: true */
 
 function Pac(x,y,velocity,direction,moveState)  {
   this.startPosX = x;
@@ -42,7 +42,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   }; // init
 
   this.softReset = function() { // reset pac to original valuse
-    console.log('pac softReset');
+    if (LOGS) console.log('pac softReset');
     // reset pac position
     this.x = this.startPosX;
     this.y = this.startPosY;
@@ -88,19 +88,19 @@ function Pac(x,y,velocity,direction,moveState)  {
 
     switch (true) {
       case ( (tDir === 'left') && ( getNearestIntersection(this.x-sp+off,this.y).char === "#") ):
-        // console.log("LEFT bounds hit ", getNearestIntersection(x-sp+off,y) );
+        // if (LOGS) console.log("LEFT bounds hit ", getNearestIntersection(x-sp+off,y) );
         bounds = false;  break;
       case ( (tDir === 'right') && ( getNearestIntersection(this.x+sp-off,this.y).char === "#") ):
-        // console.log("RIGHT bounds hit ", getNearestIntersection(x+sp-off,y) );
+        // if (LOGS) console.log("RIGHT bounds hit ", getNearestIntersection(x+sp-off,y) );
         bounds = false;  break;
       case ( (tDir === 'up') && ( getNearestIntersection(this.x,this.y-sp+off).char === "#") ):
-        // console.log("UP bounds hit ", getNearestIntersection(x,y-sp+off) );
+        // if (LOGS) console.log("UP bounds hit ", getNearestIntersection(x,y-sp+off) );
         bounds = false;  break;
       case ( (tDir === 'down') && (( getNearestIntersection(this.x,this.y+sp-off).char === "#") || ( getNearestIntersection(this.x,this.y+sp-off).char === "W")) ):
-        // console.log("DOWN bounds hit ", getNearestIntersection(x,this.y+sp-off) );
+        // if (LOGS) console.log("DOWN bounds hit ", getNearestIntersection(x,this.y+sp-off) );
         bounds = false;  break;
       default:
-        // console.log('no bounds hit, keep going fwd');
+        // if (LOGS) console.log('no bounds hit, keep going fwd');
         bounds = true; break;
     }
 
@@ -122,7 +122,7 @@ function Pac(x,y,velocity,direction,moveState)  {
       this.vel = Math.abs(this.vel);
       this.rotatePacFace();
     } else {
-      console.log(' changeDir problems ');
+      if (LOGS) console.log(' changeDir problems ');
     }
     this.moveState = 'go';
   };
@@ -142,7 +142,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     } else if ( (this.direction === 'up') || (this.direction === 'down') ) {
       this.y += this.vel;
     } else {
-      console.log(' move pac problems ');
+      if (LOGS) console.log(' move pac problems ');
     }
     if ( (this.runSoundOn === false) && (State.soundsOn) ) { // turn the waka waka on if pac just now starting to move
       this.runSoundOn = true;
@@ -151,15 +151,15 @@ function Pac(x,y,velocity,direction,moveState)  {
   }; //move
 
   this.rotatePacFace = function() {
-    // console.log("rotatePacFace");
+    // if (LOGS) console.log("rotatePacFace");
     switch ( this.direction )  {
       case 'left':  this.rotateFace = Math.PI;  break;
       case 'right':  this.rotateFace = 0;  break;
       case 'up':  this.rotateFace = Math.PI*3/2;  break;
       case 'down':  this.rotateFace = Math.PI/2;  break;
-      case 'stop': console.log("stopped");  break;
+      case 'stop': if (LOGS) console.log("stopped");  break;
       default:
-        console.log("rotatePacFace broke");
+        if (LOGS) console.log("rotatePacFace broke");
         break;
     } // end switch
   };
@@ -203,7 +203,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     // soft game reset
     // start new life animation
     // resume game
-    console.log('pac die');
+    if (LOGS) console.log('pac die');
     this.moveState = 'dying1';
     State.myGame.stopAllGhosts();
     this.timedPause(200);
@@ -212,10 +212,10 @@ function Pac(x,y,velocity,direction,moveState)  {
     this.mouthVel = getRadianAngle(3);
     this.mouthSize = getRadianAngle(20);
     this.lives -= 1;
-    console.log('pac lives left: ', this.lives);
+    if (LOGS) console.log('pac lives left: ', this.lives);
     State.myGame.updateLives();
     State.myGame.scatterCount = 4; // reset the scatter counter
-    console.log('pac movestate = ', this.moveState);
+    if (LOGS) console.log('pac movestate = ', this.moveState);
     State.myGame.pauseAllSounds();
     State.myGame.sounds.pdeath.play();
   };
@@ -233,7 +233,7 @@ function Pac(x,y,velocity,direction,moveState)  {
 
   this.nextDeathMouth = function() {
     if (this.mouthSize > getRadianAngle(177)) { // mouth animation finished, proceed to death phase 2: sparkles
-      console.log('mouth death done');
+      if (LOGS) console.log('mouth death done');
       this.deathMouthAnimFinished = true;
     } else { // animate the pac mouth death
       this.mouthSize += this.mouthVel;
@@ -241,7 +241,7 @@ function Pac(x,y,velocity,direction,moveState)  {
   };
 
   this.initDeathSparkles = function() {
-    console.log('initDeathSparkles');
+    if (LOGS) console.log('initDeathSparkles');
     let getRII = getRandomIntInclusive;
     this.moveState = 'dying2';
     this.deathSparklesStart = performance.now();
@@ -284,7 +284,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     } else if (sDir === 'down') {
       yCoef = 1;
     } else {
-      console.log('pixTestFront issues');
+      if (LOGS) console.log('pixTestFront issues');
     }
     this.pixX = (this.x+((this.lineW+this.radius+2)*xCoef));
     this.pixY = (this.y+((this.lineW+this.radius+2)*yCoef));
@@ -313,16 +313,15 @@ function Pac(x,y,velocity,direction,moveState)  {
     if (this.moveState === 'dying2') { // make the beautiful sparkles happen!
       let dSpark = this.deathSparkles;
       for (let i = 0; i < dSpark.length; i++) {
+        ctx.beginPath();
         ctx.lineWidth = getRandomIntInclusive(1,12);
         ctx.strokeStyle = dSpark[i].color;
-        // ctx.strokeStyle = Colors.pacYellow;
         // ctx.strokeStyle = randColor('rgba'); // full random color madness
         let x = dSpark[i].x;
         let y = dSpark[i].y;
         let angle = dSpark[i].angle;
         let len = dSpark[i].len;
         // single ray
-        ctx.beginPath();
         ctx.moveTo( x , y );
         ctx.lineTo( x+(len*Math.cos(angle)) , y+(len*Math.sin(angle)) );
         ctx.stroke();
@@ -378,7 +377,7 @@ function Pac(x,y,velocity,direction,moveState)  {
             this.nextMouth();
           }
         } else {
-          console.log("[lastDirKey problems]");
+          if (LOGS) console.log("[lastDirKey problems]");
         }
     } else if (mState === 'tpaused') {
         // check to see if it's time to resume movement after an intersection
@@ -412,7 +411,7 @@ function Pac(x,y,velocity,direction,moveState)  {
         } else if (this.deathMouthAnimFinished === true) {
           this.initDeathSparkles();
         } else {
-          console.log('deathMouthAnimFinished probs');
+          if (LOGS) console.log('deathMouthAnimFinished probs');
         }
     } else if (mState === 'dying2') {
         if ((performance.now() - this.deathSparklesStart) > this.deathSparklesDur) {
@@ -429,7 +428,7 @@ function Pac(x,y,velocity,direction,moveState)  {
     } else if (mState === 'gameover') {
       // show gameover animation
     } else {
-        console.log("[move state problems]");
+        if (LOGS) console.log("[move state problems]");
     }
   }; // update
 

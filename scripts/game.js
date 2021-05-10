@@ -1,5 +1,4 @@
-/* jshint esversion: 6 */
-
+/* jshint esversion: 6, asi: true */
 
 var debugMode = false;
 
@@ -156,7 +155,7 @@ function Game(updateDur) {
     this.currentTxt = this.readyTxt;
     this.currentTxt.startTimer(); // turn on the ready txt
     this.levelStartTime = performance.now();
-    console.log("State.soundsOn = ", State.soundsOn);
+    if (LOGS) console.log("State.soundsOn = ", State.soundsOn);
     if (State.soundsOn) {
       this.sounds.lvl.play();
     }
@@ -183,7 +182,7 @@ function Game(updateDur) {
   };
 
   this.soundsOff = function() {
-    console.log('turning sounds to 0');
+    if (LOGS) console.log('turning sounds to 0');
     for (let i in this.sounds) {
       this.sounds[i].changeVol(0);
       this.sounds[i].stop();
@@ -191,7 +190,7 @@ function Game(updateDur) {
   };
 
   this.newLifeReset = function() {
-    console.log('game newLifeReset');
+    if (LOGS) console.log('game newLifeReset');
     this.myPac.softReset();
     for (var i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].softReset();
@@ -202,7 +201,7 @@ function Game(updateDur) {
   };
 
   this.levelCompleteInit = function() {
-    console.log('level complete');
+    if (LOGS) console.log('level complete');
     this.pauseAllSounds();
     for (var i = 0; i < this.ghosts.length; i++) {
       let g = this.ghosts[i];
@@ -237,7 +236,7 @@ function Game(updateDur) {
   };
 
   this.nextLvlReset = function() {
-    console.log('next level starting');
+    if (LOGS) console.log('next level starting');
     this.nextLvlResetStartTime = undefined;
     this.nextLvlResetElapsed = undefined;
     this.resetAllScatterVars();
@@ -267,7 +266,7 @@ function Game(updateDur) {
     // maybe game over animation
     // final score etc game summary, play again?
     // firebase high scores?
-    console.log("GAME OVER SON!");
+    if (LOGS) console.log("GAME OVER SON!");
     this.gameover = true;
     this.myPac.moveState = 'gameover';
     this.ghosts.forEach(function(g) {
@@ -277,7 +276,7 @@ function Game(updateDur) {
     // TxtBox(x,y,msg,color,dur,font)
     this.currentTxt = this.gameoverTxt;
     this.currentTxt.on();
-    console.log('myGame = ', State.myGame);
+    if (LOGS) console.log('myGame = ', State.myGame);
   };
 
   this.updateLives = function() { // update the number of pac life images below game
@@ -312,13 +311,13 @@ function Game(updateDur) {
     } else if (lvlChar === 'F') { // fruit eaten
       this.score += fruitScore;
     } else {
-      console.log('updateScore problems, char is = ', lvlChar);
+      if (LOGS) console.log('updateScore problems, char is = ', lvlChar);
     }
     $('#score').text(this.score);
   };
 
   this.startGhostFleeState = function() {  // pac initiates this when he eats a big pill, @(pac.update)
-    console.log('start ghost flee state');
+    if (LOGS) console.log('start ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].tryStartFlee();
     }
@@ -332,7 +331,7 @@ function Game(updateDur) {
   };
 
   this.stopGhostFleeState = function() {
-    console.log('stop ghost flee state');
+    if (LOGS) console.log('stop ghost flee state');
     for (let i = 0; i < this.ghosts.length; i++) {
       this.ghosts[i].stopFlee();
     }
@@ -348,8 +347,8 @@ function Game(updateDur) {
         if (this.scatterOn === false) {
           let playTimeSeconds = State.playTime / 1000;
           if ( (this.scatterCount > 0) && (this.scatterCount < 4) ) {
-            // console.log('playTimeSeconds = ', playTimeSeconds);
-            // console.log('(this.chaseStartTime/1000) ', (this.chaseStartTime/1000));
+            // if (LOGS) console.log('playTimeSeconds = ', playTimeSeconds);
+            // if (LOGS) console.log('(this.chaseStartTime/1000) ', (this.chaseStartTime/1000));
             if ( ((playTimeSeconds) - (this.chaseStartTime/1000)) > this.chaseDuration ) {
               this.startGhostsScatterState();
             }
@@ -367,26 +366,26 @@ function Game(updateDur) {
         // scatter count is 0 so just chase forever
       }
     } else {
-      // console.log('too early to scatter');
+      // if (LOGS) console.log('too early to scatter');
       // don't scatter for a bit when level starts
     }
 
   };
 
   this.startGhostsScatterState = function() {
-      console.log('start - scatter');
+      if (LOGS) console.log('start - scatter');
       this.scatterStartTime = performance.now();
       this.scatterOn = true;
       this.scatterCount--;
       this.chaseStartTime = undefined;
-      console.log(this.scatterCount+" - scatters left");
+      if (LOGS) console.log(this.scatterCount+" - scatters left");
       this.ghosts.forEach( function(g) {
         g.tryStartScatter();
       });
   };
 
   this.stopGhostsScatterState = function() {
-    console.log('game.stopGhostsScatterState');
+    if (LOGS) console.log('game.stopGhostsScatterState');
     this.scatterStartTime = undefined;
     this.scatterOn = false;
     this.chaseStartTime = State.playTime;
@@ -426,7 +425,7 @@ function Game(updateDur) {
   };
 
   this.pauseIt = function() {
-    console.log('GAME paused');
+    if (LOGS) console.log('GAME paused');
     State.pauseStartTime = performance.now();
     this.paused = true;
     this.currentTxt = this.pausedTxt;
@@ -446,7 +445,7 @@ function Game(updateDur) {
   };
 
   this.unpauseIt = function() {
-    console.log('GAME un-paused');
+    if (LOGS) console.log('GAME un-paused');
     this.paused = false;
     this.currentTxt.off();
     if (this.bigPillEffect === true) {
@@ -526,7 +525,7 @@ function Game(updateDur) {
                   }
                 }
             // } else {
-            //   console.log('frames skipped!');
+            //   if (LOGS) console.log('frames skipped!');
             // }
             this.lastUpdate = performance.now();
           }
@@ -572,7 +571,7 @@ function Game(updateDur) {
     } else if (this.gameover) {
       // chill
     } else {
-      console.log('unhandeled game update case');
+      if (LOGS) console.log('unhandeled game update case');
     }
 
     // ALWAYS check if text needs showing

@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6, asi: true */
 
 // original 1980s dimentions
 // width: 38 tiles wide - 26 dots + 2 tiles of edge
@@ -20,6 +20,8 @@
 ///////////////////
 // STATE
 ///////////////////
+
+const LOGS = false; // turn console.logs on/off
 
 var State = {
   canvas: undefined,
@@ -175,12 +177,12 @@ function keyDown(event) {
           case 77: // M key
             State.soundsOn = (State.soundsOn) ? false : true;
             if (State.soundsOn) {
-              // console.log('toggle sound -> ', 'ON');
+              // if (LOGS) console.log('toggle sound -> ', 'ON');
               $(".sound-img-contain").removeClass("sound-off");
               $(".sound-img-contain").addClass("sound-on");
               State.myGame.soundsReset();
             } else {
-              // console.log('toggle sound -> ', 'OFF');
+              // if (LOGS) console.log('toggle sound -> ', 'OFF');
               $(".sound-img-contain").removeClass("sound-on");
               $(".sound-img-contain").addClass("sound-off");
               State.myGame.soundsOff();
@@ -194,26 +196,26 @@ function keyDown(event) {
             } else {
               //nothin
             }
-            console.log('State.myGame.paused NOW = ', State.myGame.paused);
+            if (LOGS) console.log('State.myGame.paused NOW = ', State.myGame.paused);
             break;
           case 71: // G key
-            console.log('toggle grid');
+            if (LOGS) console.log('toggle grid');
             State.myGame.gridOn = (State.myGame.gridOn) ? false : true;
             break;
           case 76: // L key
-            console.log('toggle level');
+            if (LOGS) console.log('toggle level');
             // State.myGame.toggleLvl(); // old option to change level draw type
             break;
           case 88: // X key
-            console.log('toggle px test box');
+            if (LOGS) console.log('toggle px test box');
             State.myGame.pxBoxOn = (State.myGame.pxBoxOn) ? false : true;
             break;
           default: // Everything else
-            console.log("key = ", code);
+            if (LOGS) console.log("key = ", code);
             break;
       }
     } else { // keys useable outside of game context
-        console.log("key = ", code);
+        if (LOGS) console.log("key = ", code);
     }
 
 }
@@ -226,14 +228,14 @@ function keyDown(event) {
 
 function touchstart(event) {
   event.preventDefault();
-  // console.log('touch START');
-  // console.log('data = ', event.changedTouches[0]);
+  // if (LOGS) console.log('touch START');
+  // if (LOGS) console.log('data = ', event.changedTouches[0]);
   State.lastTouchStartData = event.changedTouches[0];
 }
 function touchend(event) {
   event.preventDefault();
-  // console.log('touch END');
-  // console.log('data = ', event.changedTouches[0]);
+  // if (LOGS) console.log('touch END');
+  // if (LOGS) console.log('data = ', event.changedTouches[0]);
   State.lastTouchEndData = event.changedTouches[0];
   let x1 = Math.round(State.lastTouchStartData.pageX);
   let y1 = Math.round(State.lastTouchStartData.pageY);
@@ -241,42 +243,42 @@ function touchend(event) {
   let y2 = Math.round(State.lastTouchEndData.pageY);
   let xDiff = x1-x2;
   let yDiff = y1-y2;
-  // console.log("x1,y1: ["+x1+","+y1+"]  x2,y2: ["+x2+","+y2+"]");
-  // console.log("xDiff,yDiff = "+xDiff+","+yDiff);
+  // if (LOGS) console.log("x1,y1: ["+x1+","+y1+"]  x2,y2: ["+x2+","+y2+"]");
+  // if (LOGS) console.log("xDiff,yDiff = "+xDiff+","+yDiff);
   if (State.myGame.paused === false) {
     if (Math.abs(xDiff) > Math.abs(yDiff)) { // desired vector along X-Axis
-      console.log('X vector');
+      if (LOGS) console.log('X vector');
       if ((x1 - x2) > 0) { // swipe left
         if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'left') && (State.lastDirKey !== 'left')) ) {
           State.lastDirKey = 'left';
-          // console.log('swipe LEFT');
+          // if (LOGS) console.log('swipe LEFT');
         }
       } else if ((x1 - x2) < 0) { // swipe right
         if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'right') && (State.lastDirKey !== 'right')) ) {
           State.lastDirKey = 'right';
-          // console.log('swipe RIGHT');
+          // if (LOGS) console.log('swipe RIGHT');
         }
       } else {
-        console.log('swipe X probs');
+        if (LOGS) console.log('swipe X probs');
       }
     } else if (Math.abs(yDiff) > Math.abs(xDiff)) { // desired vector along Y-Axis
-      console.log('Y vector');
+      if (LOGS) console.log('Y vector');
       if ((y1 - y2) > 0) { // swipe up
         if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'up') && (State.lastDirKey !== 'up')) ) {
           State.lastDirKey = 'up';
-          // console.log('swipe UP');
+          // if (LOGS) console.log('swipe UP');
         }
       } else if ((y1 - y2) < 0) { // swipe down
         if ( (State.myGame.myPac.moveState === 'stop') || ((State.myGame.myPac.direction !== 'down') && (State.lastDirKey !== 'down')) ) {
           State.lastDirKey = 'down';
-          // console.log('swipe DOWN');
+          // if (LOGS) console.log('swipe DOWN');
         }
       } else {
-        console.log('swipe Y probs');
+        if (LOGS) console.log('swipe Y probs');
       }
     } else {
       // touch vector to small to tell intended direction OR xDiff and yDiff are the same (diagonal?)
-      console.log('diagonal touch vector?');
+      if (LOGS) console.log('diagonal touch vector?');
     }
 
   }
@@ -301,7 +303,7 @@ $(document).ready(function() {
 
   document.getElementsByClassName("sound-img-contain")[0].addEventListener("click", function() {
     if (State.soundsOn === false) {
-      // console.log('toggle sound -> ', 'ON');
+      // if (LOGS) console.log('toggle sound -> ', 'ON');
       State.soundsOn = true;
       $(".sound-img-contain").removeClass("sound-off");
       $(".sound-img-contain").addClass("sound-on");
@@ -309,14 +311,14 @@ $(document).ready(function() {
         State.myGame.soundsReset();
       }
     } else {
-      // console.log('toggle sound -> ', 'OFF');
+      // if (LOGS) console.log('toggle sound -> ', 'OFF');
       State.soundsOn = false;
       $(".sound-img-contain").removeClass("sound-on");
       $(".sound-img-contain").addClass("sound-off");
       if (State.myGame !== undefined) {
         State.myGame.soundsOff();
       }
-      // console.log('State soundsOn = ', State.soundsOn);
+      // if (LOGS) console.log('State soundsOn = ', State.soundsOn);
     }
   });
 
@@ -347,7 +349,7 @@ $(document).ready(function() {
     State.myGame = new Game(10); // param = ms per update()
     State.myGame.init();
     State.canvas.focus();  // set focus to canvas on start so keybindings work, if needed
-    // console.log("document.activeElement = ", document.activeElement);
+    // if (LOGS) console.log("document.activeElement = ", document.activeElement);
     State.myReq = requestAnimationFrame(gameLoop);
     State.playStart = performance.now();
     State.playTimeMarker = performance.now();
