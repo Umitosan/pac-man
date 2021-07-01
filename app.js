@@ -346,7 +346,8 @@ $(document).ready(function() {
     State.ctx =  State.canvas.getContext('2d');
     clearCanvas();
     $('#score').text('0000');
-    State.myGame = new Game(10); // param = ms per update()
+    // State.myGame = new Game(20); // param = ms per update()
+    State.myGame = new Game();
     State.myGame.init();
     State.canvas.focus();  // set focus to canvas on start so keybindings work, if needed
     // if (LOGS) console.log("document.activeElement = ", document.activeElement);

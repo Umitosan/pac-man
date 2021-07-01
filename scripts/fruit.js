@@ -25,116 +25,117 @@ function FruitGroup() {
   this.totalDur = 10000;
   this.pauseBegin = undefined;
   this.pauseElapsedTime = 0;
+} // FruitGroup
 
-  this.init = function(someSrc) {
-    let spacing = State.gridSpacing;
-    let someImg = new Image();
+FruitGroup.prototype.init = function(someSrc) {
+  let spacing = State.gridSpacing;
+  let someImg = new Image();
+  this.eaten = false;
+  someImg.src = someSrc;
+  this.img = someImg;
+  this.dx = (spacing*13)+(spacing/2);
+  this.dy = (spacing*17);
+  this.dWidth = spacing*2;
+  this.dHeight = spacing*2;
+  let x = this.dx+25;
+  let y = this.dy+25+5;
+  this.eatenTxtBox =  new TxtBox(/* x     */ x,
+                                 /* y     */ y,
+                                 /* msg   */ '100',
+                                 /* color */ Colors.ghostAqua,
+                                 /* dur   */ 6000,
+                                 /* font  */ '20px joystix'
+                               );
+};
+
+FruitGroup.prototype.start = function() { // occurs at 70 dots eaten and 170 dots eaten // handled by myPac.tryEatPill()
+  if (LOGS) console.log('start fruit');
+  this.startTime = performance.now();
+  this.show = true;
+};
+
+FruitGroup.prototype.pauseIt = function() {
+  this.pauseElapsedTime = (performance.now() - this.pauseBegin);
+};
+
+FruitGroup.prototype.unpauseIt = function() {
+  this.pauseBegin = (performance.now() - this.pauseElapsedTime);
+};
+
+FruitGroup.prototype.checkPacCollision = function() {
+  // if (LOGS) console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
+  // if (LOGS) console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
+  if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
+    // pac eats fruit
+    this.eaten = true;
+    this.finish();
+  }
+};
+
+FruitGroup.prototype.finish = function() {
+  if (LOGS) console.log('fruit duration complete');
+  this.pauseBegin = undefined;
+  this.startTime = undefined;
+  this.pauseElapsedTime = 0;
+  this.show = false;
+  if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
+    this.eatenTxtBox.startTimer();
     this.eaten = false;
-    someImg.src = someSrc;
-    this.img = someImg;
-    this.dx = (spacing*13)+(spacing/2);
-    this.dy = (spacing*17);
-    this.dWidth = spacing*2;
-    this.dHeight = spacing*2;
-    let x = this.dx+25;
-    let y = this.dy+25+5;
-    this.eatenTxtBox =  new TxtBox(/* x     */ x,
-                                   /* y     */ y,
-                                   /* msg   */ '100',
-                                   /* color */ Colors.ghostAqua,
-                                   /* dur   */ 6000,
-                                   /* font  */ '20px joystix'
-                                 );
-  };
+    // State.myGame.pauseIt();
+  }
+  // update score
+  State.myGame.updateScore("F",this.pointsList.cherry);
+};
 
-  this.start = function() { // occurs at 70 dots eaten and 170 dots eaten // handled by myPac.tryEatPill()
-    if (LOGS) console.log('start fruit');
-    this.startTime = performance.now();
-    this.show = true;
-  };
+FruitGroup.prototype.draw = function() {
+  if (this.show === true) {
+    let ctx = State.ctx;
+    let spacing = State.gridSpacing;
+    // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+    ctx.drawImage(  /*image*/    this.img,
+                    /* dx */     this.dx,
+                    /* dy */     this.dy,
+                    /*dWidth*/   this.dWidth,
+                    /*dHeidth*/  this.dHeight
+    );
+    // placeholder box
+    // ctx.beginPath();
+    // ctx.strokeStyle = 'white';
+    // ctx.strokeWidth = 1;
+    // ctx.fillStyle = 'black';
+    // ctx.rect(this.dx+25,this.dy+25,5,5); // x y width height
+    // ctx.rect(this.dx,this.dy,this.dWidth,this.dHeight); // x y width height
+    // ctx.stroke();
+  } // end if
+  if (this.eatenTxtBox.show === true) {
+    this.eatenTxtBox.draw();
+  }
+};  // draw
 
-  this.pauseIt = function() {
-    this.pauseElapsedTime = (performance.now() - this.pauseBegin);
-  };
-
-  this.unpauseIt = function() {
-    this.pauseBegin = (performance.now() - this.pauseElapsedTime);
-  };
-
-  this.checkPacCollision = function() {
-    // if (LOGS) console.log('dist y = ', Math.abs(State.myGame.myPac.y - this.dy - 25));
-    // if (LOGS) console.log('dist x = ', Math.abs(State.myGame.myPac.x - this.dx + 25));
-    if ( (this.show === true) && (Math.abs(State.myGame.myPac.y - this.dy - 25) < 10) && (Math.abs(State.myGame.myPac.x - this.dx - 25) < 10) ) {  // 25 is to offset fruit draw corner
-      // pac eats fruit
-      this.eaten = true;
-      this.finish();
-    }
-  };
-
-  this.finish = function() {
-    if (LOGS) console.log('fruit duration complete');
-    this.pauseBegin = undefined;
-    this.startTime = undefined;
-    this.pauseElapsedTime = 0;
-    this.show = false;
-    if (this.eaten === true) { // this.eaten bug: text remebers being eaten first time and shows even not when eaten again second time
-      this.eatenTxtBox.startTimer();
-      this.eaten = false;
-      // State.myGame.pauseIt();
-    }
-    // update score
-    State.myGame.updateScore("F",this.pointsList.cherry);
-  };
-
-  this.draw = function() {
-    if (this.show === true) {
-      let ctx = State.ctx;
-      let spacing = State.gridSpacing;
-      // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-      // void ctx.drawImage(image, dx, dy, dWidth, dHeight);
-      ctx.drawImage(  /*image*/    this.img,
-                      /* dx */     this.dx,
-                      /* dy */     this.dy,
-                      /*dWidth*/   this.dWidth,
-                      /*dHeidth*/  this.dHeight
-      );
-      // placeholder box
-      // ctx.beginPath();
-      // ctx.strokeStyle = 'white';
-      // ctx.strokeWidth = 1;
-      // ctx.fillStyle = 'black';
-      // ctx.rect(this.dx+25,this.dy+25,5,5); // x y width height
-      // ctx.rect(this.dx,this.dy,this.dWidth,this.dHeight); // x y width height
-      // ctx.stroke();
-    } // end if
-    if (this.eatenTxtBox.show === true) {
-      this.eatenTxtBox.draw();
-    }
-  };
-
-  this.update = function() {
-    // timing
-    if (this.startTime !== undefined) {
-        if (this.pauseBegin !== undefined) {  // paused so check pause stuff
-            if (this.pauseElapsedTime > this.totalDur) {
-              this.finish();
-            } else {
-              this.pauseElapsedTime = (performance.now() - this.pauseBegin);
-            }
-        } else { // not paused so udpate duration passed
-          if ( (performance.now() - this.startTime + this.pauseElapsedTime) > this.totalDur ) {
+FruitGroup.prototype.update = function() {
+  // timing
+  if (this.startTime !== undefined) {
+      if (this.pauseBegin !== undefined) {  // paused so check pause stuff
+          if (this.pauseElapsedTime > this.totalDur) {
             this.finish();
+          } else {
+            this.pauseElapsedTime = (performance.now() - this.pauseBegin);
           }
-        } // if
-    } // if
-    this.checkPacCollision();
-    // update eaten text
-    if (this.eatenTxtBox.show === true) {
-      this.eatenTxtBox.update();
-    }
-  };
+      } else { // not paused so udpate duration passed
+        if ( (performance.now() - this.startTime + this.pauseElapsedTime) > this.totalDur ) {
+          this.finish();
+        }
+      } // if
+  } // if
+  this.checkPacCollision();
+  // update eaten text
+  if (this.eatenTxtBox.show === true) {
+    this.eatenTxtBox.update();
+  }
+};  // update
 
-}
+
 
 
 /*  NOTES
