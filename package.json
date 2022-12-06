@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/Umitosan/pac-man#readme",
   "dependencies": {
-    "express": "^4.16.3",
-    "http-server": "^0.11.1",
+    "express": "^4.18.2",
+    "http-server": "^0.11.2",
     "npm": "^6.4.1"
   },
   "engines": {
